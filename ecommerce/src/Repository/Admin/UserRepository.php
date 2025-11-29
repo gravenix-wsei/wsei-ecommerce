@@ -26,18 +26,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
      * The password hashing is done automatically by the security component before calling this method.
      * This method only persists the new hashed password to the database.
      *
-     * @param PasswordAuthenticatedUserInterface $user
      * @param string $newHashedPassword The new HASHED password (not plain text)
      */
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
-        if (!$user instanceof User) {
+        if (! $user instanceof User) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', $user::class));
         }
 
         $user->setPassword($newHashedPassword);
-        $this->getEntityManager()->persist($user);
-        $this->getEntityManager()->flush();
+        $this->getEntityManager()
+            ->persist($user);
+        $this->getEntityManager()
+            ->flush();
     }
 }
-

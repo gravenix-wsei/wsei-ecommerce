@@ -19,4 +19,3 @@ class DashboardController extends AbstractController
         ]);
     }
 }
-
