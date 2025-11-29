@@ -1,4 +1,4 @@
-.PHONY: help up build restart logs shell down init env
+.PHONY: help up build restart logs shell down init env start stop
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -21,6 +21,9 @@ init: .env build up ## Initialize environment: create .env, build and start cont
 up: ## Create and start containers
 	docker compose up -d
 
+start: ## Start containers
+	docker compose start
+
 build: ## Build or rebuild services
 	docker compose build
 
@@ -35,3 +38,6 @@ shell: ## Open shell in PHP container
 
 down: ## Stop and remove containers
 	docker compose down
+
+stop: ## Stop containers
+	docker compose stop
