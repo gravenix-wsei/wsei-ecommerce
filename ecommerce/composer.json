@@ -60,8 +60,7 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
-        "ecs-check": "vendor/bin/ecs check",
-        "ecs-fix": "vendor/bin/ecs check --fix",
+        "ecs": "vendor/bin/ecs check",
         "phpstan": "vendor/bin/phpstan analyse"
     },
     "conflict": {
