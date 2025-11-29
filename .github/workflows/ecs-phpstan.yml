@@ -1,0 +1,49 @@
+name: ECS and PHPStan
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'ecommerce/**'
+
+jobs:
+  ecs-phpstan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4.15'
+          extensions: mbstring, intl, pdo, pdo_mysql
+          coverage: none
+      - name: Get Composer cache directory
+        id: composer-cache
+        working-directory: ecommerce
+        run: |
+          echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+      - name: Cache Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: ecommerce/vendor
+          key: ${{ runner.os }}-composer-vendor-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-vendor-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+        working-directory: ecommerce
+      - name: Run ECS
+        run: composer ecs
+        working-directory: ecommerce
+      - name: Run PHPStan
+        run: composer phpstan
+        working-directory: ecommerce
