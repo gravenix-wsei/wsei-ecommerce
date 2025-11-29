@@ -6,6 +6,11 @@ on:
       - master
     paths:
       - 'ecommerce/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'ecommerce/**'
 
 jobs:
   ecs-phpstan:
