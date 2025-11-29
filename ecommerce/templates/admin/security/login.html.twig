@@ -6,7 +6,7 @@
 <div class="login-container">
     <div class="login-card">
         <div class="login-image">
-            <img src="https://placehold.co/400x600/1a1a2e/eee?text=Admin+Panel" alt="Admin Panel">
+            <img src="{{ asset('img/admin/login_left.png') }}" alt="Admin Panel">
         </div>
         <div class="login-form-wrapper">
             <div class="login-form-content">
@@ -19,7 +19,7 @@
                     </div>
                 {% endif %}
 
-                <form action="{{ path('admin_login') }}" method="post">
+                <form action="{{ path('admin.login') }}" method="post">
                     <div class="form-group">
                         <label for="username">Email</label>
                         <input type="text"

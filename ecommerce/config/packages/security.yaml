@@ -20,13 +20,13 @@ security:
             provider: admin_user_provider
 
             form_login:
-                login_path: admin_login
-                check_path: admin_login
+                login_path: admin.login
+                check_path: admin.login
                 enable_csrf: true
                 default_target_path: /admin/dashboard
 
             logout:
-                path: admin_logout
+                path: admin.logout
                 target: /admin/login
 
             # https://symfony.com/doc/current/security/impersonating_user.html

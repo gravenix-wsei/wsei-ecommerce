@@ -11,11 +11,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_ADMIN')]
 class DashboardController extends AbstractController
 {
-    #[Route('/dashboard', name: 'admin_dashboard')]
+    #[Route('/dashboard', name: 'admin.dashboard')]
     public function index(): Response
     {
-        return $this->render('admin/dashboard.html.twig', [
-            'user' => $this->getUser(),
-        ]);
+        return $this->render('admin/dashboard.html.twig');
     }
 }

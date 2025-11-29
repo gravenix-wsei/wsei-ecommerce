@@ -1,26 +1,16 @@
-{% extends 'base.html.twig' %}
+{% extends 'admin/base.html.twig' %}
 
 {% block title %}Admin Dashboard{% endblock %}
 
-{% block body %}
+{% block content %}
 <div class="admin-container">
     <div class="admin-header">
-        <h1>Admin Dashboard</h1>
-        <div>
-            <span>Welcome, {{ user.email }}</span>
-            <a href="{{ path('admin_logout') }}" class="btn btn-primary" style="margin-left: 1rem;">Logout</a>
-        </div>
+        <h1>Dashboard</h1>
     </div>
 
     <div class="card">
-        <h2>Welcome to the Admin Panel</h2>
-        <p>You are successfully logged in as an administrator.</p>
-        <p>This is a placeholder dashboard. Future features will be added here.</p>
-    </div>
-
-    <div class="card">
-        <h2>Quick Stats</h2>
-        <p>Dashboard statistics and metrics will be displayed here.</p>
+        <h2>Welcome!</h2>
+        <p>Let's do something productive together.</p>
     </div>
 </div>
 {% endblock %}

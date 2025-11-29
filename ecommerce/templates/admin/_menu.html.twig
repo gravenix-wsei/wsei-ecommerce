@@ -1,0 +1,26 @@
+<div class="admin-menu">
+    <div class="admin-menu-header">
+        <h2>Welcome,</h2>
+        <p class="admin-user-email">{{ app.user.email }}</p>
+    </div>
+
+    <nav class="admin-menu-nav">
+        <ul class="admin-menu-list">
+            <li class="admin-menu-item">
+                <a href="{{ path('admin.dashboard') }}" class="admin-menu-link {% if app.request.attributes.get('_route') == 'admin.dashboard' %}active{% endif %}">
+                    <span class="admin-menu-icon">📊</span>
+                    <span class="admin-menu-text">Dashboard</span>
+                </a>
+            </li>
+            {# Add more menu items here #}
+        </ul>
+    </nav>
+
+    <div class="admin-menu-footer">
+        <a href="{{ path('admin.logout') }}" class="admin-menu-link logout">
+            <span class="admin-menu-icon">🚪</span>
+            <span class="admin-menu-text">Logout</span>
+        </a>
+    </div>
+</div>
+
