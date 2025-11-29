@@ -16,7 +16,7 @@ class DatabaseTestController
     public function test(): JsonResponse
     {
         try {
-            $result = $this->connection->fetchAssociative('SELECT 1+3 as test');
+            $result = $this->connection->fetchAssociative('SELECT 1 as test');
 
             return new JsonResponse([
                 'status' => 'success',
