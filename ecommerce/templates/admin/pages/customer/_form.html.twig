@@ -1,0 +1,46 @@
+<div class="form-group">
+    {{ form_start(form) }}
+
+    {{ form_row(form.email, {
+        'label': 'Email Address',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter email address'}
+    }) }}
+
+    <div class="form-row-inline">
+        {{ form_row(form.firstName, {
+            'label': 'First Name',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter first name'}
+        }) }}
+
+        {{ form_row(form.lastName, {
+            'label': 'Last Name',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter last name'}
+        }) }}
+    </div>
+
+    {% if form.password is defined %}
+        <div class="form-row-inline">
+            {{ form_row(form.password.first, {
+                'attr': {'class': 'form-control', 'placeholder': 'Enter password'}
+            }) }}
+
+            {{ form_row(form.password.second, {
+                'attr': {'class': 'form-control', 'placeholder': 'Repeat password'}
+            }) }}
+        </div>
+    {% endif %}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+            Save
+        </button>
+        <a href="{{ path('admin.customer.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/x-circle.svg', {class: 'icon'}) }}
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+
