@@ -1,0 +1,42 @@
+<div class="form-group">
+    {{ form_start(form) }}
+
+    {{ form_row(form.name, {
+        'label': 'Product Name',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter product name'}
+    }) }}
+
+    {{ form_row(form.description, {
+        'label': 'Description',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter product description', 'rows': 5}
+    }) }}
+
+    {{ form_row(form.stock, {
+        'label': 'Stock',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity'}
+    }) }}
+
+    {{ form_row(form.priceNet, {
+        'label': 'Price Net',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter net price'}
+    }) }}
+
+    {{ form_row(form.priceGross, {
+        'label': 'Price Gross',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter gross price'}
+    }) }}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+            Save
+        </button>
+        <a href="{{ path('admin.product.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/x-circle.svg', {class: 'icon'}) }}
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+

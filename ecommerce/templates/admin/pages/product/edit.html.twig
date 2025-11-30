@@ -1,0 +1,18 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Edit Product - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Edit Product: {{ product.name }}</h1>
+    <a href="{{ path('admin.product.index') }}" class="btn btn-secondary">
+        {{ svg('img/icons/arrow-left.svg', {class: 'icon'}) }}
+        Back to list
+    </a>
+</div>
+
+<div class="form-container">
+    {{ include('admin/pages/product/_form.html.twig') }}
+</div>
+{% endblock %}
+
