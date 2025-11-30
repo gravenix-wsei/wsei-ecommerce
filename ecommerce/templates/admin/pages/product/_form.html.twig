@@ -1,0 +1,54 @@
+{% form_theme form 'form/money_theme.html.twig' %}
+
+<div class="form-group">
+    {{ form_start(form) }}
+
+    {{ form_row(form.name, {
+        'label': 'Product Name',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter product name'}
+    }) }}
+
+    {{ form_row(form.description, {
+        'label': 'Description',
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Enter product description',
+            'rows': 5
+        }
+    }) }}
+
+    <div class="form-row-inline">
+        {{ form_row(form.stock, {
+            'label': 'Stock',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity'}
+        }) }}
+
+        <div class="form-field-with-currency">
+            {{ form_row(form.priceNet, {
+                'label': 'Price Netto',
+                'attr': {'class': 'form-control', 'placeholder': 'Enter netto price'}
+            }) }}
+        </div>
+
+        <div class="form-field-with-currency">
+            {{ form_row(form.priceGross, {
+                'label': 'Price Gross',
+                'attr': {'class': 'form-control', 'placeholder': 'Enter gross price'}
+            }) }}
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+            Save
+        </button>
+        <a href="{{ path('admin.product.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/x-circle.svg', {class: 'icon'}) }}
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+

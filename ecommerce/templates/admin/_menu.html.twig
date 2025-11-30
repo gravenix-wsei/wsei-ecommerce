@@ -18,6 +18,12 @@
                     <span class="admin-menu-text">Categories</span>
                 </a>
             </li>
+            <li class="admin-menu-item">
+                <a href="{{ path('admin.product.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.product' %}active{% endif %}">
+                    <span class="admin-menu-icon">{{ svg('img/icons/products.svg', {class: 'icon'}) }}</span>
+                    <span class="admin-menu-text">Products</span>
+                </a>
+            </li>
             {# Add more menu items here #}
         </ul>
     </nav>

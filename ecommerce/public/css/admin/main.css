@@ -139,7 +139,8 @@ body {
 
     input[type="email"],
     input[type="password"],
-    input[type="text"] {
+    input[type="text"],
+    input[type="number"] {
         width: 100%;
         padding: 0.75rem 1rem;
         border: 2px solid var(--border-color);
@@ -158,6 +159,64 @@ body {
         &::placeholder {
             color: var(--text-secondary);
         }
+    }
+
+    textarea {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border: 2px solid var(--border-color);
+        border-radius: var(--border-radius-md);
+        background: var(--primary-color);
+        color: var(--text-primary);
+        font-size: 1rem;
+        font-family: inherit;
+        resize: vertical;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px var(--accent-bg-focus);
+        }
+
+        &::placeholder {
+            color: var(--text-secondary);
+        }
+    }
+}
+
+.form-row-inline {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+
+    .form-group {
+        flex: 1;
+        margin-bottom: 0;
+    }
+}
+
+.form-field-with-currency {
+    flex: 1;
+    position: relative;
+
+    .form-group {
+        margin-bottom: 0;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        padding-right: 3rem;
+    }
+
+    &::after {
+        content: "EUR";
+        position: absolute;
+        right: 1rem;
+        bottom: 0.75rem;
+        color: var(--text-secondary);
+        font-weight: 500;
+        pointer-events: none;
     }
 }
 
