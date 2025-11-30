@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}{{ category.name }} - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Category Details</h1>
+    <div>
+        <a href="{{ path('admin.category.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/arrow-left.svg', {class: 'icon'}) }}
+            Back to list
+        </a>
+        <a href="{{ path('admin.category.edit', {'id': category.id}) }}" class="btn btn-warning">
+            {{ svg('img/icons/pencil.svg', {class: 'icon'}) }}
+            Edit
+        </a>
+    </div>
+</div>
+
+<div class="detail-container">
+    <table class="detail-table">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>{{ category.id }}</td>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <td>{{ category.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="form-actions" style="margin-top: 2rem;">
+    <form method="post" action="{{ path('admin.category.delete', {'id': category.id}) }}" onsubmit="return confirm('Are you sure you want to delete this category?');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}">
+        <button type="submit" class="btn btn-danger">
+            {{ svg('img/icons/trash.svg', {class: 'icon'}) }}
+            Delete Category
+        </button>
+    </form>
+</div>
+{% endblock %}
+

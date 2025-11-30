@@ -461,6 +461,13 @@ body {
     font-size: 1.5rem;
 }
 
+a > svg {
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    height: 16px;
+}
+
 /* ========================================
    Responsive Design
    ======================================== */
