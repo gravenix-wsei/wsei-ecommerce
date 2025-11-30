@@ -226,6 +226,10 @@ body {
     padding: 0;
     box-shadow: var(--shadow-md);
     transition: all 0.3s ease;
+    &.active {
+        left: auto;
+        right: var(--spacing-md);
+    }
 }
 
 .hamburger-btn:hover {
@@ -238,6 +242,7 @@ body {
 }
 
 .hamburger-icon {
+    display: block;
     position: relative;
     width: 24px;
     height: 18px;
