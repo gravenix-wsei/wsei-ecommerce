@@ -10,8 +10,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Wsei\Ecommerce\Entity\Admin\Category;
 
+/**
+ * @extends AbstractType<Category>
+ */
 class CategoryType extends AbstractType
 {
+    /**
+     * @param array<string, mixed> $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -28,4 +34,3 @@ class CategoryType extends AbstractType
         ]);
     }
 }
-

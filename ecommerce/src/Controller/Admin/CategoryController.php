@@ -97,4 +97,3 @@ class CategoryController extends AbstractController
         return $this->redirectToRoute('admin.category.index');
     }
 }
-
