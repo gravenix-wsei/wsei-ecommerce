@@ -13,8 +13,18 @@
         {% endblock %}
     </head>
     <body>
+        <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle menu">
+            <span class="hamburger-icon">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
+        </button>
+
+        <div class="menu-overlay" id="menuOverlay"></div>
+
         <div class="admin-layout">
-            <aside class="admin-sidebar">
+            <aside class="admin-sidebar" id="adminSidebar">
                 {% include 'admin/_menu.html.twig' %}
             </aside>
 
@@ -22,6 +32,34 @@
                 {% block content %}{% endblock %}
             </main>
         </div>
+
+        <script>
+            (function() {
+                const hamburgerBtn = document.getElementById('hamburgerBtn');
+                const menuOverlay = document.getElementById('menuOverlay');
+                const adminSidebar = document.getElementById('adminSidebar');
+
+                function toggleMenu() {
+                    hamburgerBtn.classList.toggle('active');
+                    menuOverlay.classList.toggle('active');
+                    adminSidebar.classList.toggle('active');
+                    document.body.style.overflow = adminSidebar.classList.contains('active') ? 'hidden' : '';
+                }
+
+                hamburgerBtn.addEventListener('click', toggleMenu);
+                menuOverlay.addEventListener('click', toggleMenu);
+
+                // Close menu on menu link click (mobile)
+                const menuLinks = adminSidebar.querySelectorAll('.admin-menu-link');
+                menuLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        if (window.innerWidth <= 768) {
+                            toggleMenu();
+                        }
+                    });
+                });
+            })();
+        </script>
     </body>
 </html>
 

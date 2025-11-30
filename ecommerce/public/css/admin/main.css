@@ -208,70 +208,96 @@ body {
 }
 
 /* ========================================
-   Responsive Design
+   Hamburger Menu
    ======================================== */
 
-@media (max-width: 768px) {
-    .login-card {
-        grid-template-columns: 1fr;
-    }
-
-    .login-image {
-        display: none;
-    }
-
-    .login-form-wrapper {
-        padding: var(--spacing-lg);
-    }
-
-    .admin-sidebar {
-        width: 200px;
-    }
-
-    .admin-content {
-        margin-left: 200px;
-        padding: var(--spacing-md);
-    }
-
-    .admin-menu-header {
-        padding: var(--spacing-md);
-    }
-
-    .admin-menu-link {
-        padding: var(--spacing-sm) var(--spacing-md);
-    }
+.hamburger-btn {
+    display: none;
+    position: fixed;
+    top: var(--spacing-md);
+    left: var(--spacing-md);
+    z-index: 1001;
+    background: var(--accent-color);
+    border: none;
+    border-radius: var(--border-radius-md);
+    width: 44px;
+    height: 44px;
+    cursor: pointer;
+    padding: 0;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 480px) {
-    .admin-sidebar {
-        width: 60px;
-    }
+.hamburger-btn:hover {
+    background: #b8904e;
+    transform: scale(1.05);
+}
 
-    .admin-content {
-        margin-left: 60px;
-        padding: var(--spacing-sm);
-    }
+.hamburger-btn:active {
+    transform: scale(0.95);
+}
 
-    .admin-menu-header h2,
-    .admin-user-email,
-    .admin-menu-text {
-        display: none;
-    }
+.hamburger-icon {
+    position: relative;
+    width: 24px;
+    height: 18px;
+    margin: 0 auto;
+}
 
-    .admin-menu-icon {
-        margin-right: 0;
-    }
+.hamburger-icon span {
+    display: block;
+    position: absolute;
+    height: 3px;
+    width: 100%;
+    background: var(--text-primary);
+    border-radius: 3px;
+    opacity: 1;
+    left: 0;
+    transition: all 0.3s ease;
+}
 
-    .admin-menu-icon svg,
-    .admin-menu-icon .icon {
-        width: 24px;
-        height: 24px;
-    }
+.hamburger-icon span:nth-child(1) {
+    top: 0;
+}
 
-    .admin-menu-link {
-        justify-content: center;
-        padding: var(--spacing-sm);
-    }
+.hamburger-icon span:nth-child(2) {
+    top: 7.5px;
+}
+
+.hamburger-icon span:nth-child(3) {
+    top: 15px;
+}
+
+.hamburger-btn.active .hamburger-icon span:nth-child(1) {
+    top: 7.5px;
+    transform: rotate(135deg);
+}
+
+.hamburger-btn.active .hamburger-icon span:nth-child(2) {
+    opacity: 0;
+    left: -60px;
+}
+
+.hamburger-btn.active .hamburger-icon span:nth-child(3) {
+    top: 7.5px;
+    transform: rotate(-135deg);
+}
+
+.menu-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.menu-overlay.active {
+    opacity: 1;
 }
 
 /* ========================================
@@ -428,6 +454,61 @@ body {
 .card h2 {
     margin-bottom: var(--spacing-md);
     font-size: 1.5rem;
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 768px) {
+    .login-card {
+        grid-template-columns: 1fr;
+    }
+
+    .login-image {
+        display: none;
+    }
+
+    .login-form-wrapper {
+        padding: var(--spacing-lg);
+    }
+
+    .hamburger-btn {
+        display: block;
+    }
+
+    .menu-overlay {
+        display: block;
+    }
+
+    .admin-sidebar {
+        position: fixed;
+        left: -260px;
+        transition: left 0.3s ease;
+        z-index: 1000;
+    }
+
+    .admin-sidebar.active {
+        left: 0;
+    }
+
+    .admin-content {
+        margin-left: 0;
+        padding: var(--spacing-md);
+        padding-top: calc(44px + var(--spacing-lg) + var(--spacing-md));
+    }
+
+    .admin-menu-header {
+        padding: var(--spacing-md);
+    }
+
+    .admin-menu-link {
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+
+    .admin-menu-text {
+        display: inline;
+    }
 }
 
 /* ========================================
