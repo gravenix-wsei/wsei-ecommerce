@@ -1,0 +1,22 @@
+<div class="form-group">
+    {{ form_start(form) }}
+
+    {{ form_row(form.name, {
+        'label': 'Category Name',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter category name'}
+    }) }}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+            Save
+        </button>
+        <a href="{{ path('admin.category.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/x-circle.svg', {class: 'icon'}) }}
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>
+

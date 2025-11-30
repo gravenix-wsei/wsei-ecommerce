@@ -17,3 +17,6 @@ This will:
 
 Run `make help` to see all available commands.
 
+## How to Access the Admin Panel
+
+Open http://localhost:8080/admin and the default admin username is `admin` and the password is `password`.
