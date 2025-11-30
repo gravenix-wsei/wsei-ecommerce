@@ -39,12 +39,12 @@ class ProductType extends AbstractType
             ->add('priceNet', MoneyType::class, [
                 'label' => 'Price Net',
                 'required' => true,
-                'currency' => 'PLN',
+                'currency' => 'EUR',
             ])
             ->add('priceGross', MoneyType::class, [
                 'label' => 'Price Gross',
                 'required' => true,
-                'currency' => 'PLN',
+                'currency' => 'EUR',
             ]);
     }
 

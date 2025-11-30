@@ -1,3 +1,5 @@
+{% form_theme form 'form/money_theme.html.twig' %}
+
 <div class="form-group">
     {{ form_start(form) }}
 
@@ -8,23 +10,33 @@
 
     {{ form_row(form.description, {
         'label': 'Description',
-        'attr': {'class': 'form-control', 'placeholder': 'Enter product description', 'rows': 5}
+        'attr': {
+            'class': 'form-control',
+            'placeholder': 'Enter product description',
+            'rows': 5
+        }
     }) }}
 
-    {{ form_row(form.stock, {
-        'label': 'Stock',
-        'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity'}
-    }) }}
+    <div class="form-row-inline">
+        {{ form_row(form.stock, {
+            'label': 'Stock',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter stock quantity'}
+        }) }}
 
-    {{ form_row(form.priceNet, {
-        'label': 'Price Net',
-        'attr': {'class': 'form-control', 'placeholder': 'Enter net price'}
-    }) }}
+        <div class="form-field-with-currency">
+            {{ form_row(form.priceNet, {
+                'label': 'Price Netto',
+                'attr': {'class': 'form-control', 'placeholder': 'Enter netto price'}
+            }) }}
+        </div>
 
-    {{ form_row(form.priceGross, {
-        'label': 'Price Gross',
-        'attr': {'class': 'form-control', 'placeholder': 'Enter gross price'}
-    }) }}
+        <div class="form-field-with-currency">
+            {{ form_row(form.priceGross, {
+                'label': 'Price Gross',
+                'attr': {'class': 'form-control', 'placeholder': 'Enter gross price'}
+            }) }}
+        </div>
+    </div>
 
     <div class="form-actions">
         <button type="submit" class="btn btn-primary">

@@ -1,0 +1,7 @@
+{% use 'form_div_layout.html.twig' %}
+
+{% block money_widget %}
+    {% set type = type|default('text') %}
+    {{ block('form_widget_simple') }}
+{% endblock %}
+

@@ -30,7 +30,7 @@
             </tr>
             <tr>
                 <th>Description</th>
-                <td>{{ product.description }}</td>
+                <td>{{ product.description|nl2br }}</td>
             </tr>
             <tr>
                 <th>Stock</th>
@@ -38,11 +38,11 @@
             </tr>
             <tr>
                 <th>Price Net</th>
-                <td>{{ product.priceNet }} PLN</td>
+                <td>{{ product.priceNet }} EUR</td>
             </tr>
             <tr>
                 <th>Price Gross</th>
-                <td>{{ product.priceGross }} PLN</td>
+                <td>{{ product.priceGross }} EUR</td>
             </tr>
         </tbody>
     </table>
