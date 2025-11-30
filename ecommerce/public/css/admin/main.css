@@ -374,6 +374,9 @@ body {
     width: 20px;
     height: 20px;
     stroke: currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .admin-menu-text {
