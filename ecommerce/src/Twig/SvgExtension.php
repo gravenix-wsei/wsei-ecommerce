@@ -17,15 +17,20 @@ final class SvgExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('svg', [$this, 'loadSvg'], ['is_safe' => ['html']]),
+            new TwigFunction('svg', [$this, 'loadSvg'], [
+                'is_safe' => ['html'],
+            ]),
         ];
     }
 
+    /**
+     * @param array<string, mixed> $attributes
+     */
     public function loadSvg(string $path, array $attributes = []): string
     {
         $filePath = $this->projectDir . '/public/' . ltrim($path, '/');
 
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             return sprintf('<!-- SVG not found: %s -->', htmlspecialchars($path));
         }
 
@@ -35,16 +40,20 @@ final class SvgExtension extends AbstractExtension
             return sprintf('<!-- Could not read SVG: %s -->', htmlspecialchars($path));
         }
 
-        if (!empty($attributes)) {
+        if (! empty($attributes)) {
             $svg = $this->addAttributesToSvg($svg, $attributes);
         }
 
         return $svg;
     }
 
+    /**
+     * @param string $svg
+     * @param array<string, mixed> $attributes
+     */
     private function addAttributesToSvg(string $svg, array $attributes): string
     {
-        if (!preg_match('/<svg([^>]*)>/i', $svg, $matches)) {
+        if (! preg_match('/<svg([^>]*)>/i', $svg, $matches)) {
             return $svg;
         }
 
@@ -61,12 +70,6 @@ final class SvgExtension extends AbstractExtension
             $newAttributes .= sprintf(' %s="%s"', $key, htmlspecialchars($value));
         }
 
-        return preg_replace(
-            '/<svg[^>]*>/i',
-            '<svg' . $existingAttributes . $newAttributes . '>',
-            $svg,
-            1
-        );
+        return preg_replace('/<svg[^>]*>/i', '<svg' . $existingAttributes . $newAttributes . '>', $svg, 1);
     }
 }
-
