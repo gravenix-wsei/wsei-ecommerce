@@ -48,7 +48,6 @@ final class SvgExtension extends AbstractExtension
     }
 
     /**
-     * @param string $svg
      * @param array<string, mixed> $attributes
      */
     private function addAttributesToSvg(string $svg, array $attributes): string
