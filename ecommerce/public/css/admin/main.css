@@ -262,6 +262,12 @@ body {
         margin-right: 0;
     }
 
+    .admin-menu-icon svg,
+    .admin-menu-icon .icon {
+        width: 24px;
+        height: 24px;
+    }
+
     .admin-menu-link {
         justify-content: center;
         padding: var(--spacing-sm);
@@ -356,7 +362,18 @@ body {
     font-size: 1.25rem;
     margin-right: var(--spacing-sm);
     width: 24px;
-    text-align: center;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.admin-menu-icon svg,
+.admin-menu-icon .icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
 }
 
 .admin-menu-text {
