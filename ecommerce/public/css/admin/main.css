@@ -165,12 +165,17 @@ body {
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    &.float-right {
+        float: right;
+    }
+    &.full-width {
+        width: 100%;
+    }
 }
 
 .btn-primary {
     background: var(--accent-color);
     color: var(--text-primary);
-    width: 100%;
     margin-top: var(--spacing-sm);
 }
 
@@ -461,11 +466,11 @@ body {
     font-size: 1.5rem;
 }
 
-a > svg {
+a > svg, button > svg {
     display: inline-block;
     vertical-align: middle;
-    width: 16px;
-    height: 16px;
+    width: 1rem;
+    height: 1rem;
 }
 
 /* ========================================
