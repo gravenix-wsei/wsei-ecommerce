@@ -1,0 +1,65 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Customers - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>
+        {{ svg('img/icons/customer.svg', {class: 'icon'}) }}
+        Customers
+    </h1>
+    <a href="{{ path('admin.customer.new') }}" class="btn btn-primary float-right">
+        {{ svg('img/icons/plus.svg', {class: 'icon'}) }}
+        Add Customer
+    </a>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="admin-table-container">
+    <table class="admin-data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.id }}</td>
+                <td>{{ customer.email }}</td>
+                <td>{{ customer.firstName }}</td>
+                <td>{{ customer.lastName }}</td>
+                <td class="actions">
+                    <a href="{{ path('admin.customer.show', {'id': customer.id}) }}" class="btn btn-sm btn-info" title="View">
+                        {{ svg('img/icons/eye.svg', {class: 'icon'}) }}
+                    </a>
+                    <a href="{{ path('admin.customer.edit', {'id': customer.id}) }}" class="btn btn-sm btn-warning" title="Edit">
+                        {{ svg('img/icons/pencil.svg', {class: 'icon'}) }}
+                    </a>
+                    <form method="post" action="{{ path('admin.customer.delete', {'id': customer.id}) }}" onsubmit="return confirm('Are you sure you want to delete this customer?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ customer.id) }}">
+                        <button type="submit" class="btn btn-sm btn-danger" title="Delete">
+                            {{ svg('img/icons/trash.svg', {class: 'icon'}) }}
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" class="text-center">No customers found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
