@@ -9,12 +9,12 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/admin/login', name: 'admin_login')]
+    #[Route('/admin/login', name: 'admin.login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // if user is already logged in, redirect to admin dashboard
         if ($this->getUser()) {
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('admin.dashboard');
         }
 
         // get the login error if there is one
@@ -29,7 +29,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/logout', name: 'admin_logout')]
+    #[Route('/admin/logout', name: 'admin.logout')]
     public function logout(): void
     {
         // This method will be intercepted by the logout key on your firewall
