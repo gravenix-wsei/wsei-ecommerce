@@ -1,0 +1,50 @@
+<div class="form-group">
+    {{ form_start(form) }}
+
+    <div class="form-row-inline">
+        {{ form_row(form.firstName, {
+            'label': 'First Name',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter first name'}
+        }) }}
+
+        {{ form_row(form.lastName, {
+            'label': 'Last Name',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter last name'}
+        }) }}
+    </div>
+
+    {{ form_row(form.street, {
+        'label': 'Street',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter street address'}
+    }) }}
+
+    <div class="form-row-inline">
+        {{ form_row(form.zipcode, {
+            'label': 'Zipcode',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter zipcode'}
+        }) }}
+
+        {{ form_row(form.city, {
+            'label': 'City',
+            'attr': {'class': 'form-control', 'placeholder': 'Enter city'}
+        }) }}
+    </div>
+
+    {{ form_row(form.country, {
+        'label': 'Country',
+        'attr': {'class': 'form-control', 'placeholder': 'Enter country'}
+    }) }}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+            Save
+        </button>
+        <a href="{{ path('admin.customer.show', {'id': customer.id}) }}" class="btn btn-secondary">
+            {{ svg('img/icons/x-circle.svg', {class: 'icon'}) }}
+            Cancel
+        </a>
+    </div>
+
+    {{ form_end(form) }}
+</div>

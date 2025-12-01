@@ -1,0 +1,18 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}New Address for {{ customer.fullName }} - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Add New Address for {{ customer.fullName }}</h1>
+    <a href="{{ path('admin.customer.show', {'id': customer.id}) }}" class="btn btn-secondary">
+        {{ svg('img/icons/arrow-left.svg', {class: 'icon'}) }}
+        Back to Customer
+    </a>
+</div>
+
+<div class="form-container">
+    {{ include('admin/pages/customer/address/_form.html.twig') }}
+</div>
+{% endblock %}
+
