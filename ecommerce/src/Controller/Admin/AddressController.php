@@ -13,13 +13,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Wsei\Ecommerce\Entity\Admin\Address;
 use Wsei\Ecommerce\Entity\Admin\Customer;
 use Wsei\Ecommerce\Form\Admin\AddressType;
+use Wsei\Ecommerce\Repository\Admin\AddressRepository;
 
 #[Route('/admin/customer/{customerId}/address')]
 #[IsGranted('ROLE_ADMIN')]
 class AddressController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $entityManager
+        private readonly EntityManagerInterface $entityManager,
+        private readonly AddressRepository $addressRepository
     ) {
     }
 
@@ -28,7 +30,7 @@ class AddressController extends AbstractController
     {
         $customer = $this->entityManager->getRepository(Customer::class)->find($customerId);
 
-        if (!$customer) {
+        if (! $customer) {
             throw $this->createNotFoundException('Customer not found');
         }
 
@@ -44,7 +46,9 @@ class AddressController extends AbstractController
 
             $this->addFlash('success', 'Address has been created successfully.');
 
-            return $this->redirectToRoute('admin.customer.show', ['id' => $customerId]);
+            return $this->redirectToRoute('admin.customer.show', [
+                'id' => $customerId,
+            ]);
         }
 
         return $this->render('admin/pages/customer/address/new.html.twig', [
@@ -55,12 +59,9 @@ class AddressController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'admin.address.edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, int $customerId, Address $address): Response
+    public function edit(Request $request, int $customerId, int $id): Response
     {
-        // Verify that the address belongs to the customer
-        if ($address->getCustomer()?->getId() !== $customerId) {
-            throw $this->createNotFoundException('Address not found for this customer');
-        }
+        $address = $this->getCustomerAddressOrThrowException($id, $customerId);
 
         $form = $this->createForm(AddressType::class, $address);
         $form->handleRequest($request);
@@ -70,7 +71,9 @@ class AddressController extends AbstractController
 
             $this->addFlash('success', 'Address has been updated successfully.');
 
-            return $this->redirectToRoute('admin.customer.show', ['id' => $customerId]);
+            return $this->redirectToRoute('admin.customer.show', [
+                'id' => $customerId,
+            ]);
         }
 
         return $this->render('admin/pages/customer/address/edit.html.twig', [
@@ -81,12 +84,9 @@ class AddressController extends AbstractController
     }
 
     #[Route('/{id}', name: 'admin.address.delete', methods: ['POST'])]
-    public function delete(Request $request, int $customerId, Address $address): Response
+    public function delete(Request $request, int $customerId, int $id): Response
     {
-        // Verify that the address belongs to the customer
-        if ($address->getCustomer()?->getId() !== $customerId) {
-            throw $this->createNotFoundException('Address not found for this customer');
-        }
+        $address = $this->getCustomerAddressOrThrowException($id, $customerId);
 
         if ($this->isCsrfTokenValid('delete' . $address->getId(), $request->request->get('_token'))) {
             $this->entityManager->remove($address);
@@ -95,7 +95,18 @@ class AddressController extends AbstractController
             $this->addFlash('success', 'Address has been deleted successfully.');
         }
 
-        return $this->redirectToRoute('admin.customer.show', ['id' => $customerId]);
+        return $this->redirectToRoute('admin.customer.show', [
+            'id' => $customerId,
+        ]);
+    }
+
+    private function getCustomerAddressOrThrowException(int $id, int $customerId): Address
+    {
+        $address = $this->addressRepository->findOneByCustomer($id, $customerId);
+
+        if (! $address) {
+            throw $this->createNotFoundException('Address not found for this customer');
+        }
+        return $address;
     }
 }
-

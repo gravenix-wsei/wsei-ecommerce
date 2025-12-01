@@ -98,4 +98,3 @@ class AddressType extends AbstractType
         ]);
     }
 }
-

@@ -132,4 +132,3 @@ class Address
         return $this->firstName . ' ' . $this->lastName;
     }
 }
-

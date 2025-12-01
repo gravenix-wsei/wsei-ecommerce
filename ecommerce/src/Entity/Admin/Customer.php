@@ -35,7 +35,10 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var Collection<int, Address>
      */
-    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'customer', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'customer', cascade: [
+        'persist',
+        'remove',
+    ], orphanRemoval: true)]
     private Collection $addresses;
 
     public function __construct()
@@ -129,7 +132,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addAddress(Address $address): self
     {
-        if (!$this->addresses->contains($address)) {
+        if (! $this->addresses->contains($address)) {
             $this->addresses->add($address);
             $address->setCustomer($this);
         }
