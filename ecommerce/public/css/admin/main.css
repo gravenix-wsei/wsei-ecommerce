@@ -667,6 +667,16 @@ body {
         }
     }
 
+    h2 {
+        display: flex;
+        align-items: center;
+        gap: var(--spacing-sm);
+        svg, .icon {
+            width: 1.75rem;
+            height: 1.75rem;
+        }
+    }
+
     div {
         display: flex;
         gap: var(--spacing-sm);
@@ -822,11 +832,13 @@ button > svg {
     text-align: center;
 }
 
+.mt-0 { margin-top: 0; }
 .mt-1 { margin-top: var(--spacing-xs); }
 .mt-2 { margin-top: var(--spacing-sm); }
 .mt-3 { margin-top: var(--spacing-md); }
 .mt-4 { margin-top: var(--spacing-lg); }
 
+.mb-0 { margin-bottom: 0; }
 .mb-1 { margin-bottom: var(--spacing-xs); }
 .mb-2 { margin-bottom: var(--spacing-sm); }
 .mb-3 { margin-bottom: var(--spacing-md); }
