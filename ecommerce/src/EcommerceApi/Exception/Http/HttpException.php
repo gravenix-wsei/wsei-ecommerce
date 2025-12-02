@@ -9,13 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 abstract class HttpException extends \Exception
 {
     protected const ERROR_CODE = 'INTERNAL_SERVER_ERROR';
+
     protected const DEFAULT_MESSAGE = 'An internal server error occurred';
+
     protected const STATUS_CODE = Response::HTTP_INTERNAL_SERVER_ERROR;
 
-    public function __construct(
-        string $message = '',
-        ?\Throwable $previous = null
-    ) {
+    public function __construct(string $message = '', ?\Throwable $previous = null)
+    {
         $finalMessage = $message ?: static::DEFAULT_MESSAGE;
         parent::__construct($finalMessage, 0, $previous);
     }
@@ -35,6 +35,9 @@ abstract class HttpException extends \Exception
         return Response::$statusTexts[static::STATUS_CODE] ?? 'Error';
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -44,4 +47,3 @@ abstract class HttpException extends \Exception
         ];
     }
 }
-

@@ -14,6 +14,7 @@ use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
 class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface
 {
     private const API_PREFIX = '/ecommerce/api/v1/';
+
     private const TOKEN_HEADER = 'wsei-ecommerce-token';
 
     public function __construct(
@@ -71,4 +72,3 @@ class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface
         $request->attributes->set('authenticated_customer', $apiToken->getCustomer());
     }
 }
-

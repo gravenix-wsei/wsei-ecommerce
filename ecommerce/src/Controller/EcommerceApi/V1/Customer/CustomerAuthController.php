@@ -40,7 +40,9 @@ class CustomerAuthController extends AbstractController
             throw new BadRequestException('Email and password are required');
         }
 
-        $customer = $this->customerRepository->findOneBy(['email' => $data['email']]);
+        $customer = $this->customerRepository->findOneBy([
+            'email' => $data['email'],
+        ]);
 
         if ($customer === null || ! $this->passwordHasher->isPasswordValid($customer, $data['password'])) {
             throw new InvalidCredentialsException();
@@ -78,4 +80,3 @@ class CustomerAuthController extends AbstractController
         return new SuccessResponse();
     }
 }
-

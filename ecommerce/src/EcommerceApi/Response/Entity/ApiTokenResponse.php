@@ -10,7 +10,9 @@ use Wsei\Ecommerce\Utility\Defaults;
 
 class ApiTokenResponse extends EcommerceResponse
 {
-    public function __construct(private readonly ApiToken $apiToken) {
+    public function __construct(
+        private readonly ApiToken $apiToken
+    ) {
         parent::__construct();
     }
 
@@ -18,7 +20,8 @@ class ApiTokenResponse extends EcommerceResponse
     {
         return [
             'token' => $this->apiToken->getToken(),
-            'expiresAt' => $this->apiToken->getExpiresAt()->format(Defaults::DEFAULT_DATE_FORMAT),
+            'expiresAt' => $this->apiToken->getExpiresAt()
+                ->format(Defaults::DEFAULT_DATE_FORMAT),
         ];
     }
 
@@ -27,4 +30,3 @@ class ApiTokenResponse extends EcommerceResponse
         return 'ApiToken';
     }
 }
-

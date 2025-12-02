@@ -32,13 +32,9 @@ class HttpExceptionSubscriber implements EventSubscriberInterface
 
         // Handle our custom HTTP exceptions
         if ($exception instanceof HttpException) {
-            $response = new JsonResponse(
-                $exception->toArray(),
-                $exception->getStatusCode()
-            );
+            $response = new JsonResponse($exception->toArray(), $exception->getStatusCode());
 
             $event->setResponse($response);
         }
     }
 }
-

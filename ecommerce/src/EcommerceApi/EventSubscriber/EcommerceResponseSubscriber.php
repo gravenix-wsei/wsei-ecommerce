@@ -33,4 +33,3 @@ class EcommerceResponseSubscriber implements EventSubscriberInterface
         }
     }
 }
-

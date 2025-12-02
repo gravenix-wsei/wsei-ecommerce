@@ -8,10 +8,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class EcommerceResponse extends Response
 {
+    /**
+     * @param array<string, string> $headers
+     */
     public function __construct(int $status = self::HTTP_OK, array $headers = [])
     {
-        $data = $this->formatResponse() + ($this->getApiDescription() ? ['apiDescription' => $this->getApiDescription()] : []);
-        $content = json_encode($data, \JSON_THROW_ON_ERROR|\JSON_PRETTY_PRINT);
+        $data = $this->formatResponse() + ($this->getApiDescription() ? [
+            'apiDescription' => $this->getApiDescription(),
+        ] : []);
+        $content = json_encode($data, \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT);
         $headers['Content-Type'] = 'application/json';
 
         parent::__construct($content, $status, $headers);
@@ -26,4 +31,3 @@ abstract class EcommerceResponse extends Response
 
     abstract protected function getApiDescription(): ?string;
 }
-

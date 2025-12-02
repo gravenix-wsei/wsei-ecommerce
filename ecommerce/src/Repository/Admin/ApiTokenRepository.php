@@ -23,7 +23,9 @@ class ApiTokenRepository extends ServiceEntityRepository
      */
     public function findActiveTokenByValue(string $token): ?ApiToken
     {
-        $apiToken = $this->findOneBy(['token' => $token]);
+        $apiToken = $this->findOneBy([
+            'token' => $token,
+        ]);
 
         if ($apiToken === null || $apiToken->isExpired()) {
             return null;
@@ -32,4 +34,3 @@ class ApiTokenRepository extends ServiceEntityRepository
         return $apiToken;
     }
 }
-

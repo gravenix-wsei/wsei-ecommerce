@@ -8,4 +8,3 @@ namespace Wsei\Ecommerce\EcommerceApi\Attribute;
 class PublicAccess
 {
 }
-

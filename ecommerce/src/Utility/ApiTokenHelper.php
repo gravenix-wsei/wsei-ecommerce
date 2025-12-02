@@ -7,6 +7,7 @@ namespace Wsei\Ecommerce\Utility;
 class ApiTokenHelper
 {
     private const TOKEN_LENGTH = 48;
+
     private const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
     /**
@@ -24,4 +25,3 @@ class ApiTokenHelper
         return $token;
     }
 }
-

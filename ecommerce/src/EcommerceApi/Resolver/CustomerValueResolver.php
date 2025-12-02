@@ -31,4 +31,3 @@ class CustomerValueResolver implements ValueResolverInterface
         return [];
     }
 }
-

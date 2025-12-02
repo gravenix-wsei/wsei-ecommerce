@@ -100,4 +100,3 @@ class ApiToken
         return $this;
     }
 }
-
