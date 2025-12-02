@@ -11,6 +11,10 @@ use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
 #[ORM\Table(name: 'api_token')]
 class ApiToken
 {
+    private const TOKEN_LENGTH = 48;
+
+    private const CHARACTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
@@ -98,5 +102,17 @@ class ApiToken
         $this->expiresAt = new \DateTime('+1 hour');
 
         return $this;
+    }
+
+    public static function generate(): string
+    {
+        $token = '';
+        $maxIndex = strlen(self::CHARACTERS) - 1;
+
+        for ($i = 0; $i < self::TOKEN_LENGTH; $i++) {
+            $token .= self::CHARACTERS[random_int(0, $maxIndex)];
+        }
+
+        return $token;
     }
 }

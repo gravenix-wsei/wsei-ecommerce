@@ -18,7 +18,6 @@ use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
 use Wsei\Ecommerce\Entity\Admin\ApiToken;
 use Wsei\Ecommerce\Entity\Admin\Customer as CustomerEntity;
 use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
-use Wsei\Ecommerce\Utility\ApiTokenHelper;
 
 #[Route('/ecommerce/api/v1/customer')]
 class CustomerAuthController extends AbstractController
@@ -57,7 +56,7 @@ class CustomerAuthController extends AbstractController
         } else {
             // Create new token
             $apiToken = new ApiToken();
-            $apiToken->setToken(ApiTokenHelper::generate());
+            $apiToken->setToken(ApiToken::generate());
             $apiToken->setCustomer($customer);
             $this->entityManager->persist($apiToken);
         }

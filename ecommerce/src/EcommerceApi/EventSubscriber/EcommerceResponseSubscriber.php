@@ -4,20 +4,11 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\EventSubscriber;
 
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Wsei\Ecommerce\EcommerceApi\Response\EcommerceResponse;
 
-class EcommerceResponseSubscriber implements EventSubscriberInterface
+class EcommerceResponseSubscriber
 {
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            KernelEvents::VIEW => ['onKernelView', 30],
-        ];
-    }
-
     public function onKernelView(ViewEvent $event): void
     {
         $request = $event->getRequest();

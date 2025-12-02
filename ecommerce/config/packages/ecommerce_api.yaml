@@ -14,3 +14,17 @@ services:
         tags:
             - { name: controller.argument_value_resolver, priority: 150 }
 
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\ApiTokenAuthenticationSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -8 }
+
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\EcommerceResponseSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 30 }
+
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\HttpExceptionSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }
