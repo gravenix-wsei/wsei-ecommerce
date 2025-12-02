@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\EventSubscriber;
+namespace Wsei\Ecommerce\EcommerceApi\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Wsei\Ecommerce\Attribute\PublicAccess;
+use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
 use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
 
 class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface

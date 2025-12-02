@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Wsei\Ecommerce\Attribute\PublicAccess;
+use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
 use Wsei\Ecommerce\Entity\Admin\ApiToken;
 use Wsei\Ecommerce\Entity\Admin\Customer as CustomerEntity;
 use Wsei\Ecommerce\Repository\Admin\CustomerRepository;

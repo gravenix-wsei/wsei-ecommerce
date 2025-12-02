@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Resolver;
+namespace Wsei\Ecommerce\EcommerceApi\Resolver;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;

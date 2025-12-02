@@ -7,7 +7,7 @@ namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
-use Wsei\Ecommerce\Attribute\PublicAccess;
+use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
 use Wsei\Ecommerce\Entity\Admin\Customer;
 
 #[Route('/ecommerce/api/v1/customer')]

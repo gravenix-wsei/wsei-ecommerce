@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# EcommerceApi services configuration
+
+services:
+    # Auto-wire and auto-configure EcommerceApi services
+    Wsei\Ecommerce\EcommerceApi\:
+        resource: '../../src/EcommerceApi/*'
+        autowire: true
+        autoconfigure: true
+
+    # Explicitly configure Customer Value Resolver with priority
+    Wsei\Ecommerce\EcommerceApi\Resolver\CustomerValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+

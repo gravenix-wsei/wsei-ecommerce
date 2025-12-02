@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Attribute;
+namespace Wsei\Ecommerce\EcommerceApi\Attribute;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
 class PublicAccess
