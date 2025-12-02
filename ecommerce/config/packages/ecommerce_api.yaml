@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../vendor/symfony/dependency-injection/Loader/schema/services.schema.json
+
+# EcommerceApi services configuration
+
+services:
+    # Auto-wire and auto-configure EcommerceApi services
+    Wsei\Ecommerce\EcommerceApi\:
+        resource: '../../src/EcommerceApi/*'
+        autowire: true
+        autoconfigure: true
+
+    # Explicitly configure Customer Value Resolver with priority
+    Wsei\Ecommerce\EcommerceApi\Resolver\CustomerValueResolver:
+        tags:
+            - { name: controller.argument_value_resolver, priority: 150 }
+
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\ApiTokenAuthenticationSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController, priority: -8 }
+
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\EcommerceResponseSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.view, method: onKernelView, priority: 30 }
+
+    Wsei\Ecommerce\EcommerceApi\EventSubscriber\HttpExceptionSubscriber:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException, priority: 10 }

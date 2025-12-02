@@ -41,6 +41,9 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     ], orphanRemoval: true)]
     private Collection $addresses;
 
+    #[ORM\OneToOne(targetEntity: ApiToken::class, mappedBy: 'customer', cascade: ['remove'])]
+    private ?ApiToken $apiToken = null;
+
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
@@ -148,6 +151,28 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
                 $address->setCustomer(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getApiToken(): ?ApiToken
+    {
+        return $this->apiToken;
+    }
+
+    public function setApiToken(?ApiToken $apiToken): self
+    {
+        // unset the owning side of the relation if necessary
+        if ($apiToken === null && $this->apiToken !== null) {
+            $this->apiToken->setCustomer(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($apiToken !== null && $apiToken->getCustomer() !== $this) {
+            $apiToken->setCustomer($this);
+        }
+
+        $this->apiToken = $apiToken;
 
         return $this;
     }
