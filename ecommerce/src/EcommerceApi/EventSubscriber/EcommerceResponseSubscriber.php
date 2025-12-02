@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\EcommerceApi\EventSubscriber;
 
 use Symfony\Component\HttpKernel\Event\ViewEvent;
+use Wsei\Ecommerce\EcommerceApi\Attribute\RequestAttributes;
 use Wsei\Ecommerce\EcommerceApi\Response\EcommerceResponse;
 
 class EcommerceResponseSubscriber
@@ -13,7 +14,7 @@ class EcommerceResponseSubscriber
     {
         $request = $event->getRequest();
 
-        if (! $request->attributes->get('is_ecommerce_api', false)) {
+        if (! RequestAttributes::isEcommerceApi($request)) {
             return;
         }
 

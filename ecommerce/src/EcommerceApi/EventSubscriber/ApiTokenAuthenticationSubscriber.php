@@ -48,6 +48,6 @@ class ApiTokenAuthenticationSubscriber
             throw new UnauthorizedException();
         }
 
-        $request->attributes->set('authenticated_customer', $apiToken->getCustomer());
+        $request->attributes->set(RequestAttributes::AUTHENTICATED_CUSTOMER, $apiToken->getCustomer());
     }
 }

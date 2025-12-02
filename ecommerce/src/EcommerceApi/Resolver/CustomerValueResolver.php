@@ -7,6 +7,7 @@ namespace Wsei\Ecommerce\EcommerceApi\Resolver;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
+use Wsei\Ecommerce\EcommerceApi\Attribute\RequestAttributes;
 use Wsei\Ecommerce\Entity\Admin\Customer;
 
 class CustomerValueResolver implements ValueResolverInterface
@@ -22,7 +23,7 @@ class CustomerValueResolver implements ValueResolverInterface
         }
 
         // Get authenticated customer from request attributes
-        $customer = $request->attributes->get('authenticated_customer');
+        $customer = RequestAttributes::extractAuthenticatedCustomer($request);
 
         if ($customer instanceof Customer) {
             return [$customer];
