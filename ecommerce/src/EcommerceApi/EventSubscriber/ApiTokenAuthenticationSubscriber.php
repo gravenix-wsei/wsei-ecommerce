@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\EcommerceApi\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
+use Wsei\Ecommerce\EcommerceApi\Exception\Http\UnauthorizedException;
 use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
 
 class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface
@@ -38,6 +37,9 @@ class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface
             return;
         }
 
+        // Mark this request as coming from ecommerce API scope
+        $request->attributes->set('is_ecommerce_api', true);
+
         // Check if the controller method has PublicAccess attribute
         $controller = $event->getController();
 
@@ -55,26 +57,14 @@ class ApiTokenAuthenticationSubscriber implements EventSubscriberInterface
         $token = $request->headers->get(self::TOKEN_HEADER);
 
         if ($token === null) {
-            $event->setController(function () {
-                return new JsonResponse([
-                    'error' => 'Unauthorized',
-                    'message' => 'Invalid or expired token',
-                ], Response::HTTP_UNAUTHORIZED);
-            });
-            return;
+            throw new UnauthorizedException();
         }
 
         // Validate token
         $apiToken = $this->apiTokenRepository->findActiveTokenByValue($token);
 
         if ($apiToken === null) {
-            $event->setController(function () {
-                return new JsonResponse([
-                    'error' => 'Unauthorized',
-                    'message' => 'Invalid or expired token',
-                ], Response::HTTP_UNAUTHORIZED);
-            });
-            return;
+            throw new UnauthorizedException();
         }
 
         // Store authenticated customer in request attributes

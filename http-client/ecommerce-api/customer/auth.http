@@ -1,0 +1,9 @@
+### Login a customer
+POST {{baseUrl}}/customer/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}

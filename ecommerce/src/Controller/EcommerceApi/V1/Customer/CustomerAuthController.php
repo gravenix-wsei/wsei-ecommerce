@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
+use Wsei\Ecommerce\EcommerceApi\Exception\Http\BadRequestException;
+use Wsei\Ecommerce\EcommerceApi\Exception\Http\InvalidCredentialsException;
 use Wsei\Ecommerce\Entity\Admin\ApiToken;
 use Wsei\Ecommerce\Entity\Admin\Customer as CustomerEntity;
 use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
@@ -34,19 +36,13 @@ class CustomerAuthController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if (! isset($data['email']) || ! isset($data['password'])) {
-            return new JsonResponse([
-                'error' => 'Bad Request',
-                'message' => 'Email and password are required',
-            ], Response::HTTP_BAD_REQUEST);
+            throw new BadRequestException('Email and password are required');
         }
 
         $customer = $this->customerRepository->findOneBy(['email' => $data['email']]);
 
         if ($customer === null || ! $this->passwordHasher->isPasswordValid($customer, $data['password'])) {
-            return new JsonResponse([
-                'error' => 'Unauthorized',
-                'message' => 'Invalid credentials',
-            ], Response::HTTP_UNAUTHORIZED);
+            throw new InvalidCredentialsException();
         }
 
         // Check if customer already has a token
