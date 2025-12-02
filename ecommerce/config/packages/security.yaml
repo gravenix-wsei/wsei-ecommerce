@@ -15,6 +15,11 @@ security:
             # Ensure dev tools and static assets are always allowed
             pattern: ^/(_profiler|_wdt|assets|build|css)/
             security: false
+        ecommerce_api:
+            # API routes are authenticated via custom event subscriber
+            pattern: ^/ecommerce/api/v1/
+            stateless: true
+            security: false
         main:
             lazy: true
             provider: admin_user_provider
