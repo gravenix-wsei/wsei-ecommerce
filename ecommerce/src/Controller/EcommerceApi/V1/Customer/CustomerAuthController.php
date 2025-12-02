@@ -6,7 +6,6 @@ namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -14,6 +13,8 @@ use Symfony\Component\Routing\Attribute\Route;
 use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\BadRequestException;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\InvalidCredentialsException;
+use Wsei\Ecommerce\EcommerceApi\Response\Entity\ApiTokenResponse;
+use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
 use Wsei\Ecommerce\Entity\Admin\ApiToken;
 use Wsei\Ecommerce\Entity\Admin\Customer as CustomerEntity;
 use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
@@ -31,7 +32,7 @@ class CustomerAuthController extends AbstractController
 
     #[PublicAccess]
     #[Route('/login', name: 'ecommerce_api.customer.login', methods: ['POST'])]
-    public function login(Request $request): JsonResponse
+    public function login(Request $request): ApiTokenResponse
     {
         $data = json_decode($request->getContent(), true);
 
@@ -61,14 +62,11 @@ class CustomerAuthController extends AbstractController
 
         $this->entityManager->flush();
 
-        return new JsonResponse([
-            'token' => $apiToken->getToken(),
-            'expiresAt' => $apiToken->getExpiresAt()->format('Y-m-d H:i:s'),
-        ], Response::HTTP_OK);
+        return new ApiTokenResponse($apiToken);
     }
 
     #[Route('/logout', name: 'ecommerce_api.customer.logout', methods: ['POST'])]
-    public function logout(CustomerEntity $customer): JsonResponse
+    public function logout(CustomerEntity $customer): Response
     {
         $apiToken = $customer->getApiToken();
 
@@ -77,9 +75,7 @@ class CustomerAuthController extends AbstractController
             $this->entityManager->flush();
         }
 
-        return new JsonResponse([
-            'success' => true,
-        ], Response::HTTP_OK);
+        return new SuccessResponse();
     }
 }
 

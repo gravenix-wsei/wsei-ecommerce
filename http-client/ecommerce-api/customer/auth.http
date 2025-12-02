@@ -7,3 +7,19 @@ Accept: application/json
   "email": "{{userEmail}}",
   "password": "{{userPassword}}"
 }
+
+> {%
+  client.test('is 200', () => response.status === 200);
+  client.test('has auth token', () => typeof response.body?.token);
+  client.global.set('authToken', response.body.token);
+%}
+
+### Logout customer
+POST {{baseUrl}}/customer/logout
+Accept: application/json
+Content-Type: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+  client.test('is 200', () => response.status === 200);
+%}
