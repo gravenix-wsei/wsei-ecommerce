@@ -1,4 +1,4 @@
-.PHONY: help up build restart logs shell down init env start stop
+.PHONY: help up build restart logs shell php-exec down init env start stop
 
 help: ## Show this help message
 	@echo 'Usage: make [target]'
@@ -35,6 +35,14 @@ logs: ## Preview container logs (follow mode)
 
 shell: ## Open shell in PHP container
 	docker compose exec -u www-data php bash
+
+php-exec: ## Execute PHP command in container (usage: make php-exec CMD="bin/console cache:clear")
+	@if [ -z "$(CMD)" ]; then \
+		echo "Error: CMD parameter is required"; \
+		echo "Usage: make php-exec CMD=\"bin/console cache:clear\""; \
+		exit 1; \
+	fi
+	docker compose exec -u www-data php $(CMD)
 
 down: ## Stop and remove containers
 	docker compose down

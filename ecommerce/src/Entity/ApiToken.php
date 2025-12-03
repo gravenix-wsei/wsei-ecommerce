@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Entity\Admin;
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
+use Wsei\Ecommerce\Repository\ApiTokenRepository;
 
 #[ORM\Entity(repositoryClass: ApiTokenRepository::class)]
 #[ORM\Table(name: 'api_token')]

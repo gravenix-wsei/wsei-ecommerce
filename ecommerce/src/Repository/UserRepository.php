@@ -1,13 +1,15 @@
 <?php
 
-namespace Wsei\Ecommerce\Repository\Admin;
+declare(strict_types=1);
+
+namespace Wsei\Ecommerce\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
-use Wsei\Ecommerce\Entity\Admin\User;
+use Wsei\Ecommerce\Entity\User;
 
 /**
  * @extends ServiceEntityRepository<User>

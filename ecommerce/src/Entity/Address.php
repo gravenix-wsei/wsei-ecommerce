@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Entity\Admin;
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Wsei\Ecommerce\Repository\Admin\AddressRepository;
+use Wsei\Ecommerce\Repository\AddressRepository;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 #[ORM\Table(name: 'address')]

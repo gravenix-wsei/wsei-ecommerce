@@ -10,7 +10,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
-use Wsei\Ecommerce\Entity\Admin\Address;
+use Wsei\Ecommerce\Entity\Address;
 
 /**
  * @extends AbstractType<Address>

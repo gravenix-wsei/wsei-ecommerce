@@ -1,51 +1,54 @@
----
-applyTo: ecommerce/*
----
-# GitHub Copilot Instructions
+# GitHub Copilot Instructions - Symfony E-commerce
+
+> **Note:** This file contains project-specific instructions. See repository root `.github/copilot-instructions.md` for global guidelines.
 
 ## Project Overview
 This is a **Symfony 7.4** e-commerce application. Follow these guidelines when generating code suggestions.
 
 ### Docker Environment
 - **Always run Symfony commands inside the PHP Docker container**
-- Use `docker compose exec -u www-data php` prefix for all Symfony console commands
-- Example: `docker compose exec -u www-data php bash -c "php bin/console make:entity"`
-- Never run Symfony commands directly on the host machine
+- Use `make php-exec CMD="..."` for executing commands in the container
+- Example: `make php-exec CMD="bin/console cache:clear"`
 
-#### Accessing PHP Container Shell
+#### Command Execution
+Execute commands directly in the PHP container:
 ```bash
-make shell
-```
+# Clear Symfony cache
+make php-exec CMD="bin/console cache:clear"
 
-Or directly:
-```bash
-docker compose exec -u www-data php bash
+# Run migrations
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+
+# Create entity
+make php-exec CMD="bin/console make:entity Product"
+
+# Install composer packages
+make php-exec CMD="composer require package-name"
+
+# Run PHPStan
+make php-exec CMD="vendor/bin/phpstan analyse"
+
+# Run ECS
+make php-exec CMD="vendor/bin/ecs check"
+
+# Multiple commands can be chained with &&
+make php-exec CMD="composer install && bin/console cache:clear"
 ```
 
 #### Running Symfony Console Commands
-Always execute Symfony console commands inside the PHP container:
 ```bash
-# First, enter the container
-make shell
-
-# Then run Symfony commands
-php bin/console make:entity
-php bin/console make:crud
-php bin/console doctrine:migrations:migrate
-# etc.
+make php-exec CMD="bin/console make:entity"
+make php-exec CMD="bin/console make:crud"
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+make php-exec CMD="bin/console doctrine:schema:validate"
 ```
 
 #### Running Composer Commands
-Execute Composer commands inside the PHP container:
 ```bash
-# First, enter the container
-make shell
-
-# Then run Composer commands
-composer install
-composer require package-name
-composer update
-# etc.
+make php-exec CMD="composer install"
+make php-exec CMD="composer require package-name"
+make php-exec CMD="composer update"
+make php-exec CMD="composer dump-autoload"
 ```
 
 #### Quick Docker Command Reference
@@ -54,7 +57,7 @@ composer update
 make up
 
 # Stop containers
-make down
+make stop
 
 # View logs
 make logs
@@ -65,16 +68,23 @@ make restart
 # Build containers
 make build
 
-# Access shell
-make shell
+# Execute command in PHP container
+make php-exec CMD="bin/console cache:clear"
 ```
 
 #### Development Workflow
-1. Start the Docker environment: `make up`
-2. Enter the PHP container: `make shell`
-3. Run your commands inside the container
-4. Exit the container: `exit`
-5. Stop the environment when done: `make down`
+```bash
+# Start the Docker environment
+make up
+
+# Run commands as needed
+make php-exec CMD="bin/console cache:clear"
+make php-exec CMD="composer install"
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+
+# Stop the environment when done
+make stop
+```
 
 ### SVG Icons
 - **Never use inline SVG code in Twig templates**
@@ -93,13 +103,6 @@ make shell
   - `category.svg` - Category navigation
   - `products.svg` - Products navigation
 - When creating new templates, always use external SVG files instead of inline SVG markup
-
-## Important Project Rules
-
-### Documentation
-- **NEVER create summary or implementation documentation files** (e.g., SUMMARY.md, IMPLEMENTATION.md, CHECKLIST.md, etc.) unless explicitly requested by the user
-- Only create technical documentation when specifically asked
-- Focus on code implementation, not documentation files
 
 ### Administration Scoping
 - **Always scope administration features under `/admin` path** for routes
@@ -143,69 +146,6 @@ make shell
 - Create FormType classes for forms
 - Use form themes for consistent styling
 - Implement CSRF protection (enabled by default)
-
-## Coding Standards
-
-### PHP
-- Use PHP 8.0+ features where applicable
-- Follow PSR-12 coding standards
-- Use strict types: `declare(strict_types=1);`
-- Prefer type hints for parameters and return types
-- Use meaningful variable and function names
-- Follow camelCase for methods and variables, PascalCase for classes
-
-### Code Organization
-- Keep controllers thin, move business logic to services
-- Use dependency injection over static calls
-- Implement repository pattern for data access
-- Separate concerns: controllers, models, services, repositories
-
-### Security
-- Always sanitize user input
-- Use prepared statements for database queries
-- Implement CSRF protection for forms
-- Hash passwords using `password_hash()` with bcrypt
-- Validate and escape output to prevent XSS
-- Use environment variables for sensitive configuration
-
-### Database
-- Use PDO for database connections
-- Prefer migrations for schema changes
-- Index foreign keys and frequently queried columns
-- Use transactions for related operations
-- Follow naming conventions: snake_case for tables and columns
-
-### Frontend
-- Keep JavaScript modular and maintainable
-- Use modern ES6+ syntax
-- Implement progressive enhancement
-- Ensure responsive design
-- Follow accessibility best practices (ARIA labels, semantic HTML)
-
-### Comments and Documentation
-- Write PHPDoc blocks for classes and methods
-- Comment complex business logic
-- Keep comments up-to-date with code changes
-- Document API endpoints and their parameters
-
-## Best Practices
-
-### Error Handling
-- Use try-catch blocks for expected exceptions
-- Log errors appropriately
-- Show user-friendly error messages
-- Never expose sensitive information in errors
-
-### Performance
-- Implement caching where appropriate
-- Optimize database queries (avoid N+1 problems)
-- Lazy load resources when possible
-- Minimize database calls
-
-### Testing
-- Write unit tests for business logic
-- Test edge cases and error conditions
-- Use meaningful test names that describe behavior
 
 ## File Structure
 - Controllers: `/src/Controller/`
@@ -457,7 +397,8 @@ config/packages/ecommerce_api.yaml
 Tokens are generated using the `ApiTokenHelper` utility class:
 
 ```php
-use Wsei\Ecommerce\Entity\Admin\ApiToken;use Wsei\Ecommerce\Utility\ApiTokenHelper;
+use Wsei\Ecommerce\Entity\Admin\ApiToken;
+use Wsei\Ecommerce\Utility\ApiTokenHelper;
 
 $token = ApiToken::generate(); // Returns 48-char alphanumeric string
 ```
@@ -472,11 +413,10 @@ $token = ApiToken::generate(); // Returns 48-char alphanumeric string
 - Handle errors gracefully with descriptive error messages
 
 ## Avoid
-- Global variables
 - Superglobal arrays ($_GET, $_POST) in business logic
 - SQL injection vulnerabilities
-- Hardcoded credentials
 - Mixing HTML and PHP logic excessively
 - Using deprecated PHP functions
 - Hardcoding routes instead of using `path()` or `url()` functions
 - Bypassing Symfony's service container
+

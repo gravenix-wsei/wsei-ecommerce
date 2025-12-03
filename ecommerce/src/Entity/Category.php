@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Entity\Admin;
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Wsei\Ecommerce\Repository\Admin\CategoryRepository;
+use Wsei\Ecommerce\Repository\CategoryRepository;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ORM\Table(name: 'category')]

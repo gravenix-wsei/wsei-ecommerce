@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\EcommerceApi\Attribute;
 
 use Symfony\Component\HttpFoundation\Request;
-use Wsei\Ecommerce\Entity\Admin\Customer;
+use Wsei\Ecommerce\Entity\Customer;
 
 class RequestAttributes
 {

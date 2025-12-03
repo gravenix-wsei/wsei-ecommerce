@@ -11,9 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Wsei\Ecommerce\Entity\Admin\Customer;
+use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Form\Admin\CustomerType;
-use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
+use Wsei\Ecommerce\Repository\CustomerRepository;
 
 #[Route('/admin/customer')]
 #[IsGranted('ROLE_ADMIN')]

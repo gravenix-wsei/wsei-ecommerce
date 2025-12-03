@@ -7,7 +7,7 @@ security:
     providers:
         admin_user_provider:
             entity:
-                class: Wsei\Ecommerce\Entity\Admin\User
+                class: Wsei\Ecommerce\Entity\User
                 property: email
 
     firewalls:

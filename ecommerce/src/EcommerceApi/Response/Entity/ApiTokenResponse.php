@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\EcommerceApi\Response\Entity;
 
 use Wsei\Ecommerce\EcommerceApi\Response\EcommerceResponse;
-use Wsei\Ecommerce\Entity\Admin\ApiToken;
+use Wsei\Ecommerce\Entity\ApiToken;
 use Wsei\Ecommerce\Utility\Defaults;
 
 class ApiTokenResponse extends EcommerceResponse

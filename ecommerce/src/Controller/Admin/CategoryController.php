@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Wsei\Ecommerce\Entity\Admin\Category;
+use Wsei\Ecommerce\Entity\Category;
 use Wsei\Ecommerce\Form\Admin\CategoryType;
-use Wsei\Ecommerce\Repository\Admin\CategoryRepository;
+use Wsei\Ecommerce\Repository\CategoryRepository;
 
 #[Route('/admin/category')]
 #[IsGranted('ROLE_ADMIN')]

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Entity\Admin;
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Wsei\Ecommerce\Repository\Admin\ProductRepository;
+use Wsei\Ecommerce\Repository\ProductRepository;
 
 #[ORM\Entity(repositoryClass: ProductRepository::class)]
 #[ORM\Table(name: 'product')]
