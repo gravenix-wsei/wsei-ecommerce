@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Repository\Admin;
+namespace Wsei\Ecommerce\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Wsei\Ecommerce\Entity\Admin\Category;
+use Wsei\Ecommerce\Entity\Category;
 
 /**
  * @extends ServiceEntityRepository<Category>

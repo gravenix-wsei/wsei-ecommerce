@@ -1,11 +1,13 @@
 <?php
 
-namespace Wsei\Ecommerce\Entity\Admin;
+declare(strict_types=1);
+
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Wsei\Ecommerce\Repository\Admin\UserRepository;
+use Wsei\Ecommerce\Repository\UserRepository;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user')]

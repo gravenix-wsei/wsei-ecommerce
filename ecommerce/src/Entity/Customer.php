@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Entity\Admin;
+namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
+use Wsei\Ecommerce\Repository\CustomerRepository;
 
 #[ORM\Entity(repositoryClass: CustomerRepository::class)]
 #[ORM\Table(name: 'customer')]

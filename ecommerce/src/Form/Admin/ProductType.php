@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Wsei\Ecommerce\Entity\Admin\Product;
+use Wsei\Ecommerce\Entity\Product;
 
 /**
  * @extends AbstractType<Product>

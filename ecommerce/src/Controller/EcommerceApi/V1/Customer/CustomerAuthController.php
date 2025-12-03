@@ -15,9 +15,9 @@ use Wsei\Ecommerce\EcommerceApi\Exception\Http\BadRequestException;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\InvalidCredentialsException;
 use Wsei\Ecommerce\EcommerceApi\Response\Entity\ApiTokenResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
-use Wsei\Ecommerce\Entity\Admin\ApiToken;
-use Wsei\Ecommerce\Entity\Admin\Customer as CustomerEntity;
-use Wsei\Ecommerce\Repository\Admin\CustomerRepository;
+use Wsei\Ecommerce\Entity\ApiToken;
+use Wsei\Ecommerce\Entity\Customer as CustomerEntity;
+use Wsei\Ecommerce\Repository\CustomerRepository;
 
 #[Route('/ecommerce/api/v1/customer')]
 class CustomerAuthController extends AbstractController

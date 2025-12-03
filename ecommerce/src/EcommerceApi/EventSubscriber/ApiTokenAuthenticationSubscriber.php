@@ -8,7 +8,7 @@ use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Wsei\Ecommerce\EcommerceApi\Attribute\PublicAccess;
 use Wsei\Ecommerce\EcommerceApi\Attribute\RequestAttributes;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\UnauthorizedException;
-use Wsei\Ecommerce\Repository\Admin\ApiTokenRepository;
+use Wsei\Ecommerce\Repository\ApiTokenRepository;
 
 class ApiTokenAuthenticationSubscriber
 {

@@ -10,9 +10,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Wsei\Ecommerce\Entity\Admin\Product;
+use Wsei\Ecommerce\Entity\Product;
 use Wsei\Ecommerce\Form\Admin\ProductType;
-use Wsei\Ecommerce\Repository\Admin\ProductRepository;
+use Wsei\Ecommerce\Repository\ProductRepository;
 
 #[Route('/admin/product')]
 #[IsGranted('ROLE_ADMIN')]

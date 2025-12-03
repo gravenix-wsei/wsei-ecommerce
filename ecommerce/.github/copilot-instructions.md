@@ -7,43 +7,48 @@ This is a **Symfony 7.4** e-commerce application. Follow these guidelines when g
 
 ### Docker Environment
 - **Always run Symfony commands inside the PHP Docker container**
-- Use `docker compose exec -u www-data php` prefix for all Symfony console commands
-- Example: `docker compose exec -u www-data php bash -c "php bin/console make:entity"`
+- Use `make php-exec CMD="..."` for executing commands in the container
+- Example: `make php-exec CMD="bin/console cache:clear"`
 
-#### Accessing PHP Container Shell
+#### Command Execution
+Execute commands directly in the PHP container:
 ```bash
-make shell
-```
+# Clear Symfony cache
+make php-exec CMD="bin/console cache:clear"
 
-Or directly:
-```bash
-docker compose exec -u www-data php bash
+# Run migrations
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+
+# Create entity
+make php-exec CMD="bin/console make:entity Product"
+
+# Install composer packages
+make php-exec CMD="composer require package-name"
+
+# Run PHPStan
+make php-exec CMD="vendor/bin/phpstan analyse"
+
+# Run ECS
+make php-exec CMD="vendor/bin/ecs check"
+
+# Multiple commands can be chained with &&
+make php-exec CMD="composer install && bin/console cache:clear"
 ```
 
 #### Running Symfony Console Commands
-Always execute Symfony console commands inside the PHP container:
 ```bash
-# First, enter the container
-make shell
-
-# Then run Symfony commands
-php bin/console make:entity
-php bin/console make:crud
-php bin/console doctrine:migrations:migrate
-# etc.
+make php-exec CMD="bin/console make:entity"
+make php-exec CMD="bin/console make:crud"
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+make php-exec CMD="bin/console doctrine:schema:validate"
 ```
 
 #### Running Composer Commands
-Execute Composer commands inside the PHP container:
 ```bash
-# First, enter the container
-make shell
-
-# Then run Composer commands
-composer install
-composer require package-name
-composer update
-# etc.
+make php-exec CMD="composer install"
+make php-exec CMD="composer require package-name"
+make php-exec CMD="composer update"
+make php-exec CMD="composer dump-autoload"
 ```
 
 #### Quick Docker Command Reference
@@ -52,7 +57,7 @@ composer update
 make up
 
 # Stop containers
-make down
+make stop
 
 # View logs
 make logs
@@ -63,16 +68,23 @@ make restart
 # Build containers
 make build
 
-# Access shell
-make shell
+# Execute command in PHP container
+make php-exec CMD="bin/console cache:clear"
 ```
 
 #### Development Workflow
-1. Start the Docker environment: `make up`
-2. Enter the PHP container: `make shell`
-3. Run your commands inside the container
-4. Exit the container: `exit`
-5. Stop the environment when done: `make down`
+```bash
+# Start the Docker environment
+make up
+
+# Run commands as needed
+make php-exec CMD="bin/console cache:clear"
+make php-exec CMD="composer install"
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+
+# Stop the environment when done
+make stop
+```
 
 ### SVG Icons
 - **Never use inline SVG code in Twig templates**

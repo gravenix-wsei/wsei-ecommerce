@@ -75,10 +75,51 @@
 
 ### Coding Standards
 
-- Use `make` commands when available for common tasks
-- Never run framework commands directly on the host machine
-- **Always run project commands inside their respective Docker containers**
 ### Docker Environment
+
+- **Always run project commands inside their respective Docker containers**
+- Use `make php-exec CMD="..."` for executing commands in the PHP container
+- Never run framework commands directly on the host machine
+
+#### Available Make Commands
+
+**Container Management:**
+```bash
+make init          # Initialize environment: create .env, build and start containers
+make up            # Create and start containers
+make down          # Stop and remove containers
+make start         # Start containers
+make stop          # Stop containers
+make restart       # Restart containers
+make build         # Build or rebuild services
+make logs          # Preview container logs (follow mode)
+```
+
+**PHP Command Execution:**
+```bash
+make php-exec CMD="bin/console cache:clear"  # Execute Symfony console commands
+make php-exec CMD="composer install"         # Execute composer commands
+make php-exec CMD="composer phpstan"         # Execute vendor binaries
+make php-exec CMD="composer ecs"             # Execute code quality tools
+```
+
+**Usage Examples:**
+```bash
+# Symfony commands
+make php-exec CMD="bin/console doctrine:migrations:migrate"
+make php-exec CMD="bin/console make:entity Product"
+
+# Composer commands
+make php-exec CMD="composer require symfony/validator"
+make php-exec CMD="composer update"
+
+# Code quality
+make php-exec CMD="vendor/bin/phpstan analyse"
+make php-exec CMD="vendor/bin/ecs check src"
+
+# Chain multiple commands
+make php-exec CMD="composer install && bin/console cache:clear"
+```
 
 ## Global Guidelines
 

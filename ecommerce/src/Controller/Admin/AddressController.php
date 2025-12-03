@@ -10,10 +10,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Wsei\Ecommerce\Entity\Admin\Address;
-use Wsei\Ecommerce\Entity\Admin\Customer;
+use Wsei\Ecommerce\Entity\Address;
+use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Form\Admin\AddressType;
-use Wsei\Ecommerce\Repository\Admin\AddressRepository;
+use Wsei\Ecommerce\Repository\AddressRepository;
 
 #[Route('/admin/customer/{customerId}/address')]
 #[IsGranted('ROLE_ADMIN')]

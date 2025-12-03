@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ValueResolverInterface;
 use Symfony\Component\HttpKernel\ControllerMetadata\ArgumentMetadata;
 use Wsei\Ecommerce\EcommerceApi\Attribute\RequestAttributes;
-use Wsei\Ecommerce\Entity\Admin\Customer;
+use Wsei\Ecommerce\Entity\Customer;
 
 class CustomerValueResolver implements ValueResolverInterface
 {
