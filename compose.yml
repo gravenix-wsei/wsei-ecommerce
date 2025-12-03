@@ -8,6 +8,8 @@ services:
       - ./ecommerce:/var/www/html
     networks:
       - ecommerce
+    env_file:
+      - .env
     depends_on:
       - mysql
 
