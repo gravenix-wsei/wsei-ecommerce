@@ -67,7 +67,10 @@
             "@auto-scripts"
         ],
         "ecs": "vendor/bin/ecs check",
-        "phpstan": "vendor/bin/phpstan analyse --memory-limit 256M"
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit 256M",
+        "test": "XDEBUG_MODE=coverage bin/phpunit",
+        "test:unit": "@test --testsuite UnitTests",
+        "test:integration": "@test --testsuite IntegrationTests"
     },
     "conflict": {
         "symfony/symfony": "*"
