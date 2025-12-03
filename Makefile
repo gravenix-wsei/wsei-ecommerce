@@ -40,7 +40,7 @@ logs: ## Preview container logs (follow mode)
 	docker compose logs -f
 
 shell: ## Open shell in PHP container
-	docker compose exec -u www-data php bash
+	docker compose exec -u www-data -e XDEBUG_MODE=off php bash
 
 php-exec: ## Execute PHP command in container (usage: make php-exec CMD="bin/console cache:clear")
 	@if [ -z "$(CMD)" ]; then \
@@ -48,7 +48,7 @@ php-exec: ## Execute PHP command in container (usage: make php-exec CMD="bin/con
 		echo "Usage: make php-exec CMD=\"bin/console cache:clear\""; \
 		exit 1; \
 	fi
-	docker compose exec -u www-data php $(CMD)
+	docker compose exec -u www-data -e XDEBUG_MODE=off php $(CMD)
 
 php-test-init: ## Create test database and run migrations (use CLEAR_EXISTING=true to drop existing database)
 ifeq ($(CLEAR_EXISTING),true)
