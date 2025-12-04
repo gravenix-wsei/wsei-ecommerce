@@ -1,0 +1,124 @@
+### Login a customer
+POST {{baseUrl}}/customer/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has auth token', () => typeof response.body?.token);
+    client.global.set('authToken', response.body.token);
+%}
+
+### Get all addresses for authenticated customer
+GET {{baseUrl}}/customer/addresses
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+  client.test('is 200', () => response.status === 200);
+  client.test('has addresses array', () => Array.isArray(response.body.addresses));
+%}
+
+### Create new address
+POST {{baseUrl}}/customer/addresses
+Accept: application/json
+Content-Type: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "street": "123 Main Street",
+  "zipcode": "12345",
+  "city": "New York",
+  "country": "USA"
+}
+
+> {%
+  client.test('is 200', () => response.status === 200);
+  client.test('has address id', () => typeof response.body.id === 'number');
+  client.test('firstName matches', () => response.body.firstName === 'John');
+  client.global.set('addressId', response.body.id);
+%}
+
+### Update existing address
+PUT {{baseUrl}}/customer/addresses/{{addressId}}
+Accept: application/json
+Content-Type: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "firstName": "Jane",
+  "lastName": "Doe",
+  "street": "456 Oak Avenue",
+  "zipcode": "67890",
+  "city": "Los Angeles",
+  "country": "USA"
+}
+
+> {%
+  client.test('is 200', () => response.status === 200);
+  client.test('firstName updated', () => response.body.firstName === 'Jane');
+  client.test('city updated', () => response.body.city === 'Los Angeles');
+%}
+
+### Delete address
+DELETE {{baseUrl}}/customer/addresses/{{addressId}}
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+  client.test('is 204', () => response.status === 204);
+%}
+
+### Try to update non-existent address (should return 404)
+PUT {{baseUrl}}/customer/addresses/3
+Accept: application/json
+Content-Type: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "street": "123 Test St",
+  "zipcode": "00000",
+  "city": "Test City",
+  "country": "Test Country"
+}
+
+> {%
+  client.test('is 404', () => response.status === 404);
+  client.test('has error code', () => response.body.errorCode === 'NOT_FOUND');
+%}
+
+### Try to delete non-existent address (should return 404)
+DELETE {{baseUrl}}/customer/addresses/3
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+  client.test('is 404', () => response.status === 404);
+  client.test('has error code', () => response.body.errorCode === 'NOT_FOUND');
+%}
+
+### Create address with missing fields (should return 400)
+POST {{baseUrl}}/customer/addresses
+Accept: application/json
+Content-Type: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+> {%
+  client.test('is 400', () => response.status === 400);
+  client.test('has error code', () => response.body.errorCode === 'BAD_REQUEST');
+%}
+

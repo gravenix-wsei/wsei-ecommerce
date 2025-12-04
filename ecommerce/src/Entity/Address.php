@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Wsei\Ecommerce\Repository\AddressRepository;
 
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
@@ -17,21 +18,33 @@ class Address
     private ?int $id = null;
 
     #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $firstName = null;
 
     #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $lastName = null;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $street = null;
 
     #[ORM\Column(type: 'string', length: 20)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 20)]
     private ?string $zipcode = null;
 
     #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $city = null;
 
     #[ORM\Column(type: 'string', length: 100)]
+    #[Assert\NotBlank]
+    #[Assert\Length(max: 100)]
     private ?string $country = null;
 
     #[ORM\ManyToOne(targetEntity: Customer::class, inversedBy: 'addresses')]
