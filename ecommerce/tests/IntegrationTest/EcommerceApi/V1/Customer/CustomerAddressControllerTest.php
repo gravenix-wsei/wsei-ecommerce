@@ -41,6 +41,12 @@ class CustomerAddressControllerTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertCount(2, $response['addresses']);
+        $this->assertEquals('John', $response['addresses'][1]['firstName']);
+        $this->assertEquals('Doe', $response['addresses'][1]['lastName']);;
+        $this->assertEquals('New York', $response['addresses'][1]['city']);
+        $this->assertEquals('Jane', $response['addresses'][0]['firstName']);
+        $this->assertEquals('Smith', $response['addresses'][0]['lastName']);
+        $this->assertEquals('Los Angeles', $response['addresses'][0]['city']);
     }
 
     public function testCreateAddress(): void

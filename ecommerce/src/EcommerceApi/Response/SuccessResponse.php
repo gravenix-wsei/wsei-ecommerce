@@ -11,7 +11,7 @@ class SuccessResponse extends EcommerceResponse
         parent::__construct(self::HTTP_NO_CONTENT);
     }
 
-    protected function formatResponse(): array
+    protected function formatData(): array
     {
         return [];
     }

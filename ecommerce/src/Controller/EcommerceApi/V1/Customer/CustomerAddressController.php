@@ -6,15 +6,14 @@ namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\NotFoundException;
 use Wsei\Ecommerce\EcommerceApi\Payload\AddressPayload;
+use Wsei\Ecommerce\EcommerceApi\Response\Entity\AddressListResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\Entity\AddressResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
-use Wsei\Ecommerce\Entity\Address;
 use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Repository\AddressRepository;
 
@@ -28,26 +27,11 @@ class CustomerAddressController extends AbstractController
     }
 
     #[Route('', name: 'ecommerce_api.customer.addresses.index', methods: ['GET'])]
-    public function index(Customer $customer): JsonResponse
+    public function index(Customer $customer): AddressListResponse
     {
         $addresses = $this->addressRepository->findByCustomer($customer->getId());
 
-        $data = array_map(function (Address $address) {
-            return [
-                'id' => $address->getId(),
-                'firstName' => $address->getFirstName(),
-                'lastName' => $address->getLastName(),
-                'street' => $address->getStreet(),
-                'zipcode' => $address->getZipcode(),
-                'city' => $address->getCity(),
-                'country' => $address->getCountry(),
-            ];
-        }, $addresses);
-
-        return new JsonResponse([
-            'addresses' => $data,
-            'apiDescription' => 'AddressList',
-        ]);
+        return new AddressListResponse($addresses);
     }
 
     #[Route('', name: 'ecommerce_api.customer.addresses.create', methods: ['POST'])]

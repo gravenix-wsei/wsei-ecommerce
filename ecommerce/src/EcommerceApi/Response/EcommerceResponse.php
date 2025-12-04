@@ -13,13 +13,21 @@ abstract class EcommerceResponse extends Response
      */
     public function __construct(int $status = self::HTTP_OK, array $headers = [])
     {
-        $data = $this->formatResponse() + ($this->getApiDescription() ? [
-            'apiDescription' => $this->getApiDescription(),
-        ] : []);
-        $content = json_encode($data, \JSON_THROW_ON_ERROR | \JSON_PRETTY_PRINT);
+        $content = json_encode($this->formatResponse(), \JSON_THROW_ON_ERROR);
         $headers['Content-Type'] = 'application/json';
 
         parent::__construct($content, $status, $headers);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    final public function formatResponse(): array
+    {
+        return [
+            ...$this->formatData(),
+            'apiDescription' => $this->getApiDescription(),
+        ];
     }
 
     /**
@@ -27,7 +35,7 @@ abstract class EcommerceResponse extends Response
      *
      * @return array<string, mixed>
      */
-    abstract protected function formatResponse(): array;
+    abstract protected function formatData(): array;
 
     abstract protected function getApiDescription(): ?string;
 }

@@ -1,4 +1,5 @@
 ### Login a customer
+//@no-log
 POST {{baseUrl}}/customer/login
 Content-Type: application/json
 Accept: application/json
@@ -15,6 +16,7 @@ Accept: application/json
 %}
 
 ### Get all addresses for authenticated customer
+//@no-log
 GET {{baseUrl}}/customer/addresses
 Accept: application/json
 wsei-ecommerce-token: {{authToken}}
@@ -25,6 +27,7 @@ wsei-ecommerce-token: {{authToken}}
 %}
 
 ### Create new address
+//@no-log
 POST {{baseUrl}}/customer/addresses
 Accept: application/json
 Content-Type: application/json
@@ -47,6 +50,7 @@ wsei-ecommerce-token: {{authToken}}
 %}
 
 ### Update existing address
+//@no-log
 PUT {{baseUrl}}/customer/addresses/{{addressId}}
 Accept: application/json
 Content-Type: application/json
@@ -68,6 +72,7 @@ wsei-ecommerce-token: {{authToken}}
 %}
 
 ### Delete address
+//@no-log
 DELETE {{baseUrl}}/customer/addresses/{{addressId}}
 Accept: application/json
 wsei-ecommerce-token: {{authToken}}
@@ -77,6 +82,7 @@ wsei-ecommerce-token: {{authToken}}
 %}
 
 ### Try to update non-existent address (should return 404)
+//@no-log
 PUT {{baseUrl}}/customer/addresses/3
 Accept: application/json
 Content-Type: application/json
@@ -98,6 +104,7 @@ wsei-ecommerce-token: {{authToken}}
 
 ### Try to delete non-existent address (should return 404)
 DELETE {{baseUrl}}/customer/addresses/3
+//@no-log
 Accept: application/json
 wsei-ecommerce-token: {{authToken}}
 
@@ -108,6 +115,7 @@ wsei-ecommerce-token: {{authToken}}
 
 ### Create address with missing fields (should return 400)
 POST {{baseUrl}}/customer/addresses
+//@no-log
 Accept: application/json
 Content-Type: application/json
 wsei-ecommerce-token: {{authToken}}

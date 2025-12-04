@@ -15,7 +15,7 @@ class AddressResponse extends EcommerceResponse
         parent::__construct();
     }
 
-    protected function formatResponse(): array
+    protected function formatData(): array
     {
         return [
             'id' => $this->address->getId(),
