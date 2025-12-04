@@ -16,7 +16,7 @@ class ApiTokenResponse extends EcommerceResponse
         parent::__construct();
     }
 
-    protected function formatResponse(): array
+    protected function formatData(): array
     {
         return [
             'token' => $this->apiToken->getToken(),
