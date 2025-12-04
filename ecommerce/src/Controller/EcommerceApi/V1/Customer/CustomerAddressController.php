@@ -7,12 +7,11 @@ namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Wsei\Ecommerce\EcommerceApi\Exception\Http\BadRequestException;
 use Wsei\Ecommerce\EcommerceApi\Exception\Http\NotFoundException;
+use Wsei\Ecommerce\EcommerceApi\Payload\AddressPayload;
 use Wsei\Ecommerce\EcommerceApi\Response\Entity\AddressResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
 use Wsei\Ecommerce\Entity\Address;
@@ -25,7 +24,6 @@ class CustomerAddressController extends AbstractController
     public function __construct(
         private EntityManagerInterface $entityManager,
         private AddressRepository $addressRepository,
-        private ValidatorInterface $validator
     ) {
     }
 
@@ -53,33 +51,13 @@ class CustomerAddressController extends AbstractController
     }
 
     #[Route('', name: 'ecommerce_api.customer.addresses.create', methods: ['POST'])]
-    public function create(Request $request, Customer $customer): AddressResponse
-    {
-        $data = json_decode($request->getContent(), true);
-
-        if (! isset($data['firstName'], $data['lastName'], $data['street'], $data['zipcode'], $data['city'], $data['country'])) {
-            throw new BadRequestException(
-                'All fields are required: firstName, lastName, street, zipcode, city, country'
-            );
-        }
-
-        $address = new Address();
-        $address->setFirstName($data['firstName']);
-        $address->setLastName($data['lastName']);
-        $address->setStreet($data['street']);
-        $address->setZipcode($data['zipcode']);
-        $address->setCity($data['city']);
-        $address->setCountry($data['country']);
+    public function create(
+        #[MapRequestPayload]
+        AddressPayload $addressPayload,
+        Customer $customer
+    ): AddressResponse {
+        $address = $addressPayload->toAddress();
         $address->setCustomer($customer);
-
-        $errors = $this->validator->validate($address);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
-            }
-            throw new BadRequestException(implode(', ', $errorMessages));
-        }
 
         $this->entityManager->persist($address);
         $this->entityManager->flush();
@@ -88,37 +66,19 @@ class CustomerAddressController extends AbstractController
     }
 
     #[Route('/{id}', name: 'ecommerce_api.customer.addresses.update', methods: ['PUT'])]
-    public function update(int $id, Request $request, Customer $customer): AddressResponse
-    {
+    public function update(
+        int $id,
+        #[MapRequestPayload]
+        AddressPayload $addressPayload,
+        Customer $customer
+    ): AddressResponse {
         $address = $this->addressRepository->findOneByCustomer($id, $customer->getId());
 
         if ($address === null) {
             throw new NotFoundException('Address not found');
         }
 
-        $data = json_decode($request->getContent(), true);
-
-        if (! isset($data['firstName'], $data['lastName'], $data['street'], $data['zipcode'], $data['city'], $data['country'])) {
-            throw new BadRequestException(
-                'All fields are required: firstName, lastName, street, zipcode, city, country'
-            );
-        }
-
-        $address->setFirstName($data['firstName']);
-        $address->setLastName($data['lastName']);
-        $address->setStreet($data['street']);
-        $address->setZipcode($data['zipcode']);
-        $address->setCity($data['city']);
-        $address->setCountry($data['country']);
-
-        $errors = $this->validator->validate($address);
-        if (count($errors) > 0) {
-            $errorMessages = [];
-            foreach ($errors as $error) {
-                $errorMessages[] = $error->getPropertyPath() . ': ' . $error->getMessage();
-            }
-            throw new BadRequestException(implode(', ', $errorMessages));
-        }
+        $addressPayload->updateAddress($address);
 
         $this->entityManager->flush();
 
