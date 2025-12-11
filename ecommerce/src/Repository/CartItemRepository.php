@@ -32,4 +32,3 @@ class CartItemRepository extends ServiceEntityRepository
             ->getOneOrNullResult();
     }
 }
-
