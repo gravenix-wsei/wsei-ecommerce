@@ -1,0 +1,123 @@
+### Login a customer
+POST {{baseUrl}}/customer/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "{{userEmail}}",
+  "password": "{{userPassword}}"
+}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has auth token', () => typeof response.body?.token);
+    client.global.set('authToken', response.body.token);
+%}
+
+### Add item to cart (first time)
+POST {{baseUrl}}/cart/items
+Content-Type: application/json
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "productId": {{productId}},
+  "quantity": 2
+}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has item', () => typeof response.body?.id === 'number');
+    client.test('has correct product id', () => response.body?.product?.id === 3);
+    client.test('has correct quantity', () => response.body?.quantity === 2);
+    client.global.set('cartItemId', response.body.id);
+%}
+
+### Add same item to cart (should increase quantity)
+POST {{baseUrl}}/cart/items
+Content-Type: application/json
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "productId": {{productId}},
+  "quantity": 3
+}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('quantity increased', () => response.body?.quantity === 5);
+    client.test('same item id', () => response.body?.id === client.global.get('cartItemId'));
+%}
+
+### Fetch cart
+GET {{baseUrl}}/cart
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has items', () => Array.isArray(response.body?.items) && response.body.items.length > 0);
+    client.test('has correct item', () => response.body.items.some(item => item.id === client.global.get('cartItemId')));
+    client.test('has correct total quantity', () => {
+        const item = response.body.items.find(i => i.product.id === 3);
+        return item && item.quantity === 5;
+    });
+%}
+
+### Remove item from cart
+DELETE {{baseUrl}}/cart/items/{{cartItemId}}
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has success', () => response.body?.success === true);
+%}
+
+### Fetch cart after removal (should be empty)
+GET {{baseUrl}}/cart
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('cart is empty', () => Array.isArray(response.body?.items) && response.body.items.length === 0);
+%}
+
+### Add item again for clear test
+POST {{baseUrl}}/cart/items
+Content-Type: application/json
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "productId": {{productId}},
+  "quantity": 1
+}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('item added', () => response.body?.quantity === 1);
+%}
+
+### Clear entire cart
+DELETE {{baseUrl}}/cart
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has success', () => response.body?.success === true);
+%}
+
+### Fetch cart after clear (should be empty)
+GET {{baseUrl}}/cart
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('cart is empty after clear', () => Array.isArray(response.body?.items) && response.body.items.length === 0);
+%}
+
