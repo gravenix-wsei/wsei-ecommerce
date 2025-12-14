@@ -1,4 +1,5 @@
-name: mutation-testing.yml
+name: Mutation Testing
+
 on:
   workflow_run:
     workflows: [ "Test Coverage" ]
@@ -37,6 +38,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+          fetch-depth: 0
 
       - name: Set up PHP with Xdebug
         uses: shivammathur/setup-php@v2
@@ -62,6 +66,14 @@ jobs:
         working-directory: ecommerce
         run: composer install --prefer-dist --no-progress --no-interaction
 
+      - name: Download coverage artifacts from Test Coverage workflow
+        uses: actions/download-artifact@v4
+        with:
+          name: full-coverage-report
+          path: ecommerce/phpunit-coverage/
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
       - name: Wait for MySQL
         run: |
           until mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
@@ -72,14 +84,16 @@ jobs:
         working-directory: ecommerce
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-      - name: Run Infection
+      - name: Run Infection using existing coverage
         working-directory: ecommerce
         run: |
-          XDEBUG_MODE=coverage composer test:infection -- \
+          composer test:infection -- \
             --threads=4 \
             --min-msi=${{ env.MIN_MSI }} \
             --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
-            --git-diff-filter=AM
+            --git-diff-filter=AM \
+            --coverage=phpunit-coverage \
+            --skip-initial-tests
 
       - name: Upload Infection report
         if: always()
