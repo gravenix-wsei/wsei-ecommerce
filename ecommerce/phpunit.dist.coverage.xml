@@ -52,9 +52,15 @@
             <clover outputFile="phpunit-coverage/coverage.clover" />
             <cobertura outputFile="phpunit-coverage/cobertura.xml" />
             <html outputDirectory="phpunit-coverage/html" />
+            <xml outputDirectory="phpunit-coverage/xml"/>
+            
             <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false" />
         </report>
     </coverage>
+    
+    <logging>
+        <junit outputFile="phpunit-coverage/xml/phpunit-results.junit.xml"/>
+    </logging>
 
     <extensions>
         <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />

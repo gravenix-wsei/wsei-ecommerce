@@ -76,7 +76,8 @@
         "phpstan": "vendor/bin/phpstan analyse --memory-limit 256M",
         "test": "XDEBUG_MODE=coverage bin/phpunit",
         "test:unit": "@test --testsuite UnitTests",
-        "test:integration": "@test --testsuite IntegrationTests"
+        "test:integration": "@test --testsuite IntegrationTests",
+        "test:infection": "vendor/bin/infection --test-framework=phpunit --static-analysis-tool=phpstan --static-analysis-tool-options=\"--memory-limit=256M\" --coverage=phpunit-coverage/xml"
     },
     "conflict": {
         "symfony/symfony": "*"

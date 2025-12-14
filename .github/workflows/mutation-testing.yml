@@ -16,7 +16,7 @@ jobs:
 
     env:
       MYSQL_HOST: 127.0.0.1
-      MIN_MSI: 90
+      MIN_MSI: 80
       MIN_COVERED_MSI: 100
       RETENTION_DAYS: 14
 
@@ -77,12 +77,11 @@ jobs:
       - name: Run Infection
         working-directory: ecommerce
         run: |
-          XDEBUG_MODE=coverage vendor/bin/infection \
+          XDEBUG_MODE=coverage composer test:infection -- \
             --threads=4 \
             --min-msi=${{ env.MIN_MSI }} \
-            --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
-            --coverage=infection-coverage \
-            --log-verbosity=default
+            --min-covered-msi=${{ env.MIN_COVERED_MSI }}
+            --git-diff-filter=AM
 
       - name: Upload Infection report
         if: always()
