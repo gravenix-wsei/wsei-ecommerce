@@ -154,20 +154,12 @@ jobs:
             --json-report=phpunit-coverage/diff-coverage.json \
             || true
 
-      - name: Upload diff coverage HTML report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: diff-coverage-report
-          path: ecommerce/phpunit-coverage/diff-coverage.html
-          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
-
       - name: Upload full coverage report
         if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: full-coverage-report
-          path: ecommerce/phpunit-coverage/coverage.clover
+          path: ecommerce/phpunit-coverage/
           retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Add coverage summary to PR
