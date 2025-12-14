@@ -28,7 +28,7 @@ final class SvgExtension extends AbstractExtension
      */
     public function loadSvg(string $path, array $attributes = []): string
     {
-        $filePath = $this->projectDir . '/public/' . ltrim($path, '/');
+        $filePath = $this->projectDir . '/public/' . $path;
 
         if (!file_exists($filePath)) {
             return sprintf('<!-- SVG not found: %s -->', htmlspecialchars($path));
@@ -69,6 +69,6 @@ final class SvgExtension extends AbstractExtension
             $newAttributes .= sprintf(' %s="%s"', $key, htmlspecialchars($value));
         }
 
-        return preg_replace('/<svg[^>]*>/i', '<svg' . $existingAttributes . $newAttributes . '>', $svg, 1);
+        return sprintf('<svg%s%s>%s', $existingAttributes, $newAttributes, substr($svg, strlen($matches[0])));
     }
 }

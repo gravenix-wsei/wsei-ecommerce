@@ -252,13 +252,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch base branch for Infection diff comparison
-        run: |
-          git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          echo "Current branch: $(git branch --show-current)"
-          echo "Available branches:"
-          git branch -a
-          echo "Diff stats between current branch and origin/${{ github.base_ref }}:"
-          git diff --stat origin/${{ github.base_ref }}...HEAD
+        run: git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -316,16 +310,23 @@ jobs:
         working-directory: ecommerce
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
-      - name: Debug git diff for Infection
+      - name: Check if source files changed
+        id: check-source-changes
         working-directory: ecommerce
         run: |
-          echo "Files changed in ecommerce/ directory:"
-          git diff --name-only origin/${{ github.base_ref }}...HEAD -- .
-          echo ""
-          echo "Infection will analyze mutations for these PHP files:"
-          git diff --name-only origin/${{ github.base_ref }}...HEAD -- . | grep '\.php$' || echo "No PHP files changed"
+          echo "Checking for changes in src/ directory..."
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD -- src/ | grep -q '\.php$'; then
+            echo "source_changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Source files changed - mutation testing will run"
+            git diff --name-only origin/${{ github.base_ref }}...HEAD -- src/ | grep '\.php$'
+          else
+            echo "source_changed=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No source files changed - only tests or config files modified"
+            echo "Mutation testing will be skipped (tests are not mutated)"
+          fi
 
       - name: Run Infection using existing coverage
+        if: steps.check-source-changes.outputs.source_changed == 'true'
         working-directory: ecommerce
         run: |
           composer test:infection -- \
@@ -339,7 +340,7 @@ jobs:
             --logger-github
 
       - name: Upload Infection report
-        if: always()
+        if: steps.check-source-changes.outputs.source_changed == 'true' && (success() || failure())
         uses: actions/upload-artifact@v4
         with:
           name: infection-report
@@ -353,12 +354,16 @@ jobs:
           echo "## 🧬 Mutation Testing Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
-          if [ -f infection-coverage/summary.log ]; then
+          if [ "${{ steps.check-source-changes.outputs.source_changed }}" != "true" ]; then
+            echo "ℹ️ **Skipped** - No source files (`src/`) were changed in this PR." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Mutation testing only runs when source code is modified. This PR only contains changes to tests or configuration files." >> $GITHUB_STEP_SUMMARY
+          elif [ -f infection-coverage/summary.log ]; then
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
             cat infection-coverage/summary.log >> $GITHUB_STEP_SUMMARY
             echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
           else
-            echo "Mutation testing report not found." >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ Mutation testing report not found." >> $GITHUB_STEP_SUMMARY
           fi
 
 

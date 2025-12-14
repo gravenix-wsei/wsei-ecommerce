@@ -5,6 +5,7 @@ namespace Wsei\Ecommerce\Tests\UnitTest\Twig;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Twig\Extension\AbstractExtension;
+use Twig\Node\Node;
 use Twig\TwigFunction;
 use Wsei\Ecommerce\Twig\SvgExtension;
 
@@ -29,7 +30,14 @@ class SvgExtensionTest extends TestCase
         static::assertTrue(
             \array_reduce(
                 $functions,
-                fn (bool $carry, TwigFunction $item) => $carry || ($item->getName() === 'svg'),
+                function (bool $carry, TwigFunction $svgFunction) {
+                    $mockNode = $this->createMock(Node::class);
+                    $safeFor = $svgFunction->getSafe($mockNode);
+                    static::assertIsArray($safeFor);
+                    static::assertContains('html', $safeFor);
+
+                    return true;
+                },
                 false
             )
         );
@@ -98,7 +106,35 @@ SVG;
                 ],
             ],
             'file not found' => ['<!-- SVG not found: img/icons/not-found.svg -->', 'img/icons/not-found.svg', []],
+            'path with leading slash' => [$checkSvg, '///img/icons/check.svg', []],
         ];
+    }
+
+    public function testLoadSvgWithUppercaseSvgTag(): void
+    {
+        // Arrange
+        $sut = $this->createSUT();
+        $projectDir = dirname(__DIR__, 3);
+        $testSvgPath = $projectDir . '/public/img/icons/test-uppercase.svg';
+
+        // Create test SVG file with uppercase tag
+        $testSvgContent = '<SVG viewBox="0 0 24 24"><path d="M0 0h24v24H0z"/></SVG>';
+        file_put_contents($testSvgPath, $testSvgContent);
+
+        try {
+            // Act
+            $result = $sut->loadSvg('img/icons/test-uppercase.svg', ['class' => 'test-class']);
+
+            // Assert - Attributes should be added to uppercase SVG tags (case-insensitive regex)
+            static::assertStringContainsString('class="test-class"', $result);
+            static::assertStringContainsString('viewBox="0 0 24 24"', $result);
+            static::assertStringContainsString('</SVG>', $result); // End tag should remain
+        } finally {
+            // Cleanup
+            if (file_exists($testSvgPath)) {
+                unlink($testSvgPath);
+            }
+        }
     }
 
     public function createSUT(?string $projectDir = null): SvgExtension

@@ -13,12 +13,6 @@ parameters:
 			path: src/Controller/Admin/CategoryController.php
 
 		-
-			message: '#^Parameter \#2 \$plainPassword of method Symfony\\Component\\PasswordHasher\\Hasher\\UserPasswordHasherInterface\:\:hashPassword\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Controller/Admin/CustomerController.php
-
-		-
 			message: '#^Parameter \#2 \$token of method Symfony\\Bundle\\FrameworkBundle\\Controller\\AbstractController\:\:isCsrfTokenValid\(\) expects string\|null, bool\|float\|int\|string\|null given\.$#'
 			identifier: argument.type
 			count: 1
@@ -41,48 +35,6 @@ parameters:
 			identifier: argument.type
 			count: 2
 			path: src/Controller/EcommerceApi/V1/Customer/CustomerAddressController.php
-
-		-
-			message: '#^Cannot access offset ''email'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Controller/EcommerceApi/V1/Customer/CustomerAuthController.php
-
-		-
-			message: '#^Cannot access offset ''password'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: src/Controller/EcommerceApi/V1/Customer/CustomerAuthController.php
-
-		-
-			message: '#^Parameter \#2 \$plainPassword of method Symfony\\Component\\PasswordHasher\\Hasher\\UserPasswordHasherInterface\:\:isPasswordValid\(\) expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Controller/EcommerceApi/V1/Customer/CustomerAuthController.php
-
-		-
-			message: '#^Method Wsei\\Ecommerce\\EcommerceApi\\Attribute\\RequestAttributes\:\:extractAuthenticatedCustomer\(\) should return Wsei\\Ecommerce\\Entity\\Customer\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/EcommerceApi/Attribute/RequestAttributes.php
-
-		-
-			message: '#^Method Wsei\\Ecommerce\\EcommerceApi\\Attribute\\RequestAttributes\:\:isEcommerceApi\(\) should return bool but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/EcommerceApi/Attribute/RequestAttributes.php
-
-		-
-			message: '#^Parameter \#1 \$objectOrMethod of class ReflectionMethod constructor expects object\|string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/EcommerceApi/EventSubscriber/ApiTokenAuthenticationSubscriber.php
-
-		-
-			message: '#^Parameter \#2 \$method of class ReflectionMethod constructor expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/EcommerceApi/EventSubscriber/ApiTokenAuthenticationSubscriber.php
 
 		-
 			message: '#^Parameter \#2 \$array of function array_map expects array, iterable\<Wsei\\Ecommerce\\Entity\\Address\> given\.$#'
@@ -145,58 +97,16 @@ parameters:
 			path: src/Entity/User.php
 
 		-
-			message: '#^Method Wsei\\Ecommerce\\Repository\\AddressRepository\:\:findByCustomer\(\) should return array\<Wsei\\Ecommerce\\Entity\\Address\> but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/AddressRepository.php
-
-		-
-			message: '#^Method Wsei\\Ecommerce\\Repository\\AddressRepository\:\:findOneByCustomer\(\) should return Wsei\\Ecommerce\\Entity\\Address\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/AddressRepository.php
-
-		-
-			message: '#^Method Wsei\\Ecommerce\\Repository\\CartItemRepository\:\:findOneByCart\(\) should return Wsei\\Ecommerce\\Entity\\CartItem\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/CartItemRepository.php
-
-		-
-			message: '#^Method Wsei\\Ecommerce\\Repository\\CartRepository\:\:findActiveByCustomer\(\) should return Wsei\\Ecommerce\\Entity\\Cart\|null but returns mixed\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Repository/CartRepository.php
-
-		-
 			message: '#^Parameter \#2 \$cartId of method Wsei\\Ecommerce\\Repository\\CartItemRepository\:\:findOneByCart\(\) expects int, int\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Service/Cart/CartService.php
 
 		-
-			message: '#^Method Wsei\\Ecommerce\\Twig\\SvgExtension\:\:addAttributesToSvg\(\) should return string but returns string\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Twig/SvgExtension.php
-
-		-
-			message: '#^Parameter \#1 \$string of function htmlspecialchars expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Twig/SvgExtension.php
-
-		-
 			message: '#^Parameter \#3 \$subject of function preg_replace expects array\<float\|int\|string\>\|string, string\|null given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Twig/SvgExtension.php
-
-		-
-			message: '#^Binary operation "\." between ''/ecommerce/api/v1…'' and mixed results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
 
 		-
 			message: '#^Call to an undefined method object\:\:flush\(\)\.$#'
@@ -217,48 +127,6 @@ parameters:
 			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
 
 		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 5
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''items'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''message'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''name'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''product'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''quantity'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Cannot access offset 0 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
 			message: '#^Cannot call method getToken\(\) on Wsei\\Ecommerce\\Entity\\ApiToken\|null\.$#'
 			identifier: method.nonObject
 			count: 22
@@ -268,18 +136,6 @@ parameters:
 			message: '#^Parameter \#1 \$json of function json_decode expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 13
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Parameter \#1 \$string of function strtolower expects string, mixed given\.$#'
-			identifier: argument.type
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
-
-		-
-			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertCount\(\) expects Countable\|iterable, mixed given\.$#'
-			identifier: argument.type
-			count: 5
 			path: tests/IntegrationTest/EcommerceApi/V1/CartControllerTest.php
 
 		-
@@ -307,54 +163,6 @@ parameters:
 			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
 
 		-
-			message: '#^Cannot access offset ''addresses'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 7
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''city'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''country'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''firstName'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''id'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset ''lastName'' on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset 0 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Cannot access offset 1 on mixed\.$#'
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 3
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
 			message: '#^Cannot call method getToken\(\) on Wsei\\Ecommerce\\Entity\\ApiToken\|null\.$#'
 			identifier: method.nonObject
 			count: 6
@@ -364,12 +172,6 @@ parameters:
 			message: '#^Parameter \#1 \$json of function json_decode expects string, string\|false given\.$#'
 			identifier: argument.type
 			count: 3
-			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
-
-		-
-			message: '#^Parameter \#2 \$haystack of method PHPUnit\\Framework\\Assert\:\:assertCount\(\) expects Countable\|iterable, mixed given\.$#'
-			identifier: argument.type
-			count: 1
 			path: tests/IntegrationTest/EcommerceApi/V1/Customer/CustomerAddressControllerTest.php
 
 		-
