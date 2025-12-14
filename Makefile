@@ -65,7 +65,14 @@ endif
 	@echo "Test database initialized and migrations completed!"
 
 php-run-tests: ## Run PHP unit tests with coverage report
-	docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit $(FLAGS)
+	@COVERAGE_FLAGS=""; \
+	if [ -n "$(CHECK_COVERAGE)" ] && [ "$(CHECK_COVERAGE)" != "false" ]; then \
+		COVERAGE_FLAGS="$$COVERAGE_FLAGS --coverage-text"; \
+	fi; \
+	if [ -n "$(CHECK_BRANCHES)" ] && [ "$(CHECK_BRANCHES)" != "false" ]; then \
+		COVERAGE_FLAGS="$$COVERAGE_FLAGS --path-coverage"; \
+	fi; \
+	docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit $(FLAGS) $$COVERAGE_FLAGS
 
 down: ## Stop and remove containers
 	docker compose down
