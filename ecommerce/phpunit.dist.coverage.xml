@@ -44,20 +44,18 @@
         </deprecationTrigger>
     </source>
 
-    <coverage pathCoverage="false"
+    <coverage pathCoverage="true"
               ignoreDeprecatedCodeUnits="true"
-              disableCodeCoverageIgnore="false"
     >
         <report>
             <clover outputFile="phpunit-coverage/coverage.clover" />
             <cobertura outputFile="phpunit-coverage/cobertura.xml" />
             <html outputDirectory="phpunit-coverage/html" />
             <xml outputDirectory="phpunit-coverage/xml"/>
-            
-            <text outputFile="php://stdout" showUncoveredFiles="true" showOnlySummary="false" />
+            <text outputFile="php://stdout" showUncoveredFiles="true" />
         </report>
     </coverage>
-    
+
     <logging>
         <junit outputFile="phpunit-coverage/xml/phpunit-results.junit.xml"/>
     </logging>

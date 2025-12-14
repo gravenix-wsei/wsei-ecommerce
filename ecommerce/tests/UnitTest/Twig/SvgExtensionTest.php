@@ -123,7 +123,9 @@ SVG;
 
         try {
             // Act
-            $result = $sut->loadSvg('img/icons/test-uppercase.svg', ['class' => 'test-class']);
+            $result = $sut->loadSvg('img/icons/test-uppercase.svg', [
+                'class' => 'test-class',
+            ]);
 
             // Assert - Attributes should be added to uppercase SVG tags (case-insensitive regex)
             static::assertStringContainsString('class="test-class"', $result);
