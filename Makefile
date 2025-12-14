@@ -74,6 +74,26 @@ php-run-tests: ## Run PHP unit tests with coverage report
 	fi; \
 	docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit $(FLAGS) $$COVERAGE_FLAGS
 
+php-coverage-check: ## Check coverage for changed files (requires diff-cover: pip install diff-cover)
+	@echo "Running tests with coverage..."
+	@docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit \
+		--coverage-text \
+		--coverage-cobertura=phpunit-coverage/cobertura.xml
+	@echo ""
+	@if command -v diff-cover >/dev/null 2>&1; then \
+		echo "Checking coverage for changed files against master branch..."; \
+		cd ecommerce && diff-cover phpunit-coverage/cobertura.xml \
+			--compare-branch=origin/master \
+			--fail-under=100 \
+			--html-report=phpunit-coverage/diff-coverage.html && \
+		echo "✅ All changed lines have 100% coverage!" || \
+		{ echo "❌ Changed lines need more test coverage! Check ecommerce/phpunit-coverage/diff-coverage.html"; exit 1; }; \
+	else \
+		echo "⚠️  diff-cover not installed. Install it with: pip install diff-cover"; \
+		echo "Running basic coverage check instead..."; \
+		docker compose exec -u www-data php sh -c "cat phpunit-coverage/cobertura.xml | grep -o 'line-rate=\"[^\"]*\"' | head -1"; \
+	fi
+
 down: ## Stop and remove containers
 	docker compose down
 
