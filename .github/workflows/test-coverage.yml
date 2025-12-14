@@ -330,7 +330,7 @@ jobs:
             --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
             --git-diff-filter=AM \
             --git-diff-base=origin/${{ github.base_ref }} \
-            --coverage=phpunit-coverage \
+            --coverage=phpunit-coverage/xml \
             --skip-initial-tests \
             --logger-github
 
