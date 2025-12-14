@@ -22,7 +22,7 @@ class ApiTokenAuthenticationSubscriber
         $request = $event->getRequest();
 
         // Only apply to Ecommerce API routes
-        if (! str_starts_with($request->getPathInfo(), RequestAttributes::API_PREFIX)) {
+        if (!str_starts_with($request->getPathInfo(), RequestAttributes::API_PREFIX)) {
             return;
         }
         $request->attributes->set('is_ecommerce_api', true);

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Tests\IntegrationTest;
 
@@ -15,7 +17,9 @@ use Wsei\Ecommerce\Repository\CustomerRepository;
 class ExampleIntegrationTest extends KernelTestCase
 {
     private EntityManagerInterface $entityManager;
+
     private CustomerRepository $customerRepository;
+
     private UserPasswordHasherInterface $passwordHasher;
 
     protected function setUp(): void
@@ -46,7 +50,7 @@ class ExampleIntegrationTest extends KernelTestCase
 
         $request = new Request(content: \json_encode([
             'email' => 'login-test@example.com',
-            'password' => 'password123'
+            'password' => 'password123',
         ]));
 
         $response = $loginController->login($request);
@@ -60,7 +64,9 @@ class ExampleIntegrationTest extends KernelTestCase
     {
         // This test verifies that the customer from previous test doesn't exist
         // because DAMA bundle rolls back transactions after each test
-        $loginCustomer = $this->customerRepository->findOneBy(['email' => 'login-test@example.com']);
+        $loginCustomer = $this->customerRepository->findOneBy([
+            'email' => 'login-test@example.com',
+        ]);
         $this->assertNull($loginCustomer, 'Login customer should not exist - database should be rolled back');
     }
 }

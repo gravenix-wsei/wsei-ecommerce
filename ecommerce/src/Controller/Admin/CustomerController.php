@@ -84,7 +84,7 @@ class CustomerController extends AbstractController
             // Check if password was provided (optional for edit)
             $newPassword = $form->get('password')
                 ->getData();
-            if (! empty($newPassword)) {
+            if (!empty($newPassword)) {
                 $hashedPassword = $this->passwordHasher->hashPassword($customer, $newPassword);
                 $customer->setPassword($hashedPassword);
             }

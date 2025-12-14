@@ -110,7 +110,7 @@ class Cart
 
     public function addItem(CartItem $item): self
     {
-        if (! $this->items->contains($item)) {
+        if (!$this->items->contains($item)) {
             $this->items->add($item);
             $item->setCart($this);
         }

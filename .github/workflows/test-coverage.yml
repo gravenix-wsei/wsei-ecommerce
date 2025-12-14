@@ -1,0 +1,202 @@
+name: Test Coverage
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'ecommerce/**'
+      - '.github/workflows/test-coverage.yml'
+
+jobs:
+  test-coverage:
+    name: Check Test Coverage
+    runs-on: ubuntu-latest
+
+    env:
+      COVERAGE_RETENTION_DAYS: 30
+      MYSQL_HOST: 127.0.0.1
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ecommerce_test
+          MYSQL_USER: ecommerce_user
+          MYSQL_PASSWORD: ecommerce_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch full history for diff comparison
+
+      - name: Set up PHP with Xdebug
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4.15'
+          extensions: mbstring, intl, pdo, pdo_mysql, xdebug
+          coverage: xdebug
+          ini-values: memory_limit=512M
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        working-directory: ecommerce
+        run: |
+          echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-
+
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: ecommerce/vendor
+          key: ${{ runner.os }}-composer-vendor-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-vendor-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+        working-directory: ecommerce
+
+      - name: Set up Python for diff-cover
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install diff-cover
+        run: pip install diff-cover
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h 127.0.0.1 -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Run database migrations
+        working-directory: ecommerce
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Run tests
+        working-directory: ecommerce
+        run: |
+          XDEBUG_MODE=coverage bin/phpunit \
+            --coverage-text \
+            --coverage-cobertura=phpunit-coverage/cobertura.xml \
+            --coverage-clover=phpunit-coverage/coverage.clover \
+            --path-coverage
+
+      - name: Check coverage for changed files only
+        working-directory: ecommerce
+        env:
+          REQUIRED_COVERAGE: 100
+        run: |
+          echo "Checking coverage for changed files in this PR..."
+          
+          # Generate diff for changed files against base branch
+          git fetch origin ${{ github.base_ref }}
+          git diff origin/${{ github.base_ref }}...HEAD > ../changes.diff
+          
+          # Run diff-cover to check coverage only on changed lines
+          # This will fail if coverage for changed lines is below ${{ env.REQUIRED_COVERAGE }}%
+          diff-cover phpunit-coverage/cobertura.xml \
+            --compare-branch=origin/${{ github.base_ref }} \
+            --fail-under=${{ env.REQUIRED_COVERAGE }} \
+            --diff-range-notation='..' \
+            --html-report=phpunit-coverage/diff-coverage.html \
+            --markdown-report=phpunit-coverage/diff-coverage.md \
+            || {
+              echo ""
+              echo "❌ Coverage check failed!"
+              echo "Changed lines must have ${{ env.REQUIRED_COVERAGE }}% test coverage."
+              echo ""
+              echo "To see which lines need coverage, check the diff-coverage report artifact."
+              exit 1
+            }
+          
+          echo "✅ All changed lines have ${{ env.REQUIRED_COVERAGE }}% coverage!"
+
+      - name: Generate coverage summary for changed files
+        if: always()
+        working-directory: ecommerce
+        run: |
+          # Generate a summary report for changed files
+          diff-cover phpunit-coverage/cobertura.xml \
+            --compare-branch=origin/${{ github.base_ref }} \
+            --diff-range-notation='..' \
+            --json-report=phpunit-coverage/diff-coverage.json \
+            || true
+
+      - name: Upload diff coverage HTML report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: diff-coverage-report
+          path: ecommerce/phpunit-coverage/diff-coverage.html
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
+
+      - name: Upload full coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-coverage-report
+          path: ecommerce/phpunit-coverage/coverage.clover
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
+
+      - name: Add coverage summary to PR
+        if: always()
+        working-directory: ecommerce
+        run: |
+          echo "## 📊 Test Coverage Report for Changed Files" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f phpunit-coverage/diff-coverage.md ]; then
+            cat phpunit-coverage/diff-coverage.md >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "### Full Project Coverage" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          php -r "
+            if (file_exists('phpunit-coverage/coverage.clover')) {
+              \$xml = simplexml_load_file('phpunit-coverage/coverage.clover');
+              \$metrics = \$xml->project->metrics;
+              
+              \$statements = (int)\$metrics['statements'];
+              \$coveredStatements = (int)\$metrics['coveredstatements'];
+              \$statementCoverage = \$statements > 0 ? (\$coveredStatements / \$statements) * 100 : 0;
+              
+              \$methods = (int)\$metrics['methods'];
+              \$coveredMethods = (int)\$metrics['coveredmethods'];
+              \$methodCoverage = \$methods > 0 ? (\$coveredMethods / \$methods) * 100 : 0;
+              
+              \$elements = (int)\$metrics['elements'];
+              \$coveredElements = (int)\$metrics['coveredelements'];
+              \$lineCoverage = \$elements > 0 ? (\$coveredElements / \$elements) * 100 : 0;
+              
+              echo '| Metric | Coverage | Covered | Total |' . PHP_EOL;
+              echo '|--------|----------|---------|-------|' . PHP_EOL;
+              echo sprintf('| Lines | %.2f%% | %d | %d |', \$lineCoverage, \$coveredElements, \$elements) . PHP_EOL;
+              echo sprintf('| Statements | %.2f%% | %d | %d |', \$statementCoverage, \$coveredStatements, \$statements) . PHP_EOL;
+              echo sprintf('| Methods | %.2f%% | %d | %d |', \$methodCoverage, \$coveredMethods, \$methods) . PHP_EOL;
+            }
+          " >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Note:** Only changed lines in this PR are required to have 100% coverage." >> $GITHUB_STEP_SUMMARY
+

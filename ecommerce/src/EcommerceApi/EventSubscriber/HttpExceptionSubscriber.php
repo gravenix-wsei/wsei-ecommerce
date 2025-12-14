@@ -16,7 +16,7 @@ class HttpExceptionSubscriber
         $request = $event->getRequest();
 
         // Only apply to ecommerce API routes
-        if (! RequestAttributes::isEcommerceApi($request)) {
+        if (!RequestAttributes::isEcommerceApi($request)) {
             return;
         }
 
