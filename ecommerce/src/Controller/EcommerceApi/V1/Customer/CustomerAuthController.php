@@ -35,7 +35,7 @@ class CustomerAuthController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        if (! isset($data['email']) || ! isset($data['password'])) {
+        if (!isset($data['email']) || !isset($data['password'])) {
             throw new BadRequestException('Email and password are required');
         }
 
@@ -43,7 +43,7 @@ class CustomerAuthController extends AbstractController
             'email' => $data['email'],
         ]);
 
-        if ($customer === null || ! $this->passwordHasher->isPasswordValid($customer, $data['password'])) {
+        if ($customer === null || !$this->passwordHasher->isPasswordValid($customer, $data['password'])) {
             throw new InvalidCredentialsException();
         }
 

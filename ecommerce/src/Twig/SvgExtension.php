@@ -30,7 +30,7 @@ final class SvgExtension extends AbstractExtension
     {
         $filePath = $this->projectDir . '/public/' . ltrim($path, '/');
 
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             return sprintf('<!-- SVG not found: %s -->', htmlspecialchars($path));
         }
 
@@ -40,7 +40,7 @@ final class SvgExtension extends AbstractExtension
             return sprintf('<!-- Could not read SVG: %s -->', htmlspecialchars($path));
         }
 
-        if (! empty($attributes)) {
+        if (!empty($attributes)) {
             $svg = $this->addAttributesToSvg($svg, $attributes);
         }
 
@@ -52,7 +52,7 @@ final class SvgExtension extends AbstractExtension
      */
     private function addAttributesToSvg(string $svg, array $attributes): string
     {
-        if (! preg_match('/<svg([^>]*)>/i', $svg, $matches)) {
+        if (!preg_match('/<svg([^>]*)>/i', $svg, $matches)) {
             return $svg;
         }
 

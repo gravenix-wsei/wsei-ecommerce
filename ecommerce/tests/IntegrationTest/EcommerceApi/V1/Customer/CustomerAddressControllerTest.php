@@ -17,6 +17,7 @@ use Wsei\Ecommerce\Repository\AddressRepository;
 class CustomerAddressControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
+
     private ContainerInterface $container;
 
     protected function setUp(): void
@@ -34,7 +35,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->request('GET', '/ecommerce/api/v1/customer/addresses', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -42,7 +44,7 @@ class CustomerAddressControllerTest extends WebTestCase
         $response = json_decode($this->client->getResponse()->getContent(), true);
         $this->assertCount(2, $response['addresses']);
         $this->assertEquals('John', $response['addresses'][1]['firstName']);
-        $this->assertEquals('Doe', $response['addresses'][1]['lastName']);;
+        $this->assertEquals('Doe', $response['addresses'][1]['lastName']);
         $this->assertEquals('New York', $response['addresses'][1]['city']);
         $this->assertEquals('Jane', $response['addresses'][0]['firstName']);
         $this->assertEquals('Smith', $response['addresses'][0]['lastName']);
@@ -64,7 +66,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/customer/addresses', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -90,7 +93,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('PUT', '/ecommerce/api/v1/customer/addresses/' . $address->getId(), $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -109,7 +113,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->request('DELETE', '/ecommerce/api/v1/customer/addresses/' . $addressId, [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -135,7 +140,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('PUT', '/ecommerce/api/v1/customer/addresses/' . $address->getId(), $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -151,7 +157,8 @@ class CustomerAddressControllerTest extends WebTestCase
 
         // Act
         $this->client->request('DELETE', '/ecommerce/api/v1/customer/addresses/' . $address->getId(), [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -199,4 +206,3 @@ class CustomerAddressControllerTest extends WebTestCase
         return $address;
     }
 }
-

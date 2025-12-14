@@ -135,7 +135,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function addAddress(Address $address): self
     {
-        if (! $this->addresses->contains($address)) {
+        if (!$this->addresses->contains($address)) {
             $this->addresses->add($address);
             $address->setCustomer($this);
         }

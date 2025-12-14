@@ -30,7 +30,7 @@ class AddressController extends AbstractController
     {
         $customer = $this->entityManager->getRepository(Customer::class)->find($customerId);
 
-        if (! $customer) {
+        if (!$customer) {
             throw $this->createNotFoundException('Customer not found');
         }
 
@@ -104,7 +104,7 @@ class AddressController extends AbstractController
     {
         $address = $this->addressRepository->findOneByCustomer($id, $customerId);
 
-        if (! $address) {
+        if (!$address) {
             throw $this->createNotFoundException('Address not found for this customer');
         }
         return $address;

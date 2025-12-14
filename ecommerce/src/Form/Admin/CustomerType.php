@@ -58,7 +58,7 @@ class CustomerType extends AbstractType
             ]);
 
         // Only add password field for new customers or when explicitly resetting password
-        if (! $isEdit) {
+        if (!$isEdit) {
             $builder->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => [

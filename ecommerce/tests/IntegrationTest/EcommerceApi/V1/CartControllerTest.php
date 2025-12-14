@@ -12,11 +12,11 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Wsei\Ecommerce\Entity\ApiToken;
 use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Entity\Product;
-use Wsei\Ecommerce\Repository\CartRepository;
 
 class CartControllerTest extends WebTestCase
 {
     private KernelBrowser $client;
+
     private ContainerInterface $container;
 
     protected function setUp(): void
@@ -32,7 +32,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -54,7 +55,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -77,7 +79,8 @@ class CartControllerTest extends WebTestCase
 
         // Act - Add first time
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $firstResponse = json_decode($this->client->getResponse()->getContent(), true);
@@ -85,7 +88,8 @@ class CartControllerTest extends WebTestCase
 
         // Act - Add same product again
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -107,19 +111,22 @@ class CartControllerTest extends WebTestCase
             'productId' => $product1->getId(),
             'quantity' => 1,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', [
             'productId' => $product2->getId(),
             'quantity' => 2,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Act
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -139,7 +146,8 @@ class CartControllerTest extends WebTestCase
             'productId' => $product->getId(),
             'quantity' => 1,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $addResponse = json_decode($this->client->getResponse()->getContent(), true);
@@ -147,7 +155,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->request('DELETE', '/ecommerce/api/v1/cart/items/' . $itemId, [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -155,7 +164,8 @@ class CartControllerTest extends WebTestCase
 
         // Verify item is removed
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $cartResponse = json_decode($this->client->getResponse()->getContent(), true);
@@ -174,19 +184,22 @@ class CartControllerTest extends WebTestCase
             'productId' => $product1->getId(),
             'quantity' => 1,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', [
             'productId' => $product2->getId(),
             'quantity' => 2,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Act
         $this->client->request('DELETE', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -194,7 +207,8 @@ class CartControllerTest extends WebTestCase
 
         // Verify cart is empty
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         $cartResponse = json_decode($this->client->getResponse()->getContent(), true);
@@ -212,7 +226,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -233,7 +248,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -254,7 +270,8 @@ class CartControllerTest extends WebTestCase
             'productId' => $product->getId(),
             'quantity' => 1,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
+                ->getToken(),
         ]);
 
         $addResponse = json_decode($this->client->getResponse()->getContent(), true);
@@ -262,7 +279,8 @@ class CartControllerTest extends WebTestCase
 
         // Act - Customer 2 tries to remove customer 1's item
         $this->client->request('DELETE', '/ecommerce/api/v1/cart/items/' . $itemId, [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -280,7 +298,8 @@ class CartControllerTest extends WebTestCase
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert
@@ -299,12 +318,14 @@ class CartControllerTest extends WebTestCase
             'productId' => $product->getId(),
             'quantity' => 5,
         ], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
+                ->getToken(),
         ]);
 
         // Customer 2 gets their cart
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
+                ->getToken(),
         ]);
 
         // Assert - Customer 2's cart should be empty
@@ -313,7 +334,8 @@ class CartControllerTest extends WebTestCase
 
         // Customer 1's cart should have the item
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()->getToken(),
+            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
+                ->getToken(),
         ]);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
@@ -360,4 +382,3 @@ class CartControllerTest extends WebTestCase
         return $product;
     }
 }
-

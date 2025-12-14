@@ -13,6 +13,9 @@ jobs:
     name: Check Test Coverage
     runs-on: ubuntu-latest
 
+    env:
+      COVERAGE_RETENTION_DAYS: 30
+
     services:
       mysql:
         image: mysql:8.0
@@ -86,7 +89,9 @@ jobs:
 
       - name: Run database migrations
         working-directory: ecommerce
-        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+        run: |-
+          echo 'MYSQL_HOST=127.0.0.1' >> .env.local
+          php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
       - name: Run tests
         working-directory: ecommerce
@@ -99,6 +104,8 @@ jobs:
 
       - name: Check coverage for changed files only
         working-directory: ecommerce
+        env:
+          REQUIRED_COVERAGE: 100
         run: |
           echo "Checking coverage for changed files in this PR..."
           
@@ -107,23 +114,23 @@ jobs:
           git diff origin/${{ github.base_ref }}...HEAD > ../changes.diff
           
           # Run diff-cover to check coverage only on changed lines
-          # This will fail if coverage for changed lines is below 100%
+          # This will fail if coverage for changed lines is below ${{ env.REQUIRED_COVERAGE }}%
           diff-cover phpunit-coverage/cobertura.xml \
             --compare-branch=origin/${{ github.base_ref }} \
-            --fail-under=100 \
+            --fail-under=${{ env.REQUIRED_COVERAGE }} \
             --diff-range-notation='..' \
             --html-report=phpunit-coverage/diff-coverage.html \
             --markdown-report=phpunit-coverage/diff-coverage.md \
             || {
               echo ""
               echo "❌ Coverage check failed!"
-              echo "Changed lines must have 100% test coverage."
+              echo "Changed lines must have ${{ env.REQUIRED_COVERAGE }}% test coverage."
               echo ""
               echo "To see which lines need coverage, check the diff-coverage report artifact."
               exit 1
             }
           
-          echo "✅ All changed lines have 100% coverage!"
+          echo "✅ All changed lines have ${{ env.REQUIRED_COVERAGE }}% coverage!"
 
       - name: Generate coverage summary for changed files
         if: always()
@@ -142,7 +149,7 @@ jobs:
         with:
           name: diff-coverage-report
           path: ecommerce/phpunit-coverage/diff-coverage.html
-          retention-days: 30
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Upload full coverage report
         uses: actions/upload-artifact@v4
@@ -150,7 +157,7 @@ jobs:
         with:
           name: full-coverage-report
           path: ecommerce/phpunit-coverage/coverage.clover
-          retention-days: 30
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Add coverage summary to PR
         if: always()

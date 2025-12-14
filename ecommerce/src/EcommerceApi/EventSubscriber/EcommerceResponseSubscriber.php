@@ -14,7 +14,7 @@ class EcommerceResponseSubscriber
     {
         $request = $event->getRequest();
 
-        if (! RequestAttributes::isEcommerceApi($request)) {
+        if (!RequestAttributes::isEcommerceApi($request)) {
             return;
         }
 
