@@ -26,9 +26,12 @@ class SvgExtensionTest extends TestCase
 
         // Assert
         static::assertGreaterThan(0, $functions);
-        static::assertTrue(\array_reduce(
-            $functions,
-            fn (bool $carry, TwigFunction $item) => $carry || ($item->getName() === 'svg'), false)
+        static::assertTrue(
+            \array_reduce(
+                $functions,
+                fn (bool $carry, TwigFunction $item) => $carry || ($item->getName() === 'svg'),
+                false
+            )
         );
     }
 
@@ -48,7 +51,9 @@ class SvgExtensionTest extends TestCase
         static::assertSame($expectedOutput, $actualResult);
     }
 
-    /** @return iterable<string, array<mixed>> */
+    /**
+     * @return iterable<string, array<mixed>>
+     */
     public static function provideLoadSvgs(): iterable
     {
         $checkSvg = <<<'SVG'
@@ -68,29 +73,31 @@ SVG;
         $checkWithClass = preg_replace('/<svg([^>]*)>/i', '<svg$1 class="h-4 w-4">', $checkSvg, 1);
 
         $plusWithoutAria = preg_replace('/\s+aria-hidden="[^"]*"/i', '', $plusSvg, 1) ?? '';
-        $plusWithAttrs = preg_replace('/<svg([^>]*)>/i', '<svg$1 aria-hidden="false" class="icon">', $plusWithoutAria, 1);
+        $plusWithAttrs = preg_replace(
+            '/<svg([^>]*)>/i',
+            '<svg$1 aria-hidden="false" class="icon">',
+            $plusWithoutAria,
+            1
+        );
 
         return [
-            'check raw' => [
-                $checkSvg,
-                'img/icons/check.svg',
-                [],
-            ],
+            'check raw' => [$checkSvg, 'img/icons/check.svg', []],
             'check with class' => [
                 $checkWithClass,
                 'img/icons/check.svg',
-                ['class' => 'h-4 w-4'],
+                [
+                    'class' => 'h-4 w-4',
+                ],
             ],
             'plus replace aria + class' => [
                 $plusWithAttrs,
                 'img/icons/plus.svg',
-                ['aria-hidden' => 'false', 'class' => 'icon'],
+                [
+                    'aria-hidden' => 'false',
+                    'class' => 'icon',
+                ],
             ],
-            'file not found' => [
-                '<!-- SVG not found: img/icons/not-found.svg -->',
-                'img/icons/not-found.svg',
-                []
-            ]
+            'file not found' => ['<!-- SVG not found: img/icons/not-found.svg -->', 'img/icons/not-found.svg', []],
         ];
     }
 

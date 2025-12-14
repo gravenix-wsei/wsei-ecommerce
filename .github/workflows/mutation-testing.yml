@@ -4,8 +4,6 @@ on:
     workflows: [ "Test Coverage" ]
     types:
       - completed
-    branches:
-      - master
 
 jobs:
   mutation-testing:
@@ -80,7 +78,7 @@ jobs:
           XDEBUG_MODE=coverage composer test:infection -- \
             --threads=4 \
             --min-msi=${{ env.MIN_MSI }} \
-            --min-covered-msi=${{ env.MIN_COVERED_MSI }}
+            --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
             --git-diff-filter=AM
 
       - name: Upload Infection report
