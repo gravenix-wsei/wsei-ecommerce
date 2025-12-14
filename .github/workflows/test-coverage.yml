@@ -200,3 +200,122 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Note:** Only changed lines in this PR are required to have 100% coverage." >> $GITHUB_STEP_SUMMARY
 
+  mutation-testing:
+    name: Check Test Effectiveness
+    runs-on: ubuntu-latest
+    needs: test-coverage
+    if: success()
+
+    env:
+      MYSQL_HOST: 127.0.0.1
+      MIN_MSI: 80
+      MIN_COVERED_MSI: 100
+      RETENTION_DAYS: 14
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ecommerce_test
+          MYSQL_USER: ecommerce_user
+          MYSQL_PASSWORD: ecommerce_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4.15'
+          extensions: mbstring, intl, pdo, pdo_mysql
+          ini-values: memory_limit=512M
+          tools: infection
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        working-directory: ecommerce
+        run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-
+
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: ecommerce/vendor
+          key: ${{ runner.os }}-composer-vendor-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-vendor-
+
+      - name: Install dependencies
+        working-directory: ecommerce
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Download coverage from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: full-coverage-report
+          path: ecommerce/phpunit-coverage/
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Run database migrations
+        working-directory: ecommerce
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Run Infection using existing coverage
+        working-directory: ecommerce
+        run: |
+          composer test:infection -- \
+            --threads=4 \
+            --min-msi=${{ env.MIN_MSI }} \
+            --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
+            --git-diff-filter=AM \
+            --coverage=phpunit-coverage \
+            --skip-initial-tests
+
+      - name: Upload Infection report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-report
+          path: ecommerce/infection-coverage/
+          retention-days: ${{ env.RETENTION_DAYS }}
+
+      - name: Add mutation testing summary to PR
+        if: always()
+        working-directory: ecommerce
+        run: |
+          echo "## 🧬 Mutation Testing Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ -f infection-coverage/summary.log ]; then
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat infection-coverage/summary.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "Mutation testing report not found." >> $GITHUB_STEP_SUMMARY
+          fi
+
+
