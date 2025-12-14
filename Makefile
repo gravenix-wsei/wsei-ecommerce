@@ -77,6 +77,7 @@ php-run-tests: ## Run PHP unit tests with coverage report
 php-coverage-check: ## Check coverage for changed files (requires diff-cover: pip install diff-cover)
 	@echo "Running tests with coverage..."
 	@docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit \
+		--config phpunit.dist.coverage.xml \
 		--coverage-text \
 		--coverage-cobertura=phpunit-coverage/cobertura.xml
 	@echo ""
