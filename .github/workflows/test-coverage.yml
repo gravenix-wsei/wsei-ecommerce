@@ -15,6 +15,7 @@ jobs:
 
     env:
       COVERAGE_RETENTION_DAYS: 30
+      MYSQL_HOST: 127.0.0.1
 
     services:
       mysql:
@@ -67,11 +68,6 @@ jobs:
           key: ${{ runner.os }}-composer-vendor-${{ hashFiles('ecommerce/composer.lock') }}
           restore-keys: |
             ${{ runner.os }}-composer-vendor-
-
-      - name: Set up database environment variables
-        working-directory: ecommerce
-        run: |-
-          echo 'MYSQL_HOST=127.0.0.1' >> .env.local
 
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress --no-interaction
