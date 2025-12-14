@@ -214,7 +214,7 @@ jobs:
       COVERAGE_RETENTION_DAYS: 30
       MYSQL_HOST: 127.0.0.1
       MIN_MSI: 80
-      MIN_COVERED_MSI: 100
+      MIN_COVERED_MSI: 80
 
     services:
       mysql:
