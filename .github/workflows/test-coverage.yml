@@ -251,6 +251,15 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fetch base branch for Infection diff comparison
+        run: |
+          git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
+          echo "Current branch: $(git branch --show-current)"
+          echo "Available branches:"
+          git branch -a
+          echo "Diff stats between current branch and origin/${{ github.base_ref }}:"
+          git diff --stat origin/${{ github.base_ref }}...HEAD
+
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
@@ -307,6 +316,15 @@ jobs:
         working-directory: ecommerce
         run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
+      - name: Debug git diff for Infection
+        working-directory: ecommerce
+        run: |
+          echo "Files changed in ecommerce/ directory:"
+          git diff --name-only origin/${{ github.base_ref }}...HEAD -- .
+          echo ""
+          echo "Infection will analyze mutations for these PHP files:"
+          git diff --name-only origin/${{ github.base_ref }}...HEAD -- . | grep '\.php$' || echo "No PHP files changed"
+
       - name: Run Infection using existing coverage
         working-directory: ecommerce
         run: |
@@ -317,7 +335,8 @@ jobs:
             --git-diff-filter=AM \
             --git-diff-base=origin/${{ github.base_ref }} \
             --coverage=phpunit-coverage \
-            --skip-initial-tests
+            --skip-initial-tests \
+            --logger-github
 
       - name: Upload Infection report
         if: always()
