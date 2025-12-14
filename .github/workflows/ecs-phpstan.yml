@@ -16,6 +16,8 @@ jobs:
   ecs-phpstan:
     name: Check PHPStan and ECS
     runs-on: ubuntu-latest
+    env:
+      MYSQL_HOST: 127.0.0.1
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
