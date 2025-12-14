@@ -8,6 +8,10 @@ on:
       - 'ecommerce/**'
       - '.github/workflows/test-coverage.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-coverage:
     name: Check Test Coverage
@@ -16,6 +20,7 @@ jobs:
     env:
       COVERAGE_RETENTION_DAYS: 30
       MYSQL_HOST: 127.0.0.1
+      REQUIRED_COVERAGE: 100
 
     services:
       mysql:
@@ -78,15 +83,29 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Cache diff-cover
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-diff-cover-10.0.0
+          restore-keys: |
+            ${{ runner.os }}-pip-diff-cover-
+
       - name: Install diff-cover
-        run: pip install diff-cover
+        run: pip install diff-cover==10.0.0
 
       - name: Wait for MySQL to be ready
         run: |
-          until mysql -h 127.0.0.1 -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
-            echo "Waiting for MySQL..."
+          for i in {1..30}; do
+            if mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1" >/dev/null 2>&1; then
+              echo "MySQL is ready!"
+              exit 0
+            fi
+            echo "Waiting for MySQL... (attempt $i/30)"
             sleep 2
           done
+          echo "MySQL failed to become ready in time"
+          exit 1
 
       - name: Run database migrations
         working-directory: ecommerce
@@ -94,17 +113,10 @@ jobs:
 
       - name: Run tests
         working-directory: ecommerce
-        run: |
-          XDEBUG_MODE=coverage bin/phpunit \
-            --coverage-text \
-            --coverage-cobertura=phpunit-coverage/cobertura.xml \
-            --coverage-clover=phpunit-coverage/coverage.clover \
-            --path-coverage
+        run: composer test:coverage
 
       - name: Check coverage for changed files only
         working-directory: ecommerce
-        env:
-          REQUIRED_COVERAGE: 100
         run: |
           echo "Checking coverage for changed files in this PR..."
           
@@ -118,7 +130,7 @@ jobs:
             --compare-branch=origin/${{ github.base_ref }} \
             --fail-under=${{ env.REQUIRED_COVERAGE }} \
             --diff-range-notation='..' \
-            --html-report=phpunit-coverage/diff-coverage.html \
+            --format html:phpunit-coverage/diff-coverage.html \
             --markdown-report=phpunit-coverage/diff-coverage.md \
             || {
               echo ""
@@ -142,20 +154,12 @@ jobs:
             --json-report=phpunit-coverage/diff-coverage.json \
             || true
 
-      - name: Upload diff coverage HTML report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: diff-coverage-report
-          path: ecommerce/phpunit-coverage/diff-coverage.html
-          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
-
       - name: Upload full coverage report
+        if: success() || failure()
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: full-coverage-report
-          path: ecommerce/phpunit-coverage/coverage.clover
+          path: ecommerce/phpunit-coverage/
           retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Add coverage summary to PR
@@ -199,4 +203,154 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Note:** Only changed lines in this PR are required to have 100% coverage." >> $GITHUB_STEP_SUMMARY
+
+  mutation-testing:
+    name: Check Test Effectiveness
+    runs-on: ubuntu-latest
+    needs: test-coverage
+    if: success()
+
+    env:
+      COVERAGE_RETENTION_DAYS: 30
+      MYSQL_HOST: 127.0.0.1
+      MIN_MSI: 80
+      MIN_COVERED_MSI: 80
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root_password
+          MYSQL_DATABASE: ecommerce_test
+          MYSQL_USER: ecommerce_user
+          MYSQL_PASSWORD: ecommerce_pass
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch for Infection diff comparison
+        run: git fetch origin ${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4.15'
+          extensions: mbstring, intl, pdo, pdo_mysql
+          ini-values: memory_limit=512M
+          tools: infection
+
+      - name: Get Composer cache directory
+        id: composer-cache
+        working-directory: ecommerce
+        run: echo "dir=$(composer config cache-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-cache-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-cache-
+
+      - name: Cache vendor
+        uses: actions/cache@v4
+        with:
+          path: ecommerce/vendor
+          key: ${{ runner.os }}-composer-vendor-${{ hashFiles('ecommerce/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-vendor-
+
+      - name: Install dependencies
+        working-directory: ecommerce
+        run: composer install --prefer-dist --no-progress --no-interaction
+
+      - name: Download coverage from previous job
+        uses: actions/download-artifact@v4
+        with:
+          name: full-coverage-report
+          path: ecommerce/phpunit-coverage/
+
+      - name: Wait for MySQL to be ready
+        run: |
+          for i in {1..30}; do
+            if mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1" >/dev/null 2>&1; then
+              echo "MySQL is ready!"
+              exit 0
+            fi
+            echo "Waiting for MySQL... (attempt $i/30)"
+            sleep 2
+          done
+          echo "MySQL failed to become ready in time"
+          exit 1
+
+      - name: Run database migrations
+        working-directory: ecommerce
+        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test
+
+      - name: Check if source files changed
+        id: check-source-changes
+        working-directory: ecommerce
+        run: |
+          echo "Checking for changes in src/ directory..."
+          if git diff --name-only origin/${{ github.base_ref }}...HEAD -- src/ | grep -q '\.php$'; then
+            echo "source_changed=true" >> $GITHUB_OUTPUT
+            echo "✅ Source files changed - mutation testing will run"
+            git diff --name-only origin/${{ github.base_ref }}...HEAD -- src/ | grep '\.php$'
+          else
+            echo "source_changed=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No source files changed - only tests or config files modified"
+            echo "Mutation testing will be skipped (tests are not mutated)"
+          fi
+
+      - name: Run Infection using existing coverage
+        if: steps.check-source-changes.outputs.source_changed == 'true'
+        working-directory: ecommerce
+        run: |
+          composer test:infection -- \
+            --threads=4 \
+            --min-msi=${{ env.MIN_MSI }} \
+            --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
+            --git-diff-filter=AM \
+            --git-diff-base=origin/${{ github.base_ref }} \
+            --coverage=phpunit-coverage/xml \
+            --skip-initial-tests \
+            --logger-github
+
+      - name: Upload Infection report
+        if: steps.check-source-changes.outputs.source_changed == 'true' && (success() || failure())
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-report
+          path: ecommerce/infection-coverage/
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
+
+      - name: Add mutation testing summary to PR
+        if: always()
+        working-directory: ecommerce
+        run: |
+          echo "## 🧬 Mutation Testing Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.check-source-changes.outputs.source_changed }}" != "true" ]; then
+            echo "ℹ️ **Skipped** - No source files (`src/`) were changed in this PR." >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Mutation testing only runs when source code is modified. This PR only contains changes to tests or configuration files." >> $GITHUB_STEP_SUMMARY
+          elif [ -f infection-coverage/summary.log ]; then
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+            cat infection-coverage/summary.log >> $GITHUB_STEP_SUMMARY
+            echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Mutation testing report not found." >> $GITHUB_STEP_SUMMARY
+          fi
+
 

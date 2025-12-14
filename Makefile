@@ -76,17 +76,14 @@ php-run-tests: ## Run PHP unit tests with coverage report
 
 php-coverage-check: ## Check coverage for changed files (requires diff-cover: pip install diff-cover)
 	@echo "Running tests with coverage..."
-	@docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit \
-		--config phpunit.dist.coverage.xml \
-		--coverage-text \
-		--coverage-cobertura=phpunit-coverage/cobertura.xml
+	@docker compose exec -u www-data php composer test:coverage
 	@echo ""
 	@if command -v diff-cover >/dev/null 2>&1; then \
 		echo "Checking coverage for changed files against master branch..."; \
 		cd ecommerce && diff-cover phpunit-coverage/cobertura.xml \
 			--compare-branch=origin/master \
 			--fail-under=100 \
-			--html-report=phpunit-coverage/diff-coverage.html && \
+			--format html:phpunit-coverage/diff-coverage.html && \
 		echo "✅ All changed lines have 100% coverage!" || \
 		{ echo "❌ Changed lines need more test coverage! Check ecommerce/phpunit-coverage/diff-coverage.html"; exit 1; }; \
 	else \
