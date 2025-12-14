@@ -87,12 +87,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-diff-cover-8.0.3
+          key: ${{ runner.os }}-pip-diff-cover-10.0.0
           restore-keys: |
             ${{ runner.os }}-pip-diff-cover-
 
       - name: Install diff-cover
-        run: pip install diff-cover==8.0.3
+        run: pip install diff-cover==10.0.0
 
       - name: Wait for MySQL to be ready
         run: |
