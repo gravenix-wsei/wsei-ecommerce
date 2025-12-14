@@ -28,3 +28,4 @@ phpstan.neon
 ###< phpunit/phpunit ###
 
 phpunit-coverage/
+phpmetrics/
