@@ -8,6 +8,10 @@ on:
       - 'ecommerce/**'
       - '.github/workflows/test-coverage.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test-coverage:
     name: Check Test Coverage
@@ -16,6 +20,7 @@ jobs:
     env:
       COVERAGE_RETENTION_DAYS: 30
       MYSQL_HOST: 127.0.0.1
+      REQUIRED_COVERAGE: 100
 
     services:
       mysql:
@@ -78,15 +83,29 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Cache diff-cover
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-diff-cover-8.0.3
+          restore-keys: |
+            ${{ runner.os }}-pip-diff-cover-
+
       - name: Install diff-cover
-        run: pip install diff-cover
+        run: pip install diff-cover==8.0.3
 
       - name: Wait for MySQL to be ready
         run: |
-          until mysql -h 127.0.0.1 -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
-            echo "Waiting for MySQL..."
+          for i in {1..30}; do
+            if mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1" >/dev/null 2>&1; then
+              echo "MySQL is ready!"
+              exit 0
+            fi
+            echo "Waiting for MySQL... (attempt $i/30)"
             sleep 2
           done
+          echo "MySQL failed to become ready in time"
+          exit 1
 
       - name: Run database migrations
         working-directory: ecommerce
@@ -103,8 +122,6 @@ jobs:
 
       - name: Check coverage for changed files only
         working-directory: ecommerce
-        env:
-          REQUIRED_COVERAGE: 100
         run: |
           echo "Checking coverage for changed files in this PR..."
           
@@ -143,16 +160,16 @@ jobs:
             || true
 
       - name: Upload diff coverage HTML report
-        uses: actions/upload-artifact@v4
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: diff-coverage-report
           path: ecommerce/phpunit-coverage/diff-coverage.html
           retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Upload full coverage report
+        if: success() || failure()
         uses: actions/upload-artifact@v4
-        if: always()
         with:
           name: full-coverage-report
           path: ecommerce/phpunit-coverage/coverage.clover
@@ -207,10 +224,10 @@ jobs:
     if: success()
 
     env:
+      COVERAGE_RETENTION_DAYS: 30
       MYSQL_HOST: 127.0.0.1
       MIN_MSI: 80
       MIN_COVERED_MSI: 100
-      RETENTION_DAYS: 14
 
     services:
       mysql:
@@ -275,10 +292,16 @@ jobs:
 
       - name: Wait for MySQL to be ready
         run: |
-          until mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1"; do
-            echo "Waiting for MySQL..."
+          for i in {1..30}; do
+            if mysql -h ${{ env.MYSQL_HOST }} -u ecommerce_user -pecommerce_pass -e "SELECT 1" >/dev/null 2>&1; then
+              echo "MySQL is ready!"
+              exit 0
+            fi
+            echo "Waiting for MySQL... (attempt $i/30)"
             sleep 2
           done
+          echo "MySQL failed to become ready in time"
+          exit 1
 
       - name: Run database migrations
         working-directory: ecommerce
@@ -292,6 +315,7 @@ jobs:
             --min-msi=${{ env.MIN_MSI }} \
             --min-covered-msi=${{ env.MIN_COVERED_MSI }} \
             --git-diff-filter=AM \
+            --git-diff-base=origin/${{ github.base_ref }} \
             --coverage=phpunit-coverage \
             --skip-initial-tests
 
@@ -301,7 +325,7 @@ jobs:
         with:
           name: infection-report
           path: ecommerce/infection-coverage/
-          retention-days: ${{ env.RETENTION_DAYS }}
+          retention-days: ${{ env.COVERAGE_RETENTION_DAYS }}
 
       - name: Add mutation testing summary to PR
         if: always()
