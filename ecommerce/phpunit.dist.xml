@@ -24,6 +24,7 @@
         </testsuite>
         <testsuite name="IntegrationTests">
             <directory>tests/IntegrationTest</directory>
+            <exclude>tests/IntegrationTest/EcommerceApi/V1/Checkout/Order/AbstractOrderPlacementTest.php</exclude>
         </testsuite>
     </testsuites>
 
