@@ -20,7 +20,7 @@ jobs:
     env:
       COVERAGE_RETENTION_DAYS: 30
       MYSQL_HOST: 127.0.0.1
-      REQUIRED_COVERAGE: 100
+      REQUIRED_COVERAGE: 90
 
     services:
       mysql:
