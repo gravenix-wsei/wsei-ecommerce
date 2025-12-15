@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Tests\IntegrationTest\EcommerceApi\V1;
+namespace Wsei\Ecommerce\Tests\IntegrationTest\EcommerceApi\V1\Checkout\Cart;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
