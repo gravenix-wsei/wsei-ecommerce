@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use PhpCsFixer\Fixer\Operator\NotOperatorWithSuccessorSpaceFixer;
+use Symplify\CodingStandard\Fixer\Spacing\MethodChainingNewlineFixer;
 use Symplify\EasyCodingStandard\Config\ECSConfig;
 
 return ECSConfig::configure()
@@ -10,4 +11,4 @@ return ECSConfig::configure()
     ->withRootFiles()
     ->withPreparedSets(psr12: true, common: true, symplify: true)
     ->withEditorConfig()
-    ->withSkip([NotOperatorWithSuccessorSpaceFixer::class]);
+    ->withSkip([NotOperatorWithSuccessorSpaceFixer::class, MethodChainingNewlineFixer::class]);

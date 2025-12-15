@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Wsei\Ecommerce\Entity\Cart;
 use Wsei\Ecommerce\Entity\Order;
 use Wsei\Ecommerce\Entity\OrderItem;
-use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatus;
 use Wsei\Ecommerce\Repository\AddressRepository;
 use Wsei\Ecommerce\Repository\OrderRepository;
 

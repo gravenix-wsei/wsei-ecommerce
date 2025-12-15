@@ -11,7 +11,7 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Arrange
         $customer = $this->createCustomerWithToken('cart-cleared@example.com');
         $address = $this->createAddress($customer);
-        $product = $this->createProduct('Product Clear', 20, );
+        $product = $this->createProduct('Product Clear', 20);
 
         $this->addItemToCart($customer, $product->getId(), 3);
 
@@ -32,7 +32,7 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Arrange
         $customer = $this->createCustomerWithToken('cart-preserved@example.com');
         $address = $this->createAddress($customer);
-        $product = $this->createProduct('Product Fail', 5, );
+        $product = $this->createProduct('Product Fail', 5);
 
         $this->addItemToCart($customer, $product->getId(), 10); // Exceeds stock
 
@@ -54,7 +54,7 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Arrange
         $customer = $this->createCustomerWithToken('multiple-orders@example.com');
         $address = $this->createAddress($customer);
-        $product1 = $this->createProduct('Product Order1', 50, );
+        $product1 = $this->createProduct('Product Order1', 50);
         $product2 = $this->createProduct('Product Order2', 50, '20.00', '24.60');
 
         // Act & Assert - First order
@@ -119,7 +119,7 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
             'city' => 'City B',
         ]);
 
-        $product = $this->createProduct('Product Multi-Addr', 50, );
+        $product = $this->createProduct('Product Multi-Addr', 50);
 
         // Order to first address
         $this->addItemToCart($customer, $product->getId(), 2);

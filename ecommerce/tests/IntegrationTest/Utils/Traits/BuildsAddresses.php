@@ -32,4 +32,3 @@ trait BuildsAddresses
         return $address;
     }
 }
-

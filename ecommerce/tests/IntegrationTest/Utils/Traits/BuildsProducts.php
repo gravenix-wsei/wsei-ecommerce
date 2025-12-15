@@ -37,4 +37,3 @@ trait BuildsProducts
         return $product;
     }
 }
-

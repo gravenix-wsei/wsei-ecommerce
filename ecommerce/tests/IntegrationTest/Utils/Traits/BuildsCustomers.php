@@ -53,4 +53,3 @@ trait BuildsCustomers
         return $this->createCustomer(email: $email, withApiToken: true);
     }
 }
-

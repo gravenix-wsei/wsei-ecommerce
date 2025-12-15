@@ -39,13 +39,15 @@ class OrderResponse extends EcommerceResponse
             'items' => array_map(
                 fn (OrderItem $item) => [
                     'id' => $item->getId(),
-                    'productId' => $item->getProduct()->getId(),
+                    'productId' => $item->getProduct()
+                        ->getId(),
                     'productName' => $item->getProductName(),
                     'quantity' => $item->getQuantity(),
                     'priceNet' => $item->getPriceNet(),
                     'priceGross' => $item->getPriceGross(),
                 ],
-                $this->order->getItems()->toArray()
+                $this->order->getItems()
+                    ->toArray()
             ),
         ];
     }
