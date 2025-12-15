@@ -156,4 +156,15 @@ class Address
     {
         return $this->firstName . ' ' . $this->lastName;
     }
+
+    public function toOrderAddress(): OrderAddress
+    {
+        return (new OrderAddress())
+            ->setFirstName($this->firstName)
+            ->setLastName($this->lastName)
+            ->setStreet($this->street)
+            ->setZipcode($this->zipcode)
+            ->setCity($this->city)
+            ->setCountry($this->country);
+    }
 }

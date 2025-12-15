@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Service\Cart;
+namespace Wsei\Ecommerce\Framework\Checkout\Cart;
 
 use Wsei\Ecommerce\Entity\Cart;
 use Wsei\Ecommerce\Entity\CartItem;

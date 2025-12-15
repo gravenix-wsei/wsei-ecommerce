@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Controller\EcommerceApi\V1;
+namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Cart;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +15,7 @@ use Wsei\Ecommerce\EcommerceApi\Response\Entity\CartItemResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\Entity\CartResponse;
 use Wsei\Ecommerce\EcommerceApi\Response\SuccessResponse;
 use Wsei\Ecommerce\Entity\Customer;
-use Wsei\Ecommerce\Service\Cart\CartServiceInterface;
+use Wsei\Ecommerce\Framework\Checkout\Cart\CartServiceInterface;
 
 #[Route('/ecommerce/api/v1/cart')]
 class CartController extends AbstractController
