@@ -39,6 +39,7 @@
         </include>
         <exclude>
             <directory>src/Entity</directory>
+            <directory>src/Form/Admin</directory>
         </exclude>
 
         <deprecationTrigger>
