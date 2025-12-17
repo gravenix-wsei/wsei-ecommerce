@@ -19,6 +19,12 @@
     </div>
 {% endfor %}
 
+{% for message in app.flashes('error') %}
+    <div class="alert alert-error">
+        {{ message }}
+    </div>
+{% endfor %}
+
 <div class="detail-container">
     <table class="detail-table">
         <tbody>

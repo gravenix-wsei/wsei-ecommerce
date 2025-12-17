@@ -215,6 +215,14 @@ body {
             padding: 0.5rem;
             background: var(--primary-color);
             color: var(--text-primary);
+
+            &:disabled,
+            &[disabled] {
+                opacity: 0.5;
+                cursor: not-allowed;
+                color: var(--text-secondary);
+                font-style: italic;
+            }
         }
     }
 }
