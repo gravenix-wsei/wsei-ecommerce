@@ -34,4 +34,27 @@ class OrderRepository extends ServiceEntityRepository
 
         return str_pad((string) $nextNumber, 5, '0', \STR_PAD_LEFT);
     }
+
+    /**
+     * @return Order[]
+     */
+    public function findAllPaginated(int $page, int $limit = 20): array
+    {
+        $offset = ($page - 1) * $limit;
+
+        return $this->createQueryBuilder('o')
+            ->orderBy('o.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countAll(): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

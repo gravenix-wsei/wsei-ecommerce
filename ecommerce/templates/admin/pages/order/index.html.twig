@@ -1,0 +1,112 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Orders - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>
+        {{ svg('img/icons/orders.svg', {class: 'icon'}) }}
+        Orders
+    </h1>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="admin-table-container">
+    <table class="admin-data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Order Number</th>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Total Gross</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.orderNumber }}</td>
+                <td>{{ order.createdAt|date('Y-m-d H:i') }}</td>
+                <td>
+                    <a href="{{ path('admin.customer.show', {'id': order.customer.id}) }}">
+                        {{ order.customer.email }}
+                    </a>
+                </td>
+                <td>{{ order.totalPriceGross|number_format(2, '.', ',') }} EUR</td>
+                <td>
+                    <span class="badge {{ order.status|order_status_badge }}">
+                        {{ order.status|order_status_label }}
+                    </span>
+                </td>
+                <td class="actions">
+                    <a href="{{ path('admin.order.show', {'id': order.id}) }}" class="btn btn-sm btn-info" title="View">
+                        {{ svg('img/icons/eye.svg', {class: 'icon'}) }}
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" class="text-center">No orders found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if totalPages > 1 %}
+<div class="pagination">
+    <div class="pagination-controls">
+        {% if currentPage > 1 %}
+            <a href="{{ path('admin.order.index', {'page': 1}) }}" class="btn btn-sm btn-secondary">First</a>
+            <a href="{{ path('admin.order.index', {'page': currentPage - 1}) }}" class="btn btn-sm btn-secondary">Previous</a>
+        {% else %}
+            <span class="btn btn-sm btn-secondary disabled">First</span>
+            <span class="btn btn-sm btn-secondary disabled">Previous</span>
+        {% endif %}
+    </div>
+
+    <div class="pagination-numbers">
+        {% if currentPage > 3 %}
+            <a href="{{ path('admin.order.index', {'page': 1}) }}" class="btn btn-sm btn-secondary">1</a>
+            {% if currentPage > 4 %}
+                <span class="pagination-ellipsis">...</span>
+            {% endif %}
+        {% endif %}
+
+        {% for page in range(max(1, currentPage - 2), min(totalPages, currentPage + 2)) %}
+            {% if page == currentPage %}
+                <span class="btn btn-sm btn-primary active">{{ page }}</span>
+            {% else %}
+                <a href="{{ path('admin.order.index', {'page': page}) }}" class="btn btn-sm btn-secondary">{{ page }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if currentPage < totalPages - 2 %}
+            {% if currentPage < totalPages - 3 %}
+                <span class="pagination-ellipsis">...</span>
+            {% endif %}
+            <a href="{{ path('admin.order.index', {'page': totalPages}) }}" class="btn btn-sm btn-secondary">{{ totalPages }}</a>
+        {% endif %}
+    </div>
+
+    <div class="pagination-controls">
+        {% if currentPage < totalPages %}
+            <a href="{{ path('admin.order.index', {'page': currentPage + 1}) }}" class="btn btn-sm btn-secondary">Next</a>
+            <a href="{{ path('admin.order.index', {'page': totalPages}) }}" class="btn btn-sm btn-secondary">Last</a>
+        {% else %}
+            <span class="btn btn-sm btn-secondary disabled">Next</span>
+            <span class="btn btn-sm btn-secondary disabled">Last</span>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+

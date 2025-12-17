@@ -1,0 +1,171 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Order #{{ order.orderNumber }} - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>Order Details</h1>
+    <div>
+        <a href="{{ path('admin.order.index') }}" class="btn btn-secondary">
+            {{ svg('img/icons/arrow-left.svg', {class: 'icon'}) }}
+            Back to list
+        </a>
+    </div>
+</div>
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">
+        {{ message }}
+    </div>
+{% endfor %}
+
+<div class="detail-container">
+    <table class="detail-table">
+        <tbody>
+            <tr>
+                <th>ID</th>
+                <td>{{ order.id }}</td>
+            </tr>
+            <tr>
+                <th>Order Number</th>
+                <td>{{ order.orderNumber }}</td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <td>
+                    <span class="badge {{ order.status|order_status_badge }}">
+                        {{ order.status|order_status_label }}
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <th>Created At</th>
+                <td>{{ order.createdAt|date('Y-m-d H:i:s') }}</td>
+            </tr>
+            <tr>
+                <th>Customer</th>
+                <td>
+                    <a href="{{ path('admin.customer.show', {'id': order.customer.id}) }}">
+                        {{ order.customer.email }} ({{ order.customer.fullName }})
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                <th>Total Price Net</th>
+                <td>{{ order.totalPriceNet|number_format(2, '.', ',') }} EUR</td>
+            </tr>
+            <tr>
+                <th>Total Price Gross</th>
+                <td>{{ order.totalPriceGross|number_format(2, '.', ',') }} EUR</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-header mt-2">
+    <h2>
+        {{ svg('img/icons/delivery.svg', {class: 'icon'}) }}
+        Shipping Address
+    </h2>
+</div>
+
+<div class="detail-container">
+    <table class="detail-table">
+        <tbody>
+            <tr>
+                <th>Full Name</th>
+                <td>{{ order.orderAddress.fullName }}</td>
+            </tr>
+            <tr>
+                <th>Street</th>
+                <td>{{ order.orderAddress.street }}</td>
+            </tr>
+            <tr>
+                <th>Zipcode</th>
+                <td>{{ order.orderAddress.zipcode }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ order.orderAddress.city }}</td>
+            </tr>
+            <tr>
+                <th>Country</th>
+                <td>{{ order.orderAddress.country }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-header mt-2">
+    <h2>
+        {{ svg('img/icons/products.svg', {class: 'icon'}) }}
+        Order Items
+    </h2>
+</div>
+
+<div class="admin-table-container">
+    <table class="admin-data-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price Net</th>
+                <th>Price Gross</th>
+                <th>Total Net</th>
+                <th>Total Gross</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in order.items %}
+                <tr>
+                    <td>{{ item.id }}</td>
+                    <td>
+                        {% if item.product %}
+                            <a href="{{ path('admin.product.show', {'id': item.product.id}) }}">
+                                {{ item.productName }}
+                            </a>
+                        {% else %}
+                            {{ item.productName }}
+                        {% endif %}
+                    </td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.priceNet|number_format(2, '.', ',') }} EUR</td>
+                    <td>{{ item.priceGross|number_format(2, '.', ',') }} EUR</td>
+                    <td>{{ (item.priceNet * item.quantity)|number_format(2, '.', ',') }} EUR</td>
+                    <td>{{ (item.priceGross * item.quantity)|number_format(2, '.', ',') }} EUR</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="text-muted">No items found in this order.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="admin-header mt-2">
+    <h2>
+        {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+        Update Order Status
+    </h2>
+</div>
+
+<div class="form-container">
+    {{ form_start(form, {'attr': {'class': 'status-update-form'}}) }}
+        <div class="form-group">
+            {{ form_label(form.status, 'Select New Status') }}
+            {{ form_widget(form.status) }}
+            {{ form_errors(form.status) }}
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                {{ svg('img/icons/check.svg', {class: 'icon'}) }}
+                Update Status
+            </button>
+        </div>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
+
