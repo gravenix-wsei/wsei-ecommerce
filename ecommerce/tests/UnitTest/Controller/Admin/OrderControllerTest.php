@@ -265,4 +265,69 @@ class OrderControllerTest extends TestCase
         // Act
         $this->controller->show($request, $order);
     }
+
+    public function testShowAcceptsValidStatusTransitionAndSavesChanges(): void
+    {
+        // Arrange
+        $request = new Request();
+        $order = $this->createMock(Order::class);
+
+        $originalStatus = OrderStatus::NEW;
+        $newStatus = OrderStatus::PENDING_PAYMENT;
+
+        $order->method('getId')->willReturn(123);
+        // getStatus() is called twice: once for originalStatus, once for newStatus
+        $order->expects(static::exactly(2))
+            ->method('getStatus')
+            ->willReturnOnConsecutiveCalls($originalStatus, $newStatus);
+
+        // Create partial mock to also mock createForm, addFlash, redirectToRoute
+        $this->controller = $this->getMockBuilder(OrderController::class)
+            ->setConstructorArgs([$this->entityManager, $this->orderRepository, $this->statusTransition])
+            ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute'])
+            ->getMock();
+
+        $form = $this->createMock(\Symfony\Component\Form\FormInterface::class);
+        $form->expects(static::once())
+            ->method('handleRequest')
+            ->with($request);
+
+        $form->expects(static::once())
+            ->method('isSubmitted')
+            ->willReturn(true);
+
+        $form->expects(static::once())
+            ->method('isValid')
+            ->willReturn(true);
+
+        $this->controller->expects(static::once())
+            ->method('createForm')
+            ->willReturn($form);
+
+        // Assert - StatusTransition should be called to validate
+        $this->statusTransition->expects(static::once())
+            ->method('canTransitionTo')
+            ->with($originalStatus, $newStatus)
+            ->willReturn(true); // Valid transition
+
+        // Assert - EntityManager flush SHOULD be called
+        $this->entityManager->expects(static::once())
+            ->method('flush');
+
+        // Assert - Success flash message should be added
+        $this->controller->expects(static::once())
+            ->method('addFlash')
+            ->with('success', 'Order status has been updated successfully.');
+
+        // Assert - Should redirect back
+        $this->controller->expects(static::once())
+            ->method('redirectToRoute')
+            ->with('admin.order.show', [
+                'id' => 123,
+            ])
+            ->willReturn(new RedirectResponse('/admin/orders/123'));
+
+        // Act
+        $this->controller->show($request, $order);
+    }
 }
