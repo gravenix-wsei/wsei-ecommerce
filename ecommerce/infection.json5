@@ -5,6 +5,11 @@
             "src"
         ]
     },
+    "logs": {
+        "text": "infection-coverage/infection.log",
+        "summary": "infection-coverage/summary.log",
+        "html": "infection-coverage/infection.html"
+    },
     "mutators": {
         "@default": true
     }
