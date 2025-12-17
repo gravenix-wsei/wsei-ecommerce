@@ -13,26 +13,18 @@ class OrderStatusTransition implements OrderStatusTransitionInterface
      * - PENDING_PAYMENT can go to PAID or CANCELLED
      * - PAID can go to SENT or CANCELLED
      * - SENT can go to DELIVERED or CANCELLED
-     * - DELIVERED is final (no transitions)
-     * - CANCELLED is final (no transitions)
+     * - DELIVERED is final (no transitions allowed)
+     * - CANCELLED is final (no transitions allowed)
      */
     public function getAllowedTransitions(OrderStatus $from): array
     {
         return match ($from) {
-            OrderStatus::NEW => [OrderStatus::NEW, OrderStatus::PENDING_PAYMENT, OrderStatus::CANCELLED],
-            OrderStatus::PENDING_PAYMENT => [
-                OrderStatus::PENDING_PAYMENT,
-                OrderStatus::PAID,
-                OrderStatus::CANCELLED,
-            ],
-            OrderStatus::PAID => [OrderStatus::PAID, OrderStatus::SENT, OrderStatus::CANCELLED],
-            OrderStatus::SENT => [OrderStatus::SENT, OrderStatus::DELIVERED, OrderStatus::CANCELLED],
-            OrderStatus::DELIVERED => [
-                OrderStatus::DELIVERED, // Only stay in DELIVERED
-            ],
-            OrderStatus::CANCELLED => [
-                OrderStatus::CANCELLED, // Only stay in CANCELLED
-            ],
+            OrderStatus::NEW => [OrderStatus::PENDING_PAYMENT, OrderStatus::CANCELLED],
+            OrderStatus::PENDING_PAYMENT => [OrderStatus::PAID, OrderStatus::CANCELLED],
+            OrderStatus::PAID => [OrderStatus::SENT, OrderStatus::CANCELLED],
+            OrderStatus::SENT => [OrderStatus::DELIVERED, OrderStatus::CANCELLED],
+            OrderStatus::DELIVERED => [], // Final status - no transitions allowed
+            OrderStatus::CANCELLED => [], // Final status - no transitions allowed
         };
     }
 
