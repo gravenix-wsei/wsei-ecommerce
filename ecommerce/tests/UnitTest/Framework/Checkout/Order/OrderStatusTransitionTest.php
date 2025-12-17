@@ -270,6 +270,9 @@ class OrderStatusTransitionTest extends TestCase
         ];
     }
 
+    /**
+     * @param OrderStatus[] $expectedDisabledStatuses
+     */
     #[DataProvider('provideDisabledStatuses')]
     public function testGetDisabledStatusesReturnsCorrectStatuses(
         OrderStatus $currentStatus,
