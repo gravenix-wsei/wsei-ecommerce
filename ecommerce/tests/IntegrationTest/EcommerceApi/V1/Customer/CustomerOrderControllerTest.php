@@ -33,11 +33,6 @@ class CustomerOrderControllerTest extends WebTestCase
         $this->entityManager = $entityManager;
     }
 
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        return $this->entityManager;
-    }
-
     public function testGetOrdersListReturnsOnlyCustomerOrders(): void
     {
         // Arrange - Create two customers with orders
@@ -97,9 +92,13 @@ class CustomerOrderControllerTest extends WebTestCase
         static::assertCount(3, $response['data']);
 
         // Verify orders are sorted from newest to oldest by checking timestamps
-        $timestamps = array_map(fn($order) => strtotime($order['createdAt']), $response['data']);
+        $timestamps = array_map(fn ($order) => strtotime($order['createdAt']), $response['data']);
         for ($i = 0; $i < count($timestamps) - 1; $i++) {
-            static::assertGreaterThanOrEqual($timestamps[$i + 1], $timestamps[$i], 'Orders should be sorted DESC by createdAt');
+            static::assertGreaterThanOrEqual(
+                $timestamps[$i + 1],
+                $timestamps[$i],
+                'Orders should be sorted DESC by createdAt'
+            );
         }
     }
 
@@ -295,6 +294,11 @@ class CustomerOrderControllerTest extends WebTestCase
         static::assertEquals('110.70', $order['totalPriceGross']); // (2*24.60) + (1*61.50)
     }
 
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->entityManager;
+    }
+
     private function addItemToCart(Customer $customer, int $productId, int $quantity): void
     {
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', [
@@ -320,4 +324,3 @@ class CustomerOrderControllerTest extends WebTestCase
         $this->placeOrder($customer, $address->getId());
     }
 }
-

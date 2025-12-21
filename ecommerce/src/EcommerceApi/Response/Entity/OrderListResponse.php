@@ -28,10 +28,7 @@ class OrderListResponse extends EcommerceResponse
     protected function formatData(): array
     {
         return [
-            'data' => \array_map(
-                fn (Order $order) => new OrderResponse($order)->formatResponse(),
-                $this->orders
-            ),
+            'data' => \array_map(fn (Order $order) => new OrderResponse($order)->formatResponse(), $this->orders),
             'page' => $this->page,
             'totalPages' => $this->totalPages,
             'nextPage' => $this->nextPage,
@@ -44,4 +41,3 @@ class OrderListResponse extends EcommerceResponse
         return 'OrderList';
     }
 }
-
