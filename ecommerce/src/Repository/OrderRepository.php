@@ -57,4 +57,31 @@ class OrderRepository extends ServiceEntityRepository
             ->getQuery()
             ->getSingleScalarResult();
     }
+
+    /**
+     * @return Order[]
+     */
+    public function findByCustomerPaginated(int $customerId, int $page, int $limit = 20): array
+    {
+        $offset = ($page - 1) * $limit;
+
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.customer = :customerId')
+            ->setParameter('customerId', $customerId)
+            ->orderBy('o.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countByCustomer(int $customerId): int
+    {
+        return (int) $this->createQueryBuilder('o')
+            ->select('COUNT(o.id)')
+            ->andWhere('o.customer = :customerId')
+            ->setParameter('customerId', $customerId)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }
