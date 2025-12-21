@@ -1,0 +1,15 @@
+### Fetch All Categories
+GET {{baseUrl}}/categories
+Accept: application/json
+Content-Type: application/json
+
+### Fetch Categories with Pagination (Page 1)
+GET {{baseUrl}}/categories?page=1&limit=10
+Accept: application/json
+Content-Type: application/json
+
+### Fetch Categories with Pagination (Page 2)
+GET {{baseUrl}}/categories?page=2&limit=10
+Accept: application/json
+Content-Type: application/json
+
