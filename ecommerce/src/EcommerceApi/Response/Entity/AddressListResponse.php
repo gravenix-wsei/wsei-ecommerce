@@ -25,7 +25,7 @@ class AddressListResponse extends EcommerceResponse
     {
         return [
             'addresses' => \array_map(
-                fn (Address $address) => (new AddressResponse($address))->formatResponse(),
+                fn (Address $address) => new AddressResponse($address)->formatResponse(),
                 $this->addresses
             ),
         ];

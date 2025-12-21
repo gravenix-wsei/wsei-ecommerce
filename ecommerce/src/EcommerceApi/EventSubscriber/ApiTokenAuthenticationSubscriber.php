@@ -28,14 +28,15 @@ class ApiTokenAuthenticationSubscriber
         $request->attributes->set('is_ecommerce_api', true);
 
         $controller = $event->getController();
-        if (is_array($controller)) {
-            $reflectionMethod = new \ReflectionMethod($controller[0], $controller[1]);
-            $attributes = $reflectionMethod->getAttributes(PublicAccess::class);
+        if (!is_array($controller)) {
+            return;
+        }
+        $reflectionMethod = new \ReflectionMethod($controller[0], $controller[1]);
+        $attributes = $reflectionMethod->getAttributes(PublicAccess::class);
 
-            if (count($attributes) > 0) {
-                // Public endpoint, skip authentication
-                return;
-            }
+        if (count($attributes) > 0) {
+            // Public endpoint, skip authentication
+            return;
         }
 
         $token = $request->headers->get(RequestAttributes::TOKEN_HEADER);
