@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Form\Admin;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\MoneyType;
@@ -11,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Wsei\Ecommerce\Entity\Category;
 use Wsei\Ecommerce\Entity\Product;
 
 /**
@@ -45,6 +47,13 @@ class ProductType extends AbstractType
                 'label' => 'Price Gross',
                 'required' => true,
                 'currency' => 'EUR',
+            ])
+            ->add('category', EntityType::class, [
+                'class' => Category::class,
+                'choice_label' => 'name',
+                'label' => 'Category',
+                'required' => false,
+                'placeholder' => '-- Select Category --',
             ]);
     }
 

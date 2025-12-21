@@ -26,6 +26,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
+                <th>Category</th>
                 <th>Stock</th>
                 <th>Price Net</th>
                 <th>Price Gross</th>
@@ -37,6 +38,7 @@
             <tr>
                 <td>{{ product.id }}</td>
                 <td>{{ product.name }}</td>
+                <td>{{ product.category ? product.category.name : 'N/A' }}</td>
                 <td>{{ product.stock }}</td>
                 <td>{{ product.priceNet }} EUR</td>
                 <td>{{ product.priceGross }} EUR</td>
@@ -57,7 +59,7 @@
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" class="text-center">No products found</td>
+                <td colspan="7" class="text-center">No products found</td>
             </tr>
             {% endfor %}
         </tbody>
