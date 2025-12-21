@@ -33,6 +33,10 @@
                 <td>{{ product.description|nl2br }}</td>
             </tr>
             <tr>
+                <th>Category</th>
+                <td>{{ product.category ? product.category.name : 'No category assigned' }}</td>
+            </tr>
+            <tr>
                 <th>Stock</th>
                 <td>{{ product.stock }}</td>
             </tr>
