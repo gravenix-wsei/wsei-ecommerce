@@ -29,13 +29,13 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(0, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(0, $response['totalPages']);
-        $this->assertEquals('ProductList', $response['apiDescription']);
+        static::assertIsArray($response['data']);
+        static::assertCount(0, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(0, $response['totalPages']);
+        static::assertEquals('ProductList', $response['apiDescription']);
     }
 
     public function testSearchProductsReturnsAllProducts(): void
@@ -50,29 +50,29 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(3, $response['data']);
+        static::assertIsArray($response['data']);
+        static::assertCount(3, $response['data']);
 
         // Verify product structure
         foreach ($response['data'] as $product) {
-            $this->assertArrayHasKey('id', $product);
-            $this->assertArrayHasKey('name', $product);
-            $this->assertArrayHasKey('description', $product);
-            $this->assertArrayHasKey('stock', $product);
-            $this->assertArrayHasKey('priceNet', $product);
-            $this->assertArrayHasKey('priceGross', $product);
-            $this->assertArrayHasKey('category', $product);
-            $this->assertArrayHasKey('apiDescription', $product);
-            $this->assertEquals('Product', $product['apiDescription']);
+            static::assertArrayHasKey('id', $product);
+            static::assertArrayHasKey('name', $product);
+            static::assertArrayHasKey('description', $product);
+            static::assertArrayHasKey('stock', $product);
+            static::assertArrayHasKey('priceNet', $product);
+            static::assertArrayHasKey('priceGross', $product);
+            static::assertArrayHasKey('category', $product);
+            static::assertArrayHasKey('apiDescription', $product);
+            static::assertEquals('Product', $product['apiDescription']);
         }
 
         // Verify product names
         $productNames = array_column($response['data'], 'name');
-        $this->assertContains('Laptop', $productNames);
-        $this->assertContains('Mouse', $productNames);
-        $this->assertContains('Keyboard', $productNames);
+        static::assertContains('Laptop', $productNames);
+        static::assertContains('Mouse', $productNames);
+        static::assertContains('Keyboard', $productNames);
     }
 
     public function testSearchProductsByCategory(): void
@@ -91,23 +91,25 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(2, $response['data']);
+        static::assertIsArray($response['data']);
+        static::assertCount(2, $response['data']);
 
         // Verify only electronics products returned
         $productNames = array_column($response['data'], 'name');
-        $this->assertContains('Laptop', $productNames);
-        $this->assertContains('Mouse', $productNames);
-        $this->assertNotContains('Book', $productNames);
+        static::assertContains('Laptop', $productNames);
+        static::assertContains('Mouse', $productNames);
+        static::assertNotContains('Book', $productNames);
 
         // Verify category is included in response
         foreach ($response['data'] as $product) {
-            $this->assertIsArray($product['category']);
-            $this->assertEquals('Electronics', $product['category']['name']);
-            $this->assertArrayNotHasKey('apiDescription', $product['category']);
+            static::assertIsArray($product['category']);
+            static::assertEquals('Electronics', $product['category']['name']);
         }
+
+        $productNames = array_column($response['data'], 'name');
+        static::assertArrayNotHasKey('Book', $productNames);
     }
 
     public function testSearchProductsWithNonExistentCategory(): void
@@ -122,10 +124,10 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(0, $response['data']);
+        static::assertIsArray($response['data']);
+        static::assertCount(0, $response['data']);
     }
 
     public function testSearchProductsWithoutCategory(): void
@@ -139,9 +141,9 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(2, $response['data']);
+        static::assertCount(2, $response['data']);
 
         // Find product without category
         $genericProduct = null;
@@ -152,8 +154,8 @@ class ProductControllerTest extends WebTestCase
             }
         }
 
-        $this->assertNotNull($genericProduct);
-        $this->assertNull($genericProduct['category']);
+        static::assertNotNull($genericProduct);
+        static::assertNull($genericProduct['category']);
     }
 
     public function testSearchProductsPaginationFirstPage(): void
@@ -171,11 +173,11 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(10, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
+        static::assertCount(10, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
     }
 
     public function testSearchProductsPaginationSecondPage(): void
@@ -193,11 +195,11 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(10, $response['data']);
-        $this->assertEquals(2, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
+        static::assertCount(10, $response['data']);
+        static::assertEquals(2, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
     }
 
     public function testSearchProductsPaginationLastPage(): void
@@ -215,11 +217,11 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(5, $response['data']);
-        $this->assertEquals(3, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
+        static::assertCount(5, $response['data']);
+        static::assertEquals(3, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
     }
 
     public function testSearchProductsPaginationWithCategoryFilter(): void
@@ -243,11 +245,11 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(10, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(2, $response['totalPages']);
+        static::assertCount(10, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(2, $response['totalPages']);
     }
 
     public function testSearchProductsEndpointIsPublic(): void
@@ -260,9 +262,9 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert - Should work without authentication
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(1, $response['data']);
+        static::assertCount(1, $response['data']);
     }
 
     public function testSearchProductsDefaultPagination(): void
@@ -277,11 +279,11 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert - Should use defaults: page=1, limit=20
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(20, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(2, $response['totalPages']);
+        static::assertCount(20, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(2, $response['totalPages']);
     }
 
     public function testSearchProductsValidatesPayload(): void
@@ -292,7 +294,7 @@ class ProductControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(422);
+        static::assertResponseStatusCodeSame(422);
     }
 
     public function testSearchProductsProductStructure(): void
@@ -305,18 +307,18 @@ class ProductControllerTest extends WebTestCase
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(1, $response['data']);
+        static::assertCount(1, $response['data']);
 
         $productData = $response['data'][0];
-        $this->assertEquals('Test Product', $productData['name']);
-        $this->assertEquals('Test description for Test Product', $productData['description']);
-        $this->assertEquals(50, $productData['stock']);
-        $this->assertEquals('99.99', $productData['priceNet']);
-        $this->assertEquals('122.99', $productData['priceGross']);
-        $this->assertIsArray($productData['category']);
-        $this->assertEquals('Electronics', $productData['category']['name']);
+        static::assertEquals('Test Product', $productData['name']);
+        static::assertEquals('Test description for Test Product', $productData['description']);
+        static::assertEquals(50, $productData['stock']);
+        static::assertEquals('99.99', $productData['priceNet']);
+        static::assertEquals('122.99', $productData['priceGross']);
+        static::assertIsArray($productData['category']);
+        static::assertEquals('Electronics', $productData['category']['name']);
     }
 
     private function createCategory(string $name): Category

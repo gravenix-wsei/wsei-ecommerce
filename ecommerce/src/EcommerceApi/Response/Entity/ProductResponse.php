@@ -29,10 +29,7 @@ class ProductResponse extends EcommerceResponse
 
         if ($this->product->getCategory() !== null) {
             $categoryResponse = new CategoryResponse($this->product->getCategory());
-            $categoryData = $categoryResponse->formatResponse();
-            // Remove apiDescription from nested category
-            unset($categoryData['apiDescription']);
-            $data['category'] = $categoryData;
+            $data['category'] = $categoryResponse->formatResponse();
         }
 
         return $data;
