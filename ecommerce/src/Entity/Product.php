@@ -32,6 +32,10 @@ class Product
     #[ORM\Column(type: 'decimal', precision: 10, scale: 2)]
     private ?string $priceGross = null;
 
+    #[ORM\ManyToOne(targetEntity: Category::class)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Category $category = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -93,6 +97,18 @@ class Product
     public function setPriceGross(string $priceGross): self
     {
         $this->priceGross = $priceGross;
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): self
+    {
+        $this->category = $category;
 
         return $this;
     }

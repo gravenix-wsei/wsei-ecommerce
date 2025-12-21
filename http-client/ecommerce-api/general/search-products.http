@@ -1,0 +1,35 @@
+### Search all products (empty body)
+POST {{baseUrl}}/products/search
+Content-Type: application/json
+Accept: application/json
+
+{}
+
+### Search all products with pagination
+POST {{baseUrl}}/products/search
+Content-Type: application/json
+
+{
+  "page": 1,
+  "limit": 2
+}
+
+### Search products by category
+POST {{baseUrl}}/products/search
+Content-Type: application/json
+
+{
+  "categoryId": 2
+}
+
+### Search products by category with pagination
+POST {{baseUrl}}/products/search
+Content-Type: application/json
+
+{
+  "categoryId": 1,
+  "page": 1,
+  "limit": 5
+}
+
+

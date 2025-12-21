@@ -17,4 +17,37 @@ class ProductRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Product::class);
     }
+
+    /**
+     * @return Product[]
+     */
+    public function findByCriteria(?int $categoryId, int $page, int $limit): array
+    {
+        $offset = ($page - 1) * $limit;
+
+        $qb = $this->createQueryBuilder('p')
+            ->orderBy('p.name', 'ASC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+
+        if ($categoryId !== null) {
+            $qb->andWhere('p.category = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function countByCriteria(?int $categoryId): int
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)');
+
+        if ($categoryId !== null) {
+            $qb->andWhere('p.category = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 }
