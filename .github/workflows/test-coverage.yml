@@ -193,21 +193,11 @@ jobs:
               \$coveredElements = (int)\$metrics['coveredelements'];
               \$lineCoverage = \$elements > 0 ? (\$coveredElements / \$elements) * 100 : 0;
               
-              \$branches = (int)\$metrics['branches'];
-              \$coveredBranches = (int)\$metrics['coveredbranches'];
-              \$branchCoverage = \$branches > 0 ? (\$coveredBranches / \$branches) * 100 : 0;
-              
-              \$paths = (int)\$metrics['paths'];
-              \$coveredPaths = (int)\$metrics['coveredpaths'];
-              \$pathCoverage = \$paths > 0 ? (\$coveredPaths / \$paths) * 100 : 0;
-              
               echo '| Metric | Coverage | Covered | Total |' . PHP_EOL;
               echo '|--------|----------|---------|-------|' . PHP_EOL;
               echo sprintf('| Lines | %.2f%% | %d | %d |', \$lineCoverage, \$coveredElements, \$elements) . PHP_EOL;
               echo sprintf('| Statements | %.2f%% | %d | %d |', \$statementCoverage, \$coveredStatements, \$statements) . PHP_EOL;
               echo sprintf('| Methods | %.2f%% | %d | %d |', \$methodCoverage, \$coveredMethods, \$methods) . PHP_EOL;
-              echo sprintf('| Branches | %.2f%% | %d | %d |', \$branchCoverage, \$coveredBranches, \$branches) . PHP_EOL;
-              echo sprintf('| Paths | %.2f%% | %d | %d |', \$pathCoverage, \$coveredPaths, \$paths) . PHP_EOL;
             }
           " >> $GITHUB_STEP_SUMMARY
           
