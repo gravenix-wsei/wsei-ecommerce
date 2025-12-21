@@ -134,6 +134,44 @@ class OrderRepositoryTest extends TestCase
         $this->assertNotEmpty($result);
     }
 
+    public function testFindAllPaginatedUsesDefaultLimitOf20(): void
+    {
+        // Arrange
+        $this->repository->expects(static::once())
+            ->method('createQueryBuilder')
+            ->with('o')
+            ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(static::once())
+            ->method('orderBy')
+            ->with('o.createdAt', 'DESC')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setFirstResult')
+            ->with(0) // page 1: (1-1) * 20 = 0
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setMaxResults')
+            ->with(20) // Default limit must be 20
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('getQuery')
+            ->willReturn($this->query);
+
+        $this->query->expects(static::once())
+            ->method('getResult')
+            ->willReturn([$this->createMock(Order::class)]);
+
+        // Act - Call without explicit limit parameter to test default
+        $result = $this->repository->findAllPaginated(1);
+
+        // Assert
+        $this->assertNotEmpty($result);
+    }
+
     public function testCountAllBuildsCorrectQuery(): void
     {
         // Arrange
@@ -160,5 +198,145 @@ class OrderRepositoryTest extends TestCase
 
         // Assert
         $this->assertSame(42, $count);
+    }
+
+    public function testFindByCustomerPaginatedBuildsCorrectQuery(): void
+    {
+        // Arrange
+        $customerId = 123;
+
+        $this->repository->expects(static::once())
+            ->method('createQueryBuilder')
+            ->with('o')
+            ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(static::once())
+            ->method('andWhere')
+            ->with('o.customer = :customerId')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setParameter')
+            ->with('customerId', $customerId)
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('orderBy')
+            ->with('o.createdAt', 'DESC')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setFirstResult')
+            ->with(20) // page 3, limit 10: (3-1) * 10 = 20
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setMaxResults')
+            ->with(10)
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('getQuery')
+            ->willReturn($this->query);
+
+        $this->query->expects(static::once())
+            ->method('getResult')
+            ->willReturn([$this->createMock(Order::class)]);
+
+        // Act
+        $result = $this->repository->findByCustomerPaginated($customerId, 3, 10);
+
+        // Assert
+        $this->assertNotEmpty($result);
+    }
+
+    public function testFindByCustomerPaginatedUsesDefaultLimitOf20(): void
+    {
+        // Arrange
+        $customerId = 456;
+
+        $this->repository->expects(static::once())
+            ->method('createQueryBuilder')
+            ->with('o')
+            ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(static::once())
+            ->method('andWhere')
+            ->with('o.customer = :customerId')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setParameter')
+            ->with('customerId', $customerId)
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('orderBy')
+            ->with('o.createdAt', 'DESC')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setFirstResult')
+            ->with(0) // page 1: (1-1) * 20 = 0
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setMaxResults')
+            ->with(20) // Default limit must be 20
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('getQuery')
+            ->willReturn($this->query);
+
+        $this->query->expects(static::once())
+            ->method('getResult')
+            ->willReturn([$this->createMock(Order::class)]);
+
+        // Act - Call without explicit limit parameter to test default
+        $result = $this->repository->findByCustomerPaginated($customerId, 1);
+
+        // Assert
+        $this->assertNotEmpty($result);
+    }
+
+    public function testCountByCustomerBuildsCorrectQuery(): void
+    {
+        // Arrange
+        $customerId = 789;
+
+        $this->repository->expects(static::once())
+            ->method('createQueryBuilder')
+            ->with('o')
+            ->willReturn($this->queryBuilder);
+
+        $this->queryBuilder->expects(static::once())
+            ->method('select')
+            ->with('COUNT(o.id)')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('andWhere')
+            ->with('o.customer = :customerId')
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('setParameter')
+            ->with('customerId', $customerId)
+            ->willReturnSelf();
+
+        $this->queryBuilder->expects(static::once())
+            ->method('getQuery')
+            ->willReturn($this->query);
+
+        $this->query->expects(static::once())
+            ->method('getSingleScalarResult')
+            ->willReturn(15);
+
+        // Act
+        $count = $this->repository->countByCustomer($customerId);
+
+        // Assert
+        $this->assertSame(15, $count);
     }
 }
