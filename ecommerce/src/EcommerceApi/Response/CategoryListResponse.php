@@ -10,10 +10,10 @@ use Wsei\Ecommerce\Entity\Category;
 class CategoryListResponse extends EcommerceResponse
 {
     /**
-     * @param iterable<Category> $categories
+     * @param Category[] $categories
      */
     public function __construct(
-        private readonly iterable $categories,
+        private readonly array $categories,
         private readonly int $page,
         private readonly int $totalPages,
         private readonly ?string $nextPage,
@@ -27,14 +27,10 @@ class CategoryListResponse extends EcommerceResponse
      */
     protected function formatData(): array
     {
-        $categoriesArray = \is_array($this->categories)
-            ? $this->categories
-            : \array_values([...$this->categories]);
-
         return [
             'data' => \array_map(
                 fn (Category $category) => new CategoryResponse($category)->formatResponse(),
-                $categoriesArray
+                $this->categories
             ),
             'page' => $this->page,
             'totalPages' => $this->totalPages,
