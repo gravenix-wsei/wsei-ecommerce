@@ -57,3 +57,20 @@ wsei-ecommerce-token: {{authToken}}
 {
   "addressId": {{addressId}}
 }
+
+> {%
+    client.test('is 200', () => response.status === 200);
+    client.test('has order id', () => typeof response.body?.id === 'number');
+    client.test('correct apiDescription', () => response.body?.apiDescription === 'Order');
+    client.global.set('orderId', response.body.id);
+%}
+
+### Pay for order
+POST {{baseUrl}}/order/pay/{{orderId}}
+Content-Type: application/json
+Accept: application/json
+wsei-ecommerce-token: {{authToken}}
+
+{
+  "returnUrl": "http://localhost:8080/payment-return"
+}
