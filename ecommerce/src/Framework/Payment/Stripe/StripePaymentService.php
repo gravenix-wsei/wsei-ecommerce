@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Framework\Payment\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
-use Stripe\Checkout\Session;
-use Stripe\Stripe;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Wsei\Ecommerce\Entity\Order;
 use Wsei\Ecommerce\Entity\OrderItem;
@@ -25,9 +23,8 @@ class StripePaymentService implements PaymentServiceInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PaymentSessionRepository $paymentSessionRepository,
         private readonly OrderStatusTransitionInterface $statusTransition,
-        private readonly string $stripeSecretKey
+        private readonly StripeClientInterface $stripeClient
     ) {
-        Stripe::setApiKey($this->stripeSecretKey);
     }
 
     public function pay(Order $order, string $returnUrl): PaymentResult
@@ -67,7 +64,7 @@ class StripePaymentService implements PaymentServiceInterface
         );
 
         // Create Stripe checkout session
-        $checkoutSession = Session::create([
+        $checkoutSession = $this->stripeClient->createCheckoutSession([
             'line_items' => \array_map(
                 static fn (OrderItem $orderItem) => [
                     'price_data' => [
@@ -119,7 +116,7 @@ class StripePaymentService implements PaymentServiceInterface
 
         try {
             // Retrieve Stripe session
-            $stripeSession = Session::retrieve($stripeSessionId);
+            $stripeSession = $this->stripeClient->retrieveSession($stripeSessionId);
 
             if ($stripeSession->payment_status === 'paid') {
                 $currentStatus = $order->getStatus();

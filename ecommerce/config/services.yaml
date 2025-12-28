@@ -32,12 +32,11 @@ when@dev: &config
         Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransitionInterface:
             class: Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransition
 
-        # Stripe Payment Service with explicit configuration
-        Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService:
+        # Stripe Client
+        Wsei\Ecommerce\Framework\Payment\Stripe\StripeClientInterface:
+            class: Wsei\Ecommerce\Framework\Payment\Stripe\StripeClient
             arguments:
                 $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
-
-
 
 when@prod:
     <<: *config

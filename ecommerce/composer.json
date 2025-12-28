@@ -75,7 +75,7 @@
             "@auto-scripts"
         ],
         "ecs": "vendor/bin/ecs check",
-        "phpstan": "vendor/bin/phpstan analyse --memory-limit 256M",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit 512M",
         "phpmetrics": "vendor/bin/phpmetrics --report-html=phpmetrics .",
         "test": "XDEBUG_MODE=coverage bin/phpunit",
         "test:unit": "@test --testsuite UnitTests",
