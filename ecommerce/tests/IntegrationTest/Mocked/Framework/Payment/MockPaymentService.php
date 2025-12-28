@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment;
 
@@ -11,14 +13,15 @@ class MockPaymentService implements PaymentServiceInterface
 {
     // Use static state to persist across HTTP requests in tests
     private static bool $shouldFailPay = false;
+
     private static bool $shouldFailVerify = false;
+
     private static bool $shouldThrowException = false;
+
     private static ?Order $order = null;
+
     private static string $failureMessage = 'Mock failure';
 
-    /**
-     * @throws \Exception
-     */
     public function pay(Order $order, string $returnUrl): PaymentResult
     {
         if (self::$shouldThrowException) {
@@ -29,10 +32,7 @@ class MockPaymentService implements PaymentServiceInterface
             throw new \InvalidArgumentException(self::$failureMessage);
         }
 
-        return new PaymentResult(
-            'https://mock.stripe.com/checkout/session_123',
-            'mock_token_' . uniqid()
-        );
+        return new PaymentResult('https://mock.stripe.com/checkout/session_123', 'mock_token_' . uniqid());
     }
 
     public function verify(string $token): PaymentVerificationResult

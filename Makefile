@@ -1,4 +1,4 @@
-.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests
+.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests phpmetrics
 
 # Load environment variables from .env file if it exists
 ifneq (,$(wildcard .env))
@@ -91,6 +91,18 @@ php-coverage-check: ## Check coverage for changed files (requires diff-cover: pi
 		echo "Running basic coverage check instead..."; \
 		docker compose exec -u www-data php sh -c "cat phpunit-coverage/cobertura.xml | grep -o 'line-rate=\"[^\"]*\"' | head -1"; \
 	fi
+
+phpmetrics: ## Generate PHP metrics report
+	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpmetrics
+
+phpstan: ## Generate PHP metrics report
+	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpstan
+
+ecs: ## Generate PHP metrics report
+	docker compose exec -u www-data -e XDEBUG_MODE=off php composer ecs
+
+ecs-fix: ## Generate PHP metrics report
+	docker compose exec -u www-data -e XDEBUG_MODE=off php composer ecs -- --fix
 
 down: ## Stop and remove containers
 	docker compose down

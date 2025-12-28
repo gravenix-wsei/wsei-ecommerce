@@ -12,7 +12,7 @@ use Wsei\Ecommerce\Entity\Order;
 use Wsei\Ecommerce\Entity\PaymentSession;
 use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransitionInterface;
 use Wsei\Ecommerce\Framework\Payment\Result\PaymentVerificationResult;
-use Wsei\Ecommerce\Framework\Payment\StripePaymentService;
+use Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService;
 use Wsei\Ecommerce\Repository\PaymentSessionRepository;
 
 class StripePaymentServiceTest extends TestCase

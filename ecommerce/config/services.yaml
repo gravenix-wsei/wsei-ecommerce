@@ -16,7 +16,7 @@ when@dev: &config
             autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
             bind:
                 $projectDir: '%kernel.project_dir%'
-                Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Framework\Payment\StripePaymentService'
+                Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService'
 
         # makes classes in src/ available to be used as services
         # this creates a service per class whose id is the fully-qualified class name
@@ -33,7 +33,7 @@ when@dev: &config
             class: Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransition
 
         # Stripe Payment Service with explicit configuration
-        Wsei\Ecommerce\Framework\Payment\StripePaymentService:
+        Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService:
             arguments:
                 $stripeSecretKey: '%env(STRIPE_SECRET_KEY)%'
 

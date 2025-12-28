@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Wsei\Ecommerce\Framework\Payment\Stripe\PaymentSessionStatus;
 use Wsei\Ecommerce\Repository\PaymentSessionRepository;
 
 #[ORM\Entity(repositoryClass: PaymentSessionRepository::class)]
@@ -38,7 +39,10 @@ class PaymentSession
     #[ORM\Column(type: 'text')]
     private ?string $returnUrl = null;
 
-    #[ORM\OneToOne(targetEntity: Order::class)]
+    #[ORM\Column(type: 'string', length: 20, enumType: PaymentSessionStatus::class)]
+    private PaymentSessionStatus $status = PaymentSessionStatus::ACTIVE;
+
+    #[ORM\ManyToOne(targetEntity: Order::class)]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private ?Order $order = null;
 
@@ -138,9 +142,51 @@ class PaymentSession
         return $this;
     }
 
+    public function getStatus(): PaymentSessionStatus
+    {
+        return $this->status;
+    }
+
+    public function setStatus(PaymentSessionStatus $status): self
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function isActive(): bool
+    {
+        return $this->status === PaymentSessionStatus::ACTIVE;
+    }
+
+    public function isCancelled(): bool
+    {
+        return $this->status === PaymentSessionStatus::CANCELLED;
+    }
+
+    public function isCompleted(): bool
+    {
+        return $this->status === PaymentSessionStatus::COMPLETED;
+    }
+
     public function isExpired(): bool
     {
-        return $this->expiresAt < new \DateTime();
+        return $this->expiresAt < new \DateTime() || $this->status === PaymentSessionStatus::EXPIRED;
+    }
+
+    public function cancel(): void
+    {
+        $this->status = PaymentSessionStatus::CANCELLED;
+    }
+
+    public function complete(): void
+    {
+        $this->status = PaymentSessionStatus::COMPLETED;
+    }
+
+    public function expire(): void
+    {
+        $this->status = PaymentSessionStatus::EXPIRED;
     }
 
     public static function generate(): string

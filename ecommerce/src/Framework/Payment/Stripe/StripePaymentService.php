@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Framework\Payment;
+namespace Wsei\Ecommerce\Framework\Payment\Stripe;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Stripe\Checkout\Session;
@@ -13,6 +13,7 @@ use Wsei\Ecommerce\Entity\OrderItem;
 use Wsei\Ecommerce\Entity\PaymentSession;
 use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatus;
 use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransitionInterface;
+use Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface;
 use Wsei\Ecommerce\Framework\Payment\Result\PaymentResult;
 use Wsei\Ecommerce\Framework\Payment\Result\PaymentVerificationResult;
 use Wsei\Ecommerce\Repository\PaymentSessionRepository;
@@ -33,7 +34,10 @@ class StripePaymentService implements PaymentServiceInterface
     {
         $this->transitionToPendingPayment($order);
 
-        // Create payment session
+        // Cancel any active payment sessions for this order
+        $this->paymentSessionRepository->cancelActiveSessionsForOrder($order);
+
+        // Create new payment session
         $paymentSession = new PaymentSession();
         $paymentSession->setOrder($order);
         $paymentSession->setReturnUrl($returnUrl);
@@ -134,7 +138,12 @@ class StripePaymentService implements PaymentServiceInterface
 
                 // Update order status to paid
                 $order->setStatus(OrderStatus::PAID);
+
+                // Mark payment session as completed
+                $paymentSession->complete();
+
                 $this->entityManager->persist($order);
+                $this->entityManager->persist($paymentSession);
                 $this->entityManager->flush();
 
                 return PaymentVerificationResult::success($order, $returnUrl);
