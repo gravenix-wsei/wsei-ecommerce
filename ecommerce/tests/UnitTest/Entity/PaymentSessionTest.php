@@ -37,13 +37,13 @@ class PaymentSessionTest extends TestCase
     public function testExpiresAtIsSetTo30MinutesFromNow(): void
     {
         // Act
+        $before = new \DateTime('+30 minutes');
         $session = new PaymentSession();
-        $now = new \DateTime();
-        $expectedExpiry = new \DateTime('+30 minutes');
+        $after = new \DateTime('+30 minutes');
 
-        // Assert
-        $diff = $session->getExpiresAt()->diff($now);
-        $this->assertEquals(30, $diff->i); // Minutes difference
+        // Assert - expiresAt should be within the range (allowing for execution time)
+        $this->assertGreaterThanOrEqual($before, $session->getExpiresAt());
+        $this->assertLessThanOrEqual($after, $session->getExpiresAt());
     }
 
     public function testCanSetAndGetOrder(): void

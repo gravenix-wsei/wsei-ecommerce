@@ -220,6 +220,8 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $customer = new Customer();
         $customer->setEmail('test' . uniqid() . '@example.com');
         $customer->setPassword('password');
+        $customer->setFirstName('Test');
+        $customer->setLastName('Customer');
 
         $address = new OrderAddress();
         $address->setFirstName('John');
