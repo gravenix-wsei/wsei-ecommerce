@@ -13,6 +13,7 @@
         "doctrine/orm": "^3.5",
         "phpdocumentor/reflection-docblock": "^5.6",
         "phpstan/phpdoc-parser": "^2.3",
+        "stripe/stripe-php": "^19.1",
         "symfony/asset": "7.4.*",
         "symfony/cache": "7.4.*",
         "symfony/console": "7.4.*",
@@ -74,7 +75,7 @@
             "@auto-scripts"
         ],
         "ecs": "vendor/bin/ecs check",
-        "phpstan": "vendor/bin/phpstan analyse --memory-limit 256M",
+        "phpstan": "vendor/bin/phpstan analyse --memory-limit 512M",
         "phpmetrics": "vendor/bin/phpmetrics --report-html=phpmetrics .",
         "test": "XDEBUG_MODE=coverage bin/phpunit",
         "test:unit": "@test --testsuite UnitTests",
