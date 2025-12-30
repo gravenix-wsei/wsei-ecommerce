@@ -12,36 +12,46 @@
                     <span class="admin-menu-text">Dashboard</span>
                 </a>
             </li>
+            {% if is_granted('ROLE_ADMIN.CATEGORY') %}
             <li class="admin-menu-item">
                 <a href="{{ path('admin.category.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.category' %}active{% endif %}">
                     <span class="admin-menu-icon">{{ svg('img/icons/category.svg', {class: 'icon'}) }}</span>
                     <span class="admin-menu-text">Categories</span>
                 </a>
             </li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN.PRODUCT') %}
             <li class="admin-menu-item">
                 <a href="{{ path('admin.product.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.product' %}active{% endif %}">
                     <span class="admin-menu-icon">{{ svg('img/icons/products.svg', {class: 'icon'}) }}</span>
                     <span class="admin-menu-text">Products</span>
                 </a>
             </li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN.CUSTOMER') %}
             <li class="admin-menu-item">
                 <a href="{{ path('admin.customer.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.customer' %}active{% endif %}">
                     <span class="admin-menu-icon">{{ svg('img/icons/customer.svg', {class: 'icon'}) }}</span>
                     <span class="admin-menu-text">Customers</span>
                 </a>
             </li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN.ORDER') %}
             <li class="admin-menu-item">
                 <a href="{{ path('admin.order.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.order' %}active{% endif %}">
                     <span class="admin-menu-icon">{{ svg('img/icons/orders.svg', {class: 'icon'}) }}</span>
                     <span class="admin-menu-text">Orders</span>
                 </a>
             </li>
+            {% endif %}
+            {% if is_granted('ROLE_ADMIN.CONFIG') %}
             <li class="admin-menu-item">
                 <a href="{{ path('admin.settings.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.settings' %}active{% endif %}">
                     <span class="admin-menu-icon">{{ svg('img/icons/settings.svg', {class: 'icon'}) }}</span>
                     <span class="admin-menu-text">Settings</span>
                 </a>
             </li>
+            {% endif %}
         </ul>
     </nav>
 

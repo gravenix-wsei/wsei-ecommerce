@@ -10,7 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider;
 
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.CONFIG')]
 #[Route('/admin/settings')]
 class SettingsController extends AbstractController
 {

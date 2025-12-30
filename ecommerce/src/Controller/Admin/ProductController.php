@@ -15,7 +15,7 @@ use Wsei\Ecommerce\Form\Admin\ProductType;
 use Wsei\Ecommerce\Repository\ProductRepository;
 
 #[Route('/admin/product')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.PRODUCT')]
 class ProductController extends AbstractController
 {
     public function __construct(

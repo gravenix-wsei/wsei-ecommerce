@@ -16,7 +16,7 @@ use Wsei\Ecommerce\Form\Admin\CustomerType;
 use Wsei\Ecommerce\Repository\CustomerRepository;
 
 #[Route('/admin/customer')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.CUSTOMER')]
 class CustomerController extends AbstractController
 {
     public function __construct(

@@ -30,12 +30,11 @@
         {% if users is empty %}
             <p>No administrator accounts found.</p>
         {% else %}
-            <table class="table">
+            <table class="admin-data-table">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Email</th>
-                        <th>Roles</th>
                         <th class="text-right">Actions</th>
                     </tr>
                 </thead>
@@ -44,11 +43,6 @@
                         <tr>
                             <td>{{ user.id }}</td>
                             <td>{{ user.email }}</td>
-                            <td>
-                                {% for role in user.roles %}
-                                    <span class="badge">{{ role }}</span>
-                                {% endfor %}
-                            </td>
                             <td class="text-right">
                                 {% if app.user.id != user.id %}
                                     <a href="{{ path('admin.settings.admin_users.edit', {id: user.id}) }}"
