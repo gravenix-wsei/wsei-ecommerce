@@ -12,7 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Wsei\Ecommerce\Entity\User;
-use Wsei\Ecommerce\Form\AdminUserType;
+use Wsei\Ecommerce\Form\Admin\AdminUserType;
 use Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface;
 use Wsei\Ecommerce\Repository\UserRepository;
 
