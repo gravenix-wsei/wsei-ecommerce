@@ -15,10 +15,8 @@ final class SettingItem
     ) {
     }
 
-    public static function fromController(
-        EcommerceSettingsInterface $controller,
-        string $url
-    ): self {
+    public static function fromController(EcommerceSettingsInterface $controller, string $url): self
+    {
         return new self(
             name: $controller->getName(),
             description: $controller->getDescription(),
@@ -36,4 +34,3 @@ final class SettingItem
         return $this->position <=> $other->position;
     }
 }
-

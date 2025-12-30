@@ -33,5 +33,3 @@ interface EcommerceSettingsInterface
      */
     public function getPathEntrypointName(): string;
 }
-
-

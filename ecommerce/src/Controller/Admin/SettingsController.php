@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Controller\Admin;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\Attribute\TaggedIterator;
+use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\RouterInterface;
@@ -21,7 +21,7 @@ class SettingsController extends AbstractController
      * @param iterable<EcommerceSettingsInterface> $settingControllers
      */
     public function __construct(
-        #[TaggedIterator('wsei_ecommerce.admin.setting')]
+        #[AutowireIterator('wsei_ecommerce.admin.setting')]
         private readonly iterable $settingControllers,
         private readonly RouterInterface $router
     ) {
@@ -58,9 +58,8 @@ class SettingsController extends AbstractController
             }
         }
 
-        usort($settings, fn(SettingItem $a, SettingItem $b) => $a->compareTo($b));
+        usort($settings, fn (SettingItem $a, SettingItem $b) => $a->compareTo($b));
 
         return $settings;
     }
 }
-
