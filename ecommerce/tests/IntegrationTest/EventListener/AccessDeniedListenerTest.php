@@ -8,7 +8,6 @@ use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Wsei\Ecommerce\Entity\User;
-use Wsei\Ecommerce\Repository\UserRepository;
 
 class AccessDeniedListenerTest extends WebTestCase
 {
@@ -157,22 +156,5 @@ class AccessDeniedListenerTest extends WebTestCase
         $entityManager->flush();
 
         return $this->testUser;
-    }
-
-    private function getUserByEmail(string $email): User
-    {
-        $container = static::getContainer();
-        /** @var UserRepository $userRepository */
-        $userRepository = $container->get(UserRepository::class);
-
-        $user = $userRepository->findOneBy([
-            'email' => $email,
-        ]);
-
-        if (!$user instanceof User) {
-            throw new \RuntimeException(sprintf('User with email "%s" not found', $email));
-        }
-
-        return $user;
     }
 }
