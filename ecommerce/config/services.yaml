@@ -30,6 +30,10 @@ when@dev: &config
             exclude:
                 - '../src/EcommerceApi/'
 
+        Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider:
+            arguments:
+                $environment: '%kernel.environment%'
+
         # add more service definitions when explicit configuration is needed
         # please note that last definitions always *replace* previous ones
 
@@ -64,6 +68,10 @@ when@test:
             resource: '../src/'
             exclude:
                 - '../src/EcommerceApi/'
+
+        Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider:
+            arguments:
+                $environment: '%kernel.environment%'
 
         # Use the simple mocked payment service for tests
         Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment\MockPaymentService:
