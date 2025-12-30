@@ -18,6 +18,11 @@ when@dev: &config
                 $projectDir: '%kernel.project_dir%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService'
 
+        # Auto-tag all setting controllers that implement EcommerceSettingsInterface
+        _instanceof:
+            Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface:
+                tags: ['wsei_ecommerce.admin.setting']
+
         # makes classes in src/ available to be used as services
         # this creates a service per class whose id is the fully-qualified class name
         Wsei\Ecommerce\:
@@ -49,6 +54,11 @@ when@test:
             bind:
                 $projectDir: '%kernel.project_dir%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment\MockPaymentService'
+
+        # Auto-tag all setting controllers that implement EcommerceSettingsInterface
+        _instanceof:
+            Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface:
+                tags: ['wsei_ecommerce.admin.setting']
 
         Wsei\Ecommerce\:
             resource: '../src/'

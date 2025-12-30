@@ -115,6 +115,234 @@ make stop
   - Providers: `admin_user_provider` not `app_user_provider`
 - Keep admin functionality clearly separated from public-facing features
 
+### Admin Settings Plugin System
+The application uses a **plugin-like architecture** for admin settings, allowing easy extension without modifying core code.
+
+#### Settings Controller Architecture
+- **Main Controller:** `Wsei\Ecommerce\Controller\Admin\SettingsController` - Discovers and displays all registered settings
+- **Setting Controllers:** `Wsei\Ecommerce\Controller\Admin\Settings\{SettingName}\*` - Individual setting implementations in their own directories
+- **Interface:** `Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface` - Required interface for all settings
+
+#### Directory Structure
+Each setting should be organized in its own directory:
+```
+src/Controller/Admin/Settings/
+├── Example/
+│   └── ExampleSettingController.php
+├── General/
+│   └── GeneralSettingController.php
+└── Payment/
+    └── PaymentSettingController.php
+
+templates/admin/pages/settings/
+├── base.html.twig (shared base template)
+├── index.html.twig (settings grid)
+├── example/
+│   └── index.html.twig
+├── general/
+│   └── index.html.twig
+└── payment/
+    └── index.html.twig
+```
+
+#### Creating a New Setting
+1. Create directory in `src/Controller/Admin/Settings/{SettingName}/`
+2. Create controller class implementing `EcommerceSettingsInterface`
+3. Create template directory in `templates/admin/pages/settings/{settingname}/`
+4. Create `index.html.twig` extending the settings base template
+5. Define route following the pattern: `admin.settings.{name}.index`
+6. Add `#[IsGranted('ROLE_ADMIN')]` security attribute
+7. Auto-tagging happens automatically via service configuration
+
+**Example Setting Controller:**
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace Wsei\Ecommerce\Controller\Admin\Settings\General;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface;
+
+#[Route('/admin/settings/general', name: 'admin.settings.general.')]
+#[IsGranted('ROLE_ADMIN')]
+class GeneralSettingController extends AbstractController implements EcommerceSettingsInterface
+{
+    public function getName(): string
+    {
+        return 'General Settings';
+    }
+
+    public function getIcon(): string
+    {
+        return 'settings.svg'; // Icon filename from public/img/icons/
+    }
+
+    public function getDescription(): ?string
+    {
+        return 'Configure general shop information and preferences';
+    }
+
+    public function getPosition(): int
+    {
+        return 10; // Lower numbers appear first; when equal, alphabetical sorting applies
+    }
+
+    public function getPathEntrypointName(): string
+    {
+        return 'admin.settings.general.index'; // Must match route name
+    }
+
+    #[Route('', name: 'index', methods: ['GET'])]
+    public function index(): Response
+    {
+        return $this->render('admin/pages/settings/general/index.html.twig');
+    }
+}
+```
+
+#### Interface Methods
+```php
+interface EcommerceSettingsInterface
+{
+    // Display name shown in settings grid
+    public function getName(): string;
+    
+    // Icon filename from public/img/icons/ (e.g., 'settings.svg')
+    public function getIcon(): string;
+    
+    // Optional description shown below the name
+    public function getDescription(): ?string;
+    
+    // Display order (lower = first; ties sorted alphabetically)
+    public function getPosition(): int;
+    
+    // Route name for this setting (must follow admin.settings.* pattern)
+    public function getPathEntrypointName(): string;
+}
+```
+
+#### SettingItem DTO
+The `SettingItem` class is a Data Transfer Object (DTO) that represents a single setting item in the admin panel. It provides:
+
+- **Type-safe property access**: All properties are typed and readonly
+- **Factory method**: `SettingItem::fromController()` creates instances from `EcommerceSettingsInterface`
+- **Built-in sorting**: `compareTo()` method for position-based and alphabetical sorting
+
+```php
+final class SettingItem
+{
+    public readonly string $name;
+    public readonly ?string $description;
+    public readonly string $icon;
+    public readonly string $url;
+    public readonly int $position;
+
+    public static function fromController(
+        EcommerceSettingsInterface $controller,
+        string $url
+    ): self;
+
+    public function compareTo(self $other): int;
+}
+```
+}
+```
+
+#### Route Naming Convention
+- **Pattern:** `admin.settings.{name}`
+- **Examples:**
+  - `admin.settings.general` - General shop settings
+  - `admin.settings.payment` - Payment configuration
+  - `admin.settings.shipping` - Shipping options
+  - `admin.settings.tax` - Tax configuration
+
+#### Position Guidelines
+- **0-99:** Core/essential settings (e.g., General, Shop Info)
+- **100-199:** Business logic settings (e.g., Payment, Shipping)
+- **200-299:** Advanced/optional settings (e.g., SEO, Analytics)
+- **300+:** Extension/plugin settings
+
+When positions are equal, settings are sorted alphabetically by name.
+
+#### Service Configuration
+All controllers implementing `EcommerceSettingsInterface` are automatically tagged with `wsei_ecommerce.admin.setting` via auto-configuration in `config/services.yaml`:
+
+```yaml
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+    
+    # Auto-tag all setting controllers that implement EcommerceSettingsInterface
+    _instanceof:
+        Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface:
+            tags: ['wsei_ecommerce.admin.setting']
+```
+
+The configuration uses Symfony's `_instanceof` feature to automatically tag any service implementing the `EcommerceSettingsInterface`, making new settings discoverable without manual registration.
+
+#### Template Structure
+- **Settings Index:** `templates/admin/pages/settings/index.html.twig` - Grid layout showing all settings
+- **Settings Base:** `templates/admin/pages/settings/base.html.twig` - Base template for all setting pages with back button
+- **Individual Settings:** `templates/admin/pages/settings/{settingname}/index.html.twig` - Each setting's view in its own directory
+- **Grid Layout:** 2 columns on desktop, 1 column on mobile
+
+Each setting should have its own template directory matching the controller structure:
+```
+templates/admin/pages/settings/
+├── base.html.twig          # Shared base template
+├── index.html.twig         # Settings grid
+├── example/
+│   └── index.html.twig     # Example setting view
+└── general/
+    └── index.html.twig     # General setting view
+```
+
+All individual setting templates should extend `admin/pages/settings/base.html.twig`:
+
+```twig
+{% extends 'admin/pages/settings/base.html.twig' %}
+
+{% block title %}Your Setting Name{% endblock %}
+
+{% block settings_title %}Your Setting Name{% endblock %}
+
+{% block settings_content %}
+    <div class="card">
+        {# Your setting content here #}
+    </div>
+{% endblock %}
+```
+
+The base template automatically provides:
+- Back button to settings index
+- Consistent header structure
+- Proper admin container layout
+
+#### Best Practices
+- Keep setting controllers focused on single responsibility
+- Use meaningful position values to group related settings
+- Provide clear, concise descriptions for better UX
+- Follow the route naming convention strictly: `admin.settings.*`
+- Always use `#[IsGranted('ROLE_ADMIN')]` for security
+- Store setting-specific logic in dedicated service classes
+- Use appropriate icons from `public/img/icons/` directory
+
+#### Discovery Mechanism
+The main `SettingsController` automatically:
+1. Injects all tagged services via `#[TaggedIterator('wsei_ecommerce.admin.setting')]`
+2. Extracts metadata (name, icon, description, position) from each setting
+3. Generates URLs using `RouterInterface` and `getPathEntrypointName()`
+4. Sorts by position (ascending), then alphabetically by name
+5. Renders settings grid with clickable cards
+
+No manual registration required - just create a controller implementing the interface!
+
 ## Symfony-Specific Guidelines
 
 ### Framework Conventions

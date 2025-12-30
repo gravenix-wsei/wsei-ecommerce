@@ -36,6 +36,12 @@
                     <span class="admin-menu-text">Orders</span>
                 </a>
             </li>
+            <li class="admin-menu-item">
+                <a href="{{ path('admin.settings.index') }}" class="admin-menu-link {% if app.request.attributes.get('_route') starts with 'admin.settings' %}active{% endif %}">
+                    <span class="admin-menu-icon">{{ svg('img/icons/settings.svg', {class: 'icon'}) }}</span>
+                    <span class="admin-menu-text">Settings</span>
+                </a>
+            </li>
         </ul>
     </nav>
 
