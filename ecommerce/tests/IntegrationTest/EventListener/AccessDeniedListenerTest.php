@@ -139,11 +139,6 @@ class AccessDeniedListenerTest extends WebTestCase
         static::assertSelectorExists('.error-title');
     }
 
-    private function getSuperAdminUser(): User
-    {
-        return $this->getUserByEmail('admin');
-    }
-
     /**
      * @param string[] $roles
      */
