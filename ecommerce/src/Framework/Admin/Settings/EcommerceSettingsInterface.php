@@ -32,4 +32,11 @@ interface EcommerceSettingsInterface
      * Must follow the pattern: admin.settings.{name}
      */
     public function getPathEntrypointName(): string;
+
+    /**
+     * Get the required role to access this setting
+     * Return null if accessible to all admin users (ROLE_ADMIN+)
+     * Return specific role (e.g., 'ROLE_SUPER_ADMIN') to restrict access
+     */
+    public function getRequiredRole(): ?string;
 }

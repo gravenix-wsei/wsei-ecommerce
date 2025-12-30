@@ -10,6 +10,9 @@ security:
                 class: Wsei\Ecommerce\Entity\User
                 property: email
 
+    role_hierarchy:
+        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
+
     firewalls:
         dev:
             # Ensure dev tools and static assets are always allowed
