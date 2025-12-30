@@ -42,7 +42,7 @@
             <directory>src/Form/Admin</directory>
             <file>src/Framework/Payment/Stripe/StripeClient.php</file>
             <file>src/Controller/Admin/SettingsController.php</file>
-            <file>src/Controller/Admin/Settings/AdminUser/AdminUsersController.php</file>
+            <file>src/Controller/Admin/Settings/AdminUsers/AdminUsersController.php</file>
             <file>src/Framework/Security/AdminRole.php</file>
         </exclude>
 
