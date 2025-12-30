@@ -41,6 +41,7 @@
             <directory>src/Entity</directory>
             <directory>src/Form/Admin</directory>
             <file>src/Framework/Payment/Stripe/StripeClient.php</file>
+            <file>src/Controller/Admin/SettingsController.php</file>
         </exclude>
 
         <deprecationTrigger>

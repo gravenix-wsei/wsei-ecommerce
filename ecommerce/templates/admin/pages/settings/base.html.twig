@@ -1,0 +1,14 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block content %}
+<div class="admin-header">
+    <h1>{% block settings_title %}{% endblock %}</h1>
+    <a href="{{ path('admin.settings.index') }}" class="btn btn-secondary">
+        {{ svg('img/icons/arrow-left.svg', {class: 'icon'}) }}
+        Back to Settings
+    </a>
+</div>
+
+{% block settings_content %}{% endblock %}
+{% endblock %}
+

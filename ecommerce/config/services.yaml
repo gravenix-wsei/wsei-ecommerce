@@ -18,12 +18,21 @@ when@dev: &config
                 $projectDir: '%kernel.project_dir%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService'
 
+        # Auto-tag all setting controllers that implement EcommerceSettingsInterface
+        _instanceof:
+            Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface:
+                tags: ['wsei_ecommerce.admin.setting']
+
         # makes classes in src/ available to be used as services
         # this creates a service per class whose id is the fully-qualified class name
         Wsei\Ecommerce\:
             resource: '../src/'
             exclude:
                 - '../src/EcommerceApi/'
+
+        Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider:
+            arguments:
+                $environment: '%kernel.environment%'
 
         # add more service definitions when explicit configuration is needed
         # please note that last definitions always *replace* previous ones
@@ -50,10 +59,19 @@ when@test:
                 $projectDir: '%kernel.project_dir%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment\MockPaymentService'
 
+        # Auto-tag all setting controllers that implement EcommerceSettingsInterface
+        _instanceof:
+            Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface:
+                tags: ['wsei_ecommerce.admin.setting']
+
         Wsei\Ecommerce\:
             resource: '../src/'
             exclude:
                 - '../src/EcommerceApi/'
+
+        Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider:
+            arguments:
+                $environment: '%kernel.environment%'
 
         # Use the simple mocked payment service for tests
         Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment\MockPaymentService:
