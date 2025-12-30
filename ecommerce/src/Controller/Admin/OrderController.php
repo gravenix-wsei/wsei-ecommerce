@@ -16,7 +16,7 @@ use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransitionInterface;
 use Wsei\Ecommerce\Repository\OrderRepository;
 
 #[Route('/admin/orders')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.ORDER')]
 class OrderController extends AbstractController
 {
     private const ORDERS_PER_PAGE = 20;

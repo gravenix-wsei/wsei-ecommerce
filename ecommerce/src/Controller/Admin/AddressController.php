@@ -16,7 +16,7 @@ use Wsei\Ecommerce\Form\Admin\AddressType;
 use Wsei\Ecommerce\Repository\AddressRepository;
 
 #[Route('/admin/customer/{customerId}/address')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.CUSTOMER')]
 class AddressController extends AbstractController
 {
     public function __construct(

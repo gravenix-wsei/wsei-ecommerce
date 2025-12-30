@@ -11,7 +11,14 @@ security:
                 property: email
 
     role_hierarchy:
-        ROLE_SUPER_ADMIN: [ROLE_ADMIN]
+        ROLE_ADMIN: []
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+            - ROLE_ADMIN.PRODUCT
+            - ROLE_ADMIN.CATEGORY
+            - ROLE_ADMIN.CUSTOMER
+            - ROLE_ADMIN.ORDER
+            - ROLE_ADMIN.CONFIG
 
     firewalls:
         dev:

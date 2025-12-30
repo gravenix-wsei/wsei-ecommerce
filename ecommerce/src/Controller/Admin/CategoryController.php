@@ -15,7 +15,7 @@ use Wsei\Ecommerce\Form\Admin\CategoryType;
 use Wsei\Ecommerce\Repository\CategoryRepository;
 
 #[Route('/admin/category')]
-#[IsGranted('ROLE_ADMIN')]
+#[IsGranted('ROLE_ADMIN.CATEGORY')]
 class CategoryController extends AbstractController
 {
     public function __construct(
