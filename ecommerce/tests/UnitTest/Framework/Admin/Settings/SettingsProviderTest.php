@@ -41,12 +41,12 @@ class SettingsProviderTest extends TestCase
         $settings = $provider->getSettings();
 
         // Assert
-        $this->assertCount(count($expectedSettings), $settings);
+        static::assertCount(count($expectedSettings), $settings);
         foreach ($expectedSettings as $index => $expected) {
-            $this->assertInstanceOf(SettingItem::class, $settings[$index]);
-            $this->assertSame($expected['name'], $settings[$index]->name);
-            $this->assertSame($expected['position'], $settings[$index]->position);
-            $this->assertSame($expected['icon'], $settings[$index]->icon);
+            static::assertInstanceOf(SettingItem::class, $settings[$index]);
+            static::assertSame($expected['name'], $settings[$index]->name);
+            static::assertSame($expected['position'], $settings[$index]->position);
+            static::assertSame($expected['icon'], $settings[$index]->icon);
         }
     }
 
@@ -70,7 +70,7 @@ class SettingsProviderTest extends TestCase
 
         // Assert
         $actualNames = array_map(fn (SettingItem $item): string => $item->name, $settings);
-        $this->assertSame($expectedOrder, $actualNames);
+        static::assertSame($expectedOrder, $actualNames);
     }
 
     public function testGetSettingsHandlesInvalidRoutesInProduction(): void
@@ -93,9 +93,9 @@ class SettingsProviderTest extends TestCase
         $settings = $provider->getSettings();
 
         // Assert - only valid setting should be returned
-        $this->assertCount(1, $settings);
-        $this->assertInstanceOf(SettingItem::class, $settings[0]);
-        $this->assertSame('Valid', $settings[0]->name);
+        static::assertCount(1, $settings);
+        static::assertInstanceOf(SettingItem::class, $settings[0]);
+        static::assertSame('Valid', $settings[0]->name);
     }
 
     public function testGetSettingsReturnsEmptyArrayWhenNoSettings(): void
@@ -107,8 +107,7 @@ class SettingsProviderTest extends TestCase
         $settings = $provider->getSettings();
 
         // Assert
-        $this->assertIsArray($settings);
-        $this->assertEmpty($settings);
+        static::assertEmpty($settings);
     }
 
     public function testSettingItemFactoryMethodCreatesCorrectInstance(): void
@@ -127,12 +126,12 @@ class SettingsProviderTest extends TestCase
         $settingItem = SettingItem::fromController($settingController, $url);
 
         // Assert
-        $this->assertInstanceOf(SettingItem::class, $settingItem);
-        $this->assertSame('Test Setting', $settingItem->name);
-        $this->assertSame('test.svg', $settingItem->icon);
-        $this->assertSame($url, $settingItem->url);
-        $this->assertSame(50, $settingItem->position);
-        $this->assertSame('Test description', $settingItem->description);
+        static::assertInstanceOf(SettingItem::class, $settingItem);
+        static::assertSame('Test Setting', $settingItem->name);
+        static::assertSame('test.svg', $settingItem->icon);
+        static::assertSame($url, $settingItem->url);
+        static::assertSame(50, $settingItem->position);
+        static::assertSame('Test description', $settingItem->description);
     }
 
     public function testSettingItemCompareTo(): void
@@ -143,12 +142,12 @@ class SettingsProviderTest extends TestCase
         $item3 = new SettingItem('Gamma', null, 'g.svg', '/g', 50);
 
         // Act & Assert - position takes precedence
-        $this->assertLessThan(0, $item3->compareTo($item1));
-        $this->assertGreaterThan(0, $item1->compareTo($item3));
+        static::assertLessThan(0, $item3->compareTo($item1));
+        static::assertGreaterThan(0, $item1->compareTo($item3));
 
         // Act & Assert - alphabetical when positions equal
-        $this->assertLessThan(0, $item1->compareTo($item2));
-        $this->assertGreaterThan(0, $item2->compareTo($item1));
+        static::assertLessThan(0, $item1->compareTo($item2));
+        static::assertGreaterThan(0, $item2->compareTo($item1));
     }
 
     /**
