@@ -9,6 +9,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Symfony\Component\Routing\RouterInterface;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Wsei\Ecommerce\Framework\Admin\Settings\EcommerceSettingsInterface;
 use Wsei\Ecommerce\Framework\Admin\Settings\SettingItem;
 use Wsei\Ecommerce\Framework\Admin\Settings\SettingsProvider;
@@ -17,9 +18,15 @@ class SettingsProviderTest extends TestCase
 {
     private RouterInterface&MockObject $router;
 
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
+        $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);
+
+        // By default, grant all permissions in tests
+        $this->authorizationChecker->method('isGranted')->willReturn(true);
     }
 
     /**
@@ -35,7 +42,7 @@ class SettingsProviderTest extends TestCase
     ): void {
         // Arrange
         $this->configureRouterWithMap($routeMap);
-        $provider = new SettingsProvider($settingControllers, $this->router, 'test');
+        $provider = new SettingsProvider($settingControllers, $this->router, 'test', $this->authorizationChecker);
 
         // Act
         $settings = $provider->getSettings();
@@ -63,7 +70,7 @@ class SettingsProviderTest extends TestCase
     ): void {
         // Arrange
         $this->configureRouterWithMap($routeMap);
-        $provider = new SettingsProvider($settingControllers, $this->router, 'test');
+        $provider = new SettingsProvider($settingControllers, $this->router, 'test', $this->authorizationChecker);
 
         // Act
         $settings = $provider->getSettings();
@@ -87,7 +94,10 @@ class SettingsProviderTest extends TestCase
                 return '/admin/settings/valid';
             });
 
-        $provider = new SettingsProvider([$validSetting, $invalidSetting], $this->router, 'prod');
+        $provider = new SettingsProvider([
+            $validSetting,
+            $invalidSetting,
+        ], $this->router, 'prod', $this->authorizationChecker);
 
         // Act
         $settings = $provider->getSettings();
@@ -101,7 +111,7 @@ class SettingsProviderTest extends TestCase
     public function testGetSettingsReturnsEmptyArrayWhenNoSettings(): void
     {
         // Arrange
-        $provider = new SettingsProvider([], $this->router, 'test');
+        $provider = new SettingsProvider([], $this->router, 'test', $this->authorizationChecker);
 
         // Act
         $settings = $provider->getSettings();
@@ -285,6 +295,7 @@ class SettingsProviderTest extends TestCase
         $setting->method('getPathEntrypointName')->willReturn($route);
         $setting->method('getPosition')->willReturn($position);
         $setting->method('getDescription')->willReturn($description);
+        $setting->method('getRequiredRole')->willReturn(null);
 
         return $setting;
     }
@@ -329,6 +340,11 @@ class SettingsProviderTest extends TestCase
             public function getPathEntrypointName(): string
             {
                 return $this->route;
+            }
+
+            public function getRequiredRole(): ?string
+            {
+                return null;
             }
         };
     }
