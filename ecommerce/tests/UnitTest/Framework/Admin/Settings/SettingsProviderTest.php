@@ -50,7 +50,6 @@ class SettingsProviderTest extends TestCase
         }
     }
 
-
     /**
      * @param array<EcommerceSettingsInterface> $settingControllers
      * @param array<string, string> $routeMap
@@ -152,7 +151,6 @@ class SettingsProviderTest extends TestCase
         $this->assertGreaterThan(0, $item2->compareTo($item1));
     }
 
-
     /**
      * @return array<string, array{settingControllers: array<EcommerceSettingsInterface>, routeMap: array<string, string>, expectedSettings: array<int, array{name: string, position: int, icon: string}>}>
      */
@@ -167,7 +165,11 @@ class SettingsProviderTest extends TestCase
                     'admin.settings.general.index' => '/admin/settings/general',
                 ],
                 'expectedSettings' => [
-                    ['name' => 'General', 'position' => 10, 'icon' => 'settings.svg'],
+                    [
+                        'name' => 'General',
+                        'position' => 10,
+                        'icon' => 'settings.svg',
+                    ],
                 ],
             ],
             'multiple settings sorted by position' => [
@@ -182,9 +184,21 @@ class SettingsProviderTest extends TestCase
                     'admin.settings.shipping.index' => '/admin/settings/shipping',
                 ],
                 'expectedSettings' => [
-                    ['name' => 'General', 'position' => 10, 'icon' => 'general.svg'],
-                    ['name' => 'Payment', 'position' => 100, 'icon' => 'payment.svg'],
-                    ['name' => 'Shipping', 'position' => 150, 'icon' => 'shipping.svg'],
+                    [
+                        'name' => 'General',
+                        'position' => 10,
+                        'icon' => 'general.svg',
+                    ],
+                    [
+                        'name' => 'Payment',
+                        'position' => 100,
+                        'icon' => 'payment.svg',
+                    ],
+                    [
+                        'name' => 'Shipping',
+                        'position' => 150,
+                        'icon' => 'shipping.svg',
+                    ],
                 ],
             ],
         ];
@@ -224,7 +238,12 @@ class SettingsProviderTest extends TestCase
             ],
             'mixed sorting: position then alphabetically' => [
                 'settingControllers' => [
-                    self::createStaticSettingMock('Payment Gateway', 'payment.svg', 'admin.settings.payment.index', 100),
+                    self::createStaticSettingMock(
+                        'Payment Gateway',
+                        'payment.svg',
+                        'admin.settings.payment.index',
+                        100
+                    ),
                     self::createStaticSettingMock('General', 'general.svg', 'admin.settings.general.index', 10),
                     self::createStaticSettingMock('Analytics', 'analytics.svg', 'admin.settings.analytics.index', 100),
                     self::createStaticSettingMock('Shop Info', 'info.svg', 'admin.settings.info.index', 10),
@@ -253,7 +272,6 @@ class SettingsProviderTest extends TestCase
                 return $routeMap[$route];
             });
     }
-
 
     private function createSettingMock(
         string $name,

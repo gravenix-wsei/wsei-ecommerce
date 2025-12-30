@@ -43,9 +43,8 @@ final readonly class SettingsProvider
             }
         }
 
-        usort($settings, fn(SettingItem $a, SettingItem $b): int => $a->compareTo($b));
+        usort($settings, fn (SettingItem $a, SettingItem $b): int => $a->compareTo($b));
 
         return $settings;
     }
 }
-
