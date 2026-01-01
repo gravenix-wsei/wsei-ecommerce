@@ -1,0 +1,16 @@
+# Playwright artifacts
+test-results/
+playwright-report/
+playwright/.cache/
+playwright/.auth/
+
+# Environment files with credentials
+.env
+
+# Node modules
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
