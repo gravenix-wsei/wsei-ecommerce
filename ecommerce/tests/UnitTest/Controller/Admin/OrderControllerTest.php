@@ -45,11 +45,15 @@ class OrderControllerTest extends TestCase
     }
 
     #[DataProvider('providePageParameters')]
-    public function testIndexPassesCorrectPageNumberToRepository(int $requestedPage, int $expectedPage): void
-    {
+    public function testIndexPassesCorrectPageNumberToRepository(
+        int|string|null $requestedPage,
+        int $expectedPage
+    ): void {
         // Arrange
         $request = new Request([], [], [], [], [], [], null);
-        $request->query->set('page', $requestedPage);
+        if ($requestedPage !== null) {
+            $request->query->set('page', $requestedPage);
+        }
 
         // Assert - Verify correct page is passed to repository
         $this->orderRepository->expects(static::once())
@@ -65,7 +69,7 @@ class OrderControllerTest extends TestCase
     }
 
     /**
-     * @return array<string, array{requestedPage: int, expectedPage: int}>
+     * @return array<string, array{requestedPage: int|string|null, expectedPage: int}>
      */
     public static function providePageParameters(): array
     {
@@ -86,6 +90,14 @@ class OrderControllerTest extends TestCase
                 'requestedPage' => -5,
                 'expectedPage' => 1,
             ],
+            'not requested page parameter' => [
+                'requestedPage' => null,
+                'expectedPage' => 1,
+            ],
+            'string as page parameter' => [
+                'requestedPage' => 'foo',
+                'expectedPage' => 1,
+            ],
         ];
     }
 
@@ -100,8 +112,8 @@ class OrderControllerTest extends TestCase
         // Assert - Verify correct template path
         $this->controller->expects(static::once())
             ->method('render')
-            ->with('admin/pages/order/index.html.twig', $this->anything())
-            ->willReturn(new Response());
+            ->with('admin/pages/order/index.html.twig', static::anything())
+            ->willReturn($this->createMock(Response::class));
 
         // Act
         $this->controller->index($request);
@@ -129,7 +141,7 @@ class OrderControllerTest extends TestCase
                     return $params['totalPages'] === $expectedTotalPages;
                 })
             )
-            ->willReturn(new Response());
+            ->willReturn($this->createMock(Response::class));
 
         // Act
         $this->controller->index($request);
@@ -165,17 +177,26 @@ class OrderControllerTest extends TestCase
         ];
     }
 
-    public function testShowRendersOrderDetailsWithForm(): void
-    {
+    #[DataProvider('provideShowRendersOrderDetailsWithForm')]
+    public function testShowRendersOrderDetailsWithForm(
+        bool $expectRedirectInsteadOfRendering,
+        bool $isSubmitted,
+        bool $isValid = true,
+        bool $isStatusChangeAllowed = true,
+        ?string $flashTypeAdded = null,
+        string $flashMessage = ''
+    ): void {
         // Arrange
+        $orderId = 123;
         $request = new Request();
         $order = $this->createMock(Order::class);
+        $order->method('getStatus')->willReturn(OrderStatus::NEW);
 
-        $order->method('getId')->willReturn(123);
+        $order->method('getId')->willReturn($orderId);
         $order->method('getStatus')->willReturn(OrderStatus::NEW);
         $this->controller = $this->getMockBuilder(OrderController::class)
             ->setConstructorArgs([$this->entityManager, $this->orderRepository, $this->statusTransition])
-            ->onlyMethods(['render', 'createForm'])
+            ->onlyMethods(['render', 'addFlash', 'createForm', 'redirectToRoute'])
             ->getMock();
 
         $form = $this->createMock(FormInterface::class);
@@ -183,151 +204,84 @@ class OrderControllerTest extends TestCase
             ->method('handleRequest')
             ->with($request);
 
-        $form->expects(static::once())
-            ->method('isSubmitted')
-            ->willReturn(false);
+        $form->expects(static::once())->method('isSubmitted')
+            ->willReturn($isSubmitted);
+
+        $form->expects($isSubmitted ? static::once() : static::never())
+            ->method('isValid')
+            ->willReturn($isValid);
 
         $this->controller->expects(static::once())
             ->method('createForm')
             ->willReturn($form);
 
+        $this->statusTransition
+            ->method('canTransitionTo')
+            ->willReturn($isStatusChangeAllowed);
+
+        $this->entityManager
+            ->expects(($isSubmitted && $isValid && $isStatusChangeAllowed) ? static::once() : static::never())
+            ->method('flush');
+
+        if ($flashTypeAdded) {
+            $this->controller->expects(static::once())
+                ->method('addFlash')
+                ->with($flashTypeAdded, static::stringContains($flashMessage));
+        }
+
         // Assert
-        $this->controller->expects(static::once())
+        $this->controller->expects($expectRedirectInsteadOfRendering ? static::once() : static::never())
+            ->method('redirectToRoute')
+            ->with('admin.order.show', [
+                'id' => $orderId,
+            ])
+            ->willReturn($this->createMock(RedirectResponse::class));
+        $this->controller->expects($expectRedirectInsteadOfRendering ? static::never() : static::once())
             ->method('render')
             ->with(
                 'admin/pages/order/show.html.twig',
                 self::callback(fn (array $params) => isset($params['order'], $params['form']))
             )
-            ->willReturn(new Response());
+            ->willReturn($this->createMock(Response::class));
 
         // Act
         $this->controller->show($request, $order);
     }
 
-    public function testShowValidatesStatusTransitionAndRejectsInvalidChange(): void
+    /**
+     * @return array<string, array{
+     *     expectRedirectInsteadOfRendering: bool,
+     *     isSubmitted: bool,
+     *     isValid?: bool,
+     *     isStatusChangeAllowed?: bool,
+     *     flashTypeAdded?: string,
+     *     flashMessage?: string}>
+     */
+    public static function provideShowRendersOrderDetailsWithForm(): array
     {
-        // Arrange
-        $request = new Request();
-        $order = $this->createMock(Order::class);
-
-        $originalStatus = OrderStatus::DELIVERED;
-        $newStatus = OrderStatus::NEW;
-
-        $order->method('getId')->willReturn(123);
-        // getStatus() is called twice: once for originalStatus, once for newStatus
-        $order->expects(static::exactly(2))
-            ->method('getStatus')
-            ->willReturnOnConsecutiveCalls($originalStatus, $newStatus);
-
-        $this->controller = $this->getMockBuilder(OrderController::class)
-            ->setConstructorArgs([$this->entityManager, $this->orderRepository, $this->statusTransition])
-            ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute'])
-            ->getMock();
-
-        $form = $this->createMock(FormInterface::class);
-
-        // Assert
-        $form->expects(static::once())
-            ->method('handleRequest')
-            ->with($request);
-
-        $form->expects(static::once())
-            ->method('isSubmitted')
-            ->willReturn(true);
-
-        $form->expects(static::once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $this->controller->expects(static::once())
-            ->method('createForm')
-            ->willReturn($form);
-
-        $this->statusTransition->expects(static::once())
-            ->method('canTransitionTo')
-            ->with($originalStatus, $newStatus)
-            ->willReturn(false); // Invalid transition
-
-        $this->entityManager->expects(static::never())
-            ->method('flush');
-
-        $this->controller->expects(static::once())
-            ->method('addFlash')
-            ->with('error', static::stringContains('Invalid status transition'));
-
-        $this->controller->expects(static::once())
-            ->method('redirectToRoute')
-            ->with('admin.order.show', [
-                'id' => 123,
-            ])
-            ->willReturn(new RedirectResponse('/admin/orders/123'));
-
-        // Act
-        $this->controller->show($request, $order);
-    }
-
-    public function testShowAcceptsValidStatusTransitionAndSavesChanges(): void
-    {
-        // Arrange
-        $request = new Request();
-        $order = $this->createMock(Order::class);
-
-        $originalStatus = OrderStatus::NEW;
-        $newStatus = OrderStatus::PENDING_PAYMENT;
-
-        $order->method('getId')->willReturn(123);
-        // getStatus() is called twice: once for originalStatus, once for newStatus
-        $order->expects(static::exactly(2))
-            ->method('getStatus')
-            ->willReturnOnConsecutiveCalls($originalStatus, $newStatus);
-
-        // Create partial mock to also mock createForm, addFlash, redirectToRoute
-        $this->controller = $this->getMockBuilder(OrderController::class)
-            ->setConstructorArgs([$this->entityManager, $this->orderRepository, $this->statusTransition])
-            ->onlyMethods(['createForm', 'addFlash', 'redirectToRoute'])
-            ->getMock();
-
-        $form = $this->createMock(\Symfony\Component\Form\FormInterface::class);
-        $form->expects(static::once())
-            ->method('handleRequest')
-            ->with($request);
-
-        $form->expects(static::once())
-            ->method('isSubmitted')
-            ->willReturn(true);
-
-        $form->expects(static::once())
-            ->method('isValid')
-            ->willReturn(true);
-
-        $this->controller->expects(static::once())
-            ->method('createForm')
-            ->willReturn($form);
-
-        // Assert - StatusTransition should be called to validate
-        $this->statusTransition->expects(static::once())
-            ->method('canTransitionTo')
-            ->with($originalStatus, $newStatus)
-            ->willReturn(true); // Valid transition
-
-        // Assert - EntityManager flush SHOULD be called
-        $this->entityManager->expects(static::once())
-            ->method('flush');
-
-        // Assert - Success flash message should be added
-        $this->controller->expects(static::once())
-            ->method('addFlash')
-            ->with('success', 'Order status has been updated successfully.');
-
-        // Assert - Should redirect back
-        $this->controller->expects(static::once())
-            ->method('redirectToRoute')
-            ->with('admin.order.show', [
-                'id' => 123,
-            ])
-            ->willReturn(new RedirectResponse('/admin/orders/123'));
-
-        // Act
-        $this->controller->show($request, $order);
+        return [
+            'submitted form with invalid data' => [
+                'expectRedirectInsteadOfRendering' => false,
+                'isSubmitted' => true,
+                'isValid' => false,
+            ],
+            'submitted form with valid data' => [
+                'expectRedirectInsteadOfRendering' => true,
+                'isSubmitted' => true,
+                'flashTypeAdded' => 'success',
+                'flashMessage' => 'updated successfully',
+            ],
+            'renders form on GET request' => [
+                'expectRedirectInsteadOfRendering' => false,
+                'isSubmitted' => false,
+            ],
+            'transition is not allowed' => [
+                'expectRedirectInsteadOfRendering' => true,
+                'isSubmitted' => true,
+                'isStatusChangeAllowed' => false,
+                'flashTypeAdded' => 'error',
+                'flashMessage' => 'invalid status transition',
+            ],
+        ];
     }
 }

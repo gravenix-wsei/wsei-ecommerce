@@ -76,7 +76,7 @@ php-run-tests: ## Run PHP unit tests with coverage report
 
 php-coverage-check: ## Check coverage for changed files (requires diff-cover: pip install diff-cover)
 	@echo "Running tests with coverage..."
-	@docker compose exec -u www-data php composer test:coverage
+	@docker compose exec -u www-data php composer test:coverage $(FLAGS)
 	@echo ""
 	@if command -v diff-cover >/dev/null 2>&1; then \
 		echo "Checking coverage for changed files against master branch..."; \
