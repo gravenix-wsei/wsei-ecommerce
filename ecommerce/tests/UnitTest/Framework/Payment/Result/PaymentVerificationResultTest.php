@@ -20,11 +20,11 @@ class PaymentVerificationResultTest extends TestCase
         $result = PaymentVerificationResult::success($order, $returnUrl);
 
         // Assert
-        $this->assertTrue($result->isSuccess());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals($returnUrl, $result->getReturnUrl());
-        $this->assertTrue($result->hasReturnUrl());
-        $this->assertNull($result->getMessage());
+        static::assertTrue($result->isSuccess());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals($returnUrl, $result->getReturnUrl());
+        static::assertTrue($result->hasReturnUrl());
+        static::assertNull($result->getMessage());
     }
 
     public function testCanCreateFailedVerificationResultWithMessage(): void
@@ -36,11 +36,11 @@ class PaymentVerificationResultTest extends TestCase
         $result = PaymentVerificationResult::failure($message);
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertEquals($message, $result->getMessage());
-        $this->assertNull($result->getOrder());
-        $this->assertEquals('', $result->getReturnUrl());
-        $this->assertFalse($result->hasReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertEquals($message, $result->getMessage());
+        static::assertNull($result->getOrder());
+        static::assertEquals('', $result->getReturnUrl());
+        static::assertFalse($result->hasReturnUrl());
     }
 
     public function testCanCreateFailedVerificationResultWithOrderAndReturnUrl(): void
@@ -54,11 +54,11 @@ class PaymentVerificationResultTest extends TestCase
         $result = PaymentVerificationResult::failure($message, $order, $returnUrl);
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertEquals($message, $result->getMessage());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals($returnUrl, $result->getReturnUrl());
-        $this->assertTrue($result->hasReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertEquals($message, $result->getMessage());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals($returnUrl, $result->getReturnUrl());
+        static::assertTrue($result->hasReturnUrl());
     }
 
     public function testHasReturnUrlReturnsFalseWhenReturnUrlIsNull(): void
@@ -67,7 +67,7 @@ class PaymentVerificationResultTest extends TestCase
         $result = PaymentVerificationResult::failure('Error');
 
         // Assert
-        $this->assertFalse($result->hasReturnUrl());
+        static::assertFalse($result->hasReturnUrl());
     }
 
     public function testHasReturnUrlReturnsTrueWhenReturnUrlExists(): void
@@ -76,6 +76,6 @@ class PaymentVerificationResultTest extends TestCase
         $result = PaymentVerificationResult::failure('Error', null, 'https://shop.com');
 
         // Assert
-        $this->assertTrue($result->hasReturnUrl());
+        static::assertTrue($result->hasReturnUrl());
     }
 }

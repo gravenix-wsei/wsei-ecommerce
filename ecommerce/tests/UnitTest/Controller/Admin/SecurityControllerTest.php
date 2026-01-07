@@ -115,13 +115,13 @@ class SecurityControllerTest extends TestCase
             ->with('admin.dashboard')
             ->willReturn($expectedResponse);
 
-        $this->authenticationUtils->expects($this->never())
+        $this->authenticationUtils->expects(static::never())
             ->method('getLastAuthenticationError');
 
-        $this->authenticationUtils->expects($this->never())
+        $this->authenticationUtils->expects(static::never())
             ->method('getLastUsername');
 
-        $this->controller->expects($this->never())
+        $this->controller->expects(static::never())
             ->method('render');
 
         // Act

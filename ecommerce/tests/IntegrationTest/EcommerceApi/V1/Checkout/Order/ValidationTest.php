@@ -18,9 +18,9 @@ class ValidationTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('Cart is empty', $response['message']);
+        static::assertStringContainsString('Cart is empty', $response['message']);
     }
 
     public function testCannotPlaceOrderWithInvalidAddressId(): void
@@ -35,9 +35,9 @@ class ValidationTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, 99999);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('Address not found', $response['message']);
+        static::assertStringContainsString('Address not found', $response['message']);
     }
 
     public function testCannotPlaceOrderWithAddressBelongingToDifferentCustomer(): void
@@ -55,9 +55,9 @@ class ValidationTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer2, $address1->getId());
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('Address not found', $response['message']);
+        static::assertStringContainsString('Address not found', $response['message']);
     }
 
     /**
@@ -76,7 +76,7 @@ class ValidationTest extends AbstractOrderPlacementTest
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/order', $payload, $this->getAuthHeaders($customer));
 
         // Assert
-        $this->assertResponseStatusCodeSame(422);
+        static::assertResponseStatusCodeSame(422);
     }
 
     /**
@@ -124,6 +124,6 @@ class ValidationTest extends AbstractOrderPlacementTest
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(401);
+        static::assertResponseStatusCodeSame(401);
     }
 }

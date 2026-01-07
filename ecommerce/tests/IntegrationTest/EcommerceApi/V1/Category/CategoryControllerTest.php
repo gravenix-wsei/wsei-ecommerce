@@ -28,14 +28,14 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(0, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(0, $response['totalPages']);
-        $this->assertNull($response['nextPage']);
-        $this->assertNull($response['previousPage']);
+        static::assertIsArray($response['data']);
+        static::assertCount(0, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(0, $response['totalPages']);
+        static::assertNull($response['nextPage']);
+        static::assertNull($response['previousPage']);
     }
 
     public function testGetCategoriesListWithData(): void
@@ -49,24 +49,24 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['data']);
-        $this->assertCount(3, $response['data']);
+        static::assertIsArray($response['data']);
+        static::assertCount(3, $response['data']);
 
         // Verify structure of each category
         foreach ($response['data'] as $category) {
-            $this->assertArrayHasKey('id', $category);
-            $this->assertArrayHasKey('name', $category);
-            $this->assertIsInt($category['id']);
-            $this->assertIsString($category['name']);
+            static::assertArrayHasKey('id', $category);
+            static::assertArrayHasKey('name', $category);
+            static::assertIsInt($category['id']);
+            static::assertIsString($category['name']);
         }
 
         // Verify specific categories exist
         $categoryNames = array_column($response['data'], 'name');
-        $this->assertContains('Electronics', $categoryNames);
-        $this->assertContains('Books', $categoryNames);
-        $this->assertContains('Clothing', $categoryNames);
+        static::assertContains('Electronics', $categoryNames);
+        static::assertContains('Books', $categoryNames);
+        static::assertContains('Clothing', $categoryNames);
     }
 
     public function testCategoriesEndpointIsPublic(): void
@@ -78,9 +78,9 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories');
 
         // Assert - Should still work without authentication
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(1, $response['data']);
+        static::assertCount(1, $response['data']);
     }
 
     public function testCategoriesPaginationFirstPage(): void
@@ -94,13 +94,13 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories?page=1&limit=10');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(10, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
-        $this->assertStringContainsString('page=2', $response['nextPage']);
-        $this->assertNull($response['previousPage']);
+        static::assertCount(10, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
+        static::assertStringContainsString('page=2', $response['nextPage']);
+        static::assertNull($response['previousPage']);
     }
 
     public function testCategoriesPaginationMiddlePage(): void
@@ -114,13 +114,13 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories?page=2&limit=10');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(10, $response['data']);
-        $this->assertEquals(2, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
-        $this->assertStringContainsString('page=3', $response['nextPage']);
-        $this->assertStringContainsString('page=1', $response['previousPage']);
+        static::assertCount(10, $response['data']);
+        static::assertEquals(2, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
+        static::assertStringContainsString('page=3', $response['nextPage']);
+        static::assertStringContainsString('page=1', $response['previousPage']);
     }
 
     public function testCategoriesPaginationLastPage(): void
@@ -134,13 +134,13 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories?page=3&limit=10');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(5, $response['data']); // Only 5 items on last page
-        $this->assertEquals(3, $response['page']);
-        $this->assertEquals(3, $response['totalPages']);
-        $this->assertNull($response['nextPage']);
-        $this->assertStringContainsString('page=2', $response['previousPage']);
+        static::assertCount(5, $response['data']); // Only 5 items on last page
+        static::assertEquals(3, $response['page']);
+        static::assertEquals(3, $response['totalPages']);
+        static::assertNull($response['nextPage']);
+        static::assertStringContainsString('page=2', $response['previousPage']);
     }
 
     public function testCategoriesPaginationCustomLimit(): void
@@ -154,10 +154,10 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories?limit=5');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(5, $response['data']);
-        $this->assertEquals(6, $response['totalPages']); // 30 / 5 = 6 pages
+        static::assertCount(5, $response['data']);
+        static::assertEquals(6, $response['totalPages']); // 30 / 5 = 6 pages
     }
 
     public function testCategoriesPaginationInvalidPage(): void
@@ -169,9 +169,9 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories?page=999');
 
         // Assert - Should return empty data but still be successful
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(0, $response['data']);
+        static::assertCount(0, $response['data']);
     }
 
     public function testCategoriesPaginationDefaultValues(): void
@@ -185,11 +185,11 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories');
 
         // Assert - Should use default limit (probably 20)
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(15, $response['data']);
-        $this->assertEquals(1, $response['page']);
-        $this->assertEquals(1, $response['totalPages']);
+        static::assertCount(15, $response['data']);
+        static::assertEquals(1, $response['page']);
+        static::assertEquals(1, $response['totalPages']);
     }
 
     public function testCategoriesResponseStructure(): void
@@ -201,27 +201,27 @@ class CategoryControllerTest extends WebTestCase
         $this->client->request('GET', '/ecommerce/api/v1/categories');
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Check top-level structure
-        $this->assertArrayHasKey('data', $response);
-        $this->assertArrayHasKey('page', $response);
-        $this->assertArrayHasKey('totalPages', $response);
-        $this->assertArrayHasKey('nextPage', $response);
-        $this->assertArrayHasKey('previousPage', $response);
+        static::assertArrayHasKey('data', $response);
+        static::assertArrayHasKey('page', $response);
+        static::assertArrayHasKey('totalPages', $response);
+        static::assertArrayHasKey('nextPage', $response);
+        static::assertArrayHasKey('previousPage', $response);
 
         // Check data structure
-        $this->assertCount(1, $response['data']);
+        static::assertCount(1, $response['data']);
         $firstCategory = $response['data'][0];
-        $this->assertArrayHasKey('id', $firstCategory);
-        $this->assertArrayHasKey('name', $firstCategory);
-        $this->assertSame('Category', $firstCategory['apiDescription']);
-        $this->assertEquals($category->getId(), $firstCategory['id']);
-        $this->assertEquals('Test Category', $firstCategory['name']);
+        static::assertArrayHasKey('id', $firstCategory);
+        static::assertArrayHasKey('name', $firstCategory);
+        static::assertSame('Category', $firstCategory['apiDescription']);
+        static::assertEquals($category->getId(), $firstCategory['id']);
+        static::assertEquals('Test Category', $firstCategory['name']);
 
         // Verify no extra fields are exposed
-        $this->assertCount(3, $firstCategory);
+        static::assertCount(3, $firstCategory);
     }
 
     public function testCategoriesOrderConsistency(): void
@@ -239,7 +239,7 @@ class CategoryControllerTest extends WebTestCase
         $response2 = json_decode($this->client->getResponse()->getContent(), true);
 
         // Assert - Order should be consistent
-        $this->assertEquals($response1['data'], $response2['data']);
+        static::assertEquals($response1['data'], $response2['data']);
     }
 
     private function createCategory(string $name): Category

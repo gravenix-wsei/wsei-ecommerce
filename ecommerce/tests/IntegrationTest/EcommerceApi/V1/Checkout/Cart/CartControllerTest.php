@@ -37,10 +37,10 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertIsArray($response['items']);
-        $this->assertCount(0, $response['items']);
+        static::assertIsArray($response['items']);
+        static::assertCount(0, $response['items']);
     }
 
     public function testAddItemToCart(): void
@@ -60,11 +60,11 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals($product->getId(), $response['product']['id']);
-        $this->assertEquals('Test Product', $response['product']['name']);
-        $this->assertEquals(2, $response['quantity']);
+        static::assertEquals($product->getId(), $response['product']['id']);
+        static::assertEquals('Test Product', $response['product']['name']);
+        static::assertEquals(2, $response['quantity']);
     }
 
     public function testAddSameProductIncreasesQuantity(): void
@@ -93,10 +93,10 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals($itemId, $response['id']); // Same item ID
-        $this->assertEquals(6, $response['quantity']); // Quantity increased from 3 to 6
+        static::assertEquals($itemId, $response['id']); // Same item ID
+        static::assertEquals(6, $response['quantity']); // Quantity increased from 3 to 6
     }
 
     public function testGetCartWithItems(): void
@@ -130,9 +130,9 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(2, $response['items']);
+        static::assertCount(2, $response['items']);
     }
 
     public function testRemoveItemFromCart(): void
@@ -160,7 +160,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(204);
+        static::assertResponseStatusCodeSame(204);
 
         // Verify item is removed
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
@@ -169,7 +169,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         $cartResponse = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(0, $cartResponse['items']);
+        static::assertCount(0, $cartResponse['items']);
     }
 
     public function testClearCart(): void
@@ -203,7 +203,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(204);
+        static::assertResponseStatusCodeSame(204);
 
         // Verify cart is empty
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
@@ -212,7 +212,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         $cartResponse = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(0, $cartResponse['items']);
+        static::assertCount(0, $cartResponse['items']);
     }
 
     public function testCannotAddNonExistentProduct(): void
@@ -231,9 +231,9 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('not found', strtolower($response['message']));
+        static::assertStringContainsString('not found', strtolower($response['message']));
     }
 
     public function testCannotAddProductWithZeroStock(): void
@@ -253,9 +253,9 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('stock', strtolower($response['message']));
+        static::assertStringContainsString('stock', strtolower($response['message']));
     }
 
     public function testCannotRemoveItemFromAnotherCustomerCart(): void
@@ -284,7 +284,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
     }
 
     public function testValidationErrorsForInvalidPayload(): void
@@ -303,7 +303,7 @@ class CartControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(422);
+        static::assertResponseStatusCodeSame(422);
     }
 
     public function testEachCustomerHasOwnActiveCart(): void
@@ -330,7 +330,7 @@ class CartControllerTest extends WebTestCase
 
         // Assert - Customer 2's cart should be empty
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(0, $response['items']);
+        static::assertCount(0, $response['items']);
 
         // Customer 1's cart should have the item
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
@@ -339,8 +339,8 @@ class CartControllerTest extends WebTestCase
         ]);
 
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(1, $response['items']);
-        $this->assertEquals(5, $response['items'][0]['quantity']);
+        static::assertCount(1, $response['items']);
+        static::assertEquals(5, $response['items'][0]['quantity']);
     }
 
     private function createCustomerWithToken(string $email): Customer

@@ -19,12 +19,12 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Verify cart is empty
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], $this->getAuthHeaders($customer));
         $cartResponse = $this->getJsonResponse();
-        $this->assertCount(0, $cartResponse['items']);
+        static::assertCount(0, $cartResponse['items']);
     }
 
     public function testCartNotClearedWhenOrderFails(): void
@@ -40,13 +40,13 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
 
         // Verify cart is NOT empty (preserved on failure)
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], $this->getAuthHeaders($customer));
         $cartResponse = $this->getJsonResponse();
-        $this->assertCount(1, $cartResponse['items']);
-        $this->assertEquals(10, $cartResponse['items'][0]['quantity']);
+        static::assertCount(1, $cartResponse['items']);
+        static::assertEquals(10, $cartResponse['items'][0]['quantity']);
     }
 
     public function testMultipleOrdersCanBePlacedFromSameCustomer(): void
@@ -60,18 +60,18 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Act & Assert - First order
         $this->addItemToCart($customer, $product1->getId(), 2);
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $order1Response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Act & Assert - Second order
         $this->addItemToCart($customer, $product2->getId(), 3);
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $order2Response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Verify both orders exist with different IDs
-        $this->assertNotEquals($order1Response['id'], $order2Response['id']);
-        $this->assertNotEquals($order1Response['orderNumber'], $order2Response['orderNumber']);
+        static::assertNotEquals($order1Response['id'], $order2Response['id']);
+        static::assertNotEquals($order1Response['orderNumber'], $order2Response['orderNumber']);
     }
 
     public function testCustomersOrdersAreIsolated(): void
@@ -88,22 +88,22 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Customer 1 places order
         $this->addItemToCart($customer1, $product->getId(), 5);
         $this->placeOrder($customer1, $address1->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Customer 2's cart should be empty
         $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], $this->getAuthHeaders($customer2));
         $cart2Response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(0, $cart2Response['items']);
+        static::assertCount(0, $cart2Response['items']);
 
         // Customer 2 can place their own order
         $this->addItemToCart($customer2, $product->getId(), 3);
         $this->placeOrder($customer2, $address2->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Verify stock decreased by both orders
         // Re-fetch the product from database to get updated stock
         $updatedProduct = $this->entityManager->find($product::class, $product->getId());
-        $this->assertEquals(92, $updatedProduct?->getStock()); // 100 - 5 - 3
+        static::assertEquals(92, $updatedProduct?->getStock()); // 100 - 5 - 3
     }
 
     public function testOrderCanBePlacedWithMultipleAddressesOverTime(): void
@@ -124,19 +124,19 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
         // Order to first address
         $this->addItemToCart($customer, $product->getId(), 2);
         $this->placeOrder($customer, $address1->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $order1Response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Order to second address
         $this->addItemToCart($customer, $product->getId(), 3);
         $this->placeOrder($customer, $address2->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $order2Response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Verify different addresses were used
-        $this->assertEquals('Home Address', $order1Response['address']['street']);
-        $this->assertEquals('City A', $order1Response['address']['city']);
-        $this->assertEquals('Work Address', $order2Response['address']['street']);
-        $this->assertEquals('City B', $order2Response['address']['city']);
+        static::assertEquals('Home Address', $order1Response['address']['street']);
+        static::assertEquals('City A', $order1Response['address']['city']);
+        static::assertEquals('Work Address', $order2Response['address']['street']);
+        static::assertEquals('City B', $order2Response['address']['city']);
     }
 }

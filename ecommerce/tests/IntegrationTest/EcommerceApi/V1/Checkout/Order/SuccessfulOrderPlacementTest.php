@@ -22,23 +22,23 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('id', $response);
-        $this->assertArrayHasKey('orderNumber', $response);
-        $this->assertEquals('new', $response['status']);
-        $this->assertEquals('1600.00', $response['totalPriceNet']);
-        $this->assertEquals('1968.00', $response['totalPriceGross']);
-        $this->assertArrayHasKey('createdAt', $response);
-        $this->assertCount(1, $response['items']);
+        static::assertArrayHasKey('id', $response);
+        static::assertArrayHasKey('orderNumber', $response);
+        static::assertEquals('new', $response['status']);
+        static::assertEquals('1600.00', $response['totalPriceNet']);
+        static::assertEquals('1968.00', $response['totalPriceGross']);
+        static::assertArrayHasKey('createdAt', $response);
+        static::assertCount(1, $response['items']);
 
         $item = $response['items'][0];
-        $this->assertEquals($product->getId(), $item['productId']);
-        $this->assertEquals('Laptop', $item['productName']);
-        $this->assertEquals(2, $item['quantity']);
-        $this->assertEquals('800.00', $item['priceNet']);
-        $this->assertEquals('984.00', $item['priceGross']);
+        static::assertEquals($product->getId(), $item['productId']);
+        static::assertEquals('Laptop', $item['productName']);
+        static::assertEquals(2, $item['quantity']);
+        static::assertEquals('800.00', $item['priceNet']);
+        static::assertEquals('984.00', $item['priceGross']);
     }
 
     public function testPlaceOrderWithMultipleItems(): void
@@ -58,12 +58,12 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertCount(3, $response['items']);
-        $this->assertEquals('510.00', $response['totalPriceNet']); // (3*20) + (1*50) + (2*200)
-        $this->assertEquals('627.30', $response['totalPriceGross']); // (3*24.60) + (1*61.50) + (2*246)
+        static::assertCount(3, $response['items']);
+        static::assertEquals('510.00', $response['totalPriceNet']); // (3*20) + (1*50) + (2*200)
+        static::assertEquals('627.30', $response['totalPriceGross']); // (3*24.60) + (1*61.50) + (2*246)
     }
 
     public function testOrderNumberFormatAndIncrement(): void
@@ -76,20 +76,20 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
         // Act & Assert - First order
         $this->addItemToCart($customer, $product->getId(), 1);
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response1 = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertMatchesRegularExpression('/^\d{5}$/', $response1['orderNumber']);
+        static::assertMatchesRegularExpression('/^\d{5}$/', $response1['orderNumber']);
 
         // Act & Assert - Second order
         $this->addItemToCart($customer, $product->getId(), 1);
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response2 = json_decode($this->client->getResponse()->getContent(), true);
 
         // Verify order number incremented
         $orderNum1 = (int) $response1['orderNumber'];
         $orderNum2 = (int) $response2['orderNumber'];
-        $this->assertEquals($orderNum1 + 1, $orderNum2);
+        static::assertEquals($orderNum1 + 1, $orderNum2);
     }
 
     public function testOrderCreatedWithNewStatus(): void
@@ -105,14 +105,14 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertEquals(OrderStatus::NEW->value, $response['status']);
+        static::assertEquals(OrderStatus::NEW->value, $response['status']);
 
         // Verify in database
         $order = $this->entityManager->getRepository(Order::class)->find($response['id']);
-        $this->assertSame(OrderStatus::NEW, $order?->getStatus());
+        static::assertSame(OrderStatus::NEW, $order?->getStatus());
     }
 
     public function testOrderAddressIsFrozen(): void
@@ -131,7 +131,7 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
 
         // Act
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Modify original address
@@ -142,15 +142,15 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
         $this->entityManager->flush();
 
         // Assert - Order address should remain unchanged
-        $this->assertEquals('Original', $response['address']['firstName']);
-        $this->assertEquals('Name', $response['address']['lastName']);
-        $this->assertEquals('Original Street', $response['address']['street']);
-        $this->assertEquals('Original City', $response['address']['city']);
+        static::assertEquals('Original', $response['address']['firstName']);
+        static::assertEquals('Name', $response['address']['lastName']);
+        static::assertEquals('Original Street', $response['address']['street']);
+        static::assertEquals('Original City', $response['address']['city']);
 
         // Verify in database
         $order = $this->entityManager->getRepository(Order::class)->find($response['id']);
         $orderAddress = $order?->getOrderAddress();
-        $this->assertEquals('Original', $orderAddress?->getFirstName());
-        $this->assertEquals('Original Street', $orderAddress?->getStreet());
+        static::assertEquals('Original', $orderAddress?->getFirstName());
+        static::assertEquals('Original Street', $orderAddress?->getStreet());
     }
 }

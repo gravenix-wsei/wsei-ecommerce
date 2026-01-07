@@ -19,7 +19,7 @@ class PaymentUrlResponseTest extends TestCase
         $response = new PaymentUrlResponse($paymentUrl, $token);
 
         // Assert
-        $this->assertInstanceOf(PaymentUrlResponse::class, $response);
+        static::assertInstanceOf(PaymentUrlResponse::class, $response);
     }
 
     public function testResponseContainsCorrectData(): void
@@ -33,9 +33,9 @@ class PaymentUrlResponseTest extends TestCase
         $data = json_decode($response->getContent(), true);
 
         // Assert
-        $this->assertEquals($paymentUrl, $data['paymentUrl']);
-        $this->assertEquals($token, $data['token']);
-        $this->assertEquals('PaymentResponse', $data['apiDescription']);
+        static::assertEquals($paymentUrl, $data['paymentUrl']);
+        static::assertEquals($token, $data['token']);
+        static::assertEquals('PaymentResponse', $data['apiDescription']);
     }
 
     public function testResponseHasCorrectStatusCode(): void
@@ -44,6 +44,6 @@ class PaymentUrlResponseTest extends TestCase
         $response = new PaymentUrlResponse('https://url.com', 'token');
 
         // Assert
-        $this->assertEquals(200, $response->getStatusCode());
+        static::assertEquals(200, $response->getStatusCode());
     }
 }

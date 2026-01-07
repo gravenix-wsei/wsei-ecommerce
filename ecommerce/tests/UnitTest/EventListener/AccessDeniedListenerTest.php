@@ -41,14 +41,14 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->never())
+        $this->twig->expects(static::never())
             ->method('render');
 
         // Act
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testListenerHandlesAccessDeniedException(): void
@@ -58,7 +58,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->with('admin/error/403.html.twig', [
                 'exception' => $exception,
@@ -69,9 +69,9 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNotNull($event->getResponse());
-        $this->assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
-        $this->assertSame('<html>403 Error</html>', $event->getResponse()->getContent());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        static::assertSame('<html>403 Error</html>', $event->getResponse()->getContent());
     }
 
     public function testListenerHandlesAccessDeniedHttpException(): void
@@ -81,7 +81,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/settings');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->with('admin/error/403.html.twig', [
                 'exception' => $exception,
@@ -92,8 +92,8 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNotNull($event->getResponse());
-        $this->assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
     #[DataProvider('provideNonAdminPaths')]
@@ -104,14 +104,14 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create($path);
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->never())
+        $this->twig->expects(static::never())
             ->method('render');
 
         // Act
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     /**
@@ -136,14 +136,14 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/login');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->never())
+        $this->twig->expects(static::never())
             ->method('render');
 
         // Act
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     #[DataProvider('provideAdminPaths')]
@@ -154,7 +154,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create($path);
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->willReturn('<html>403</html>');
 
@@ -162,8 +162,8 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNotNull($event->getResponse());
-        $this->assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
     /**
@@ -191,7 +191,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->willThrowException(new \RuntimeException('Template not found'));
 
@@ -199,7 +199,7 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert - Should not set response when rendering fails
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testListenerHandlesTwigException(): void
@@ -209,7 +209,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/settings');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->willThrowException(new \Exception('Twig error'));
 
@@ -217,7 +217,7 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testListenerPassesExceptionToTemplate(): void
@@ -227,7 +227,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->with(
                 'admin/error/403.html.twig',
@@ -242,7 +242,7 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNotNull($event->getResponse());
+        static::assertNotNull($event->getResponse());
     }
 
     public function testListenerSetsCorrectResponseStatusCode(): void
@@ -252,7 +252,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->willReturn('<html>403 Error Page</html>');
 
@@ -261,9 +261,9 @@ class AccessDeniedListenerTest extends TestCase
 
         // Assert
         $response = $event->getResponse();
-        $this->assertNotNull($response);
-        $this->assertSame(403, $response->getStatusCode());
-        $this->assertSame('<html>403 Error Page</html>', $response->getContent());
+        static::assertNotNull($response);
+        static::assertSame(403, $response->getStatusCode());
+        static::assertSame('<html>403 Error Page</html>', $response->getContent());
     }
 
     public function testListenerWorksWithAdminPathsContainingLoginSubstring(): void
@@ -273,7 +273,7 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/user/login-history');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->once())
+        $this->twig->expects(static::once())
             ->method('render')
             ->willReturn('<html>403</html>');
 
@@ -281,8 +281,8 @@ class AccessDeniedListenerTest extends TestCase
         ($this->listener)($event);
 
         // Assert
-        $this->assertNotNull($event->getResponse());
-        $this->assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
+        static::assertNotNull($event->getResponse());
+        static::assertSame(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
     public function testListenerIgnoresExactAdminLoginPath(): void
@@ -292,14 +292,14 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/login');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->never())
+        $this->twig->expects(static::never())
             ->method('render');
 
         // Act
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 
     public function testListenerIgnoresAdminLoginWithQueryString(): void
@@ -309,13 +309,13 @@ class AccessDeniedListenerTest extends TestCase
         $request = Request::create('/admin/login?redirect=/admin/product');
         $event = new ExceptionEvent($this->kernel, $request, HttpKernelInterface::MAIN_REQUEST, $exception);
 
-        $this->twig->expects($this->never())
+        $this->twig->expects(static::never())
             ->method('render');
 
         // Act
         ($this->listener)($event);
 
         // Assert
-        $this->assertNull($event->getResponse());
+        static::assertNull($event->getResponse());
     }
 }

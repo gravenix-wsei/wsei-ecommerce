@@ -40,15 +40,15 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertCount(2, $response['addresses']);
-        $this->assertEquals('John', $response['addresses'][1]['firstName']);
-        $this->assertEquals('Doe', $response['addresses'][1]['lastName']);
-        $this->assertEquals('New York', $response['addresses'][1]['city']);
-        $this->assertEquals('Jane', $response['addresses'][0]['firstName']);
-        $this->assertEquals('Smith', $response['addresses'][0]['lastName']);
-        $this->assertEquals('Los Angeles', $response['addresses'][0]['city']);
+        static::assertCount(2, $response['addresses']);
+        static::assertEquals('John', $response['addresses'][1]['firstName']);
+        static::assertEquals('Doe', $response['addresses'][1]['lastName']);
+        static::assertEquals('New York', $response['addresses'][1]['city']);
+        static::assertEquals('Jane', $response['addresses'][0]['firstName']);
+        static::assertEquals('Smith', $response['addresses'][0]['lastName']);
+        static::assertEquals('Los Angeles', $response['addresses'][0]['city']);
     }
 
     public function testCreateAddress(): void
@@ -71,10 +71,10 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals('Alice', $response['firstName']);
-        $this->assertNotNull($response['id']);
+        static::assertEquals('Alice', $response['firstName']);
+        static::assertNotNull($response['id']);
     }
 
     public function testUpdateAddress(): void
@@ -98,10 +98,10 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertEquals('Robert', $response['firstName']);
-        $this->assertEquals('United States', $response['country']);
+        static::assertEquals('Robert', $response['firstName']);
+        static::assertEquals('United States', $response['country']);
     }
 
     public function testDeleteAddress(): void
@@ -118,9 +118,9 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(204);
+        static::assertResponseStatusCodeSame(204);
         $addressRepository = $this->container->get(AddressRepository::class);
-        $this->assertNull($addressRepository->find($addressId));
+        static::assertNull($addressRepository->find($addressId));
     }
 
     public function testCannotUpdateOtherCustomerAddress(): void
@@ -145,7 +145,7 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
     }
 
     public function testCannotDeleteOtherCustomerAddress(): void
@@ -162,7 +162,7 @@ class CustomerAddressControllerTest extends WebTestCase
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
     }
 
     private function createCustomerWithToken(string $email): Customer

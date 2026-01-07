@@ -15,8 +15,8 @@ class PaymentResultTest extends TestCase
         $result = new PaymentResult('https://payment.url', 'test_token_123');
 
         // Assert
-        $this->assertEquals('https://payment.url', $result->getPaymentUrl());
-        $this->assertEquals('test_token_123', $result->getToken());
+        static::assertEquals('https://payment.url', $result->getPaymentUrl());
+        static::assertEquals('test_token_123', $result->getToken());
     }
 
     public function testPaymentUrlCanBeRetrieved(): void
@@ -26,7 +26,7 @@ class PaymentResultTest extends TestCase
         $result = new PaymentResult($paymentUrl, 'token');
 
         // Act & Assert
-        $this->assertSame($paymentUrl, $result->getPaymentUrl());
+        static::assertSame($paymentUrl, $result->getPaymentUrl());
     }
 
     public function testTokenCanBeRetrieved(): void
@@ -36,6 +36,6 @@ class PaymentResultTest extends TestCase
         $result = new PaymentResult('https://payment.url', $token);
 
         // Act & Assert
-        $this->assertSame($token, $result->getToken());
+        static::assertSame($token, $result->getToken());
     }
 }

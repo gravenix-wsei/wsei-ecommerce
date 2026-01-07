@@ -81,7 +81,7 @@ class StripePaymentServiceTest extends TestCase
             ->willReturn(true);
 
         $this->paymentSessionRepository
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('cancelActiveSessionsForOrder')
             ->with($order);
 
@@ -92,7 +92,7 @@ class StripePaymentServiceTest extends TestCase
         // Mock Stripe session creation
         $mockSession = $this->createMockStripeSession();
         $this->stripeClient
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('createCheckoutSession')
             ->willReturn($mockSession);
 
@@ -100,8 +100,8 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->pay($order, 'https://example.com/return');
 
         // Assert
-        $this->assertNotEmpty($result->getPaymentUrl());
-        $this->assertNotEmpty($result->getToken());
+        static::assertNotEmpty($result->getPaymentUrl());
+        static::assertNotEmpty($result->getToken());
     }
 
     public function testPayTransitionsOrderToPendingPaymentWhenInNewStatus(): void
@@ -114,7 +114,7 @@ class StripePaymentServiceTest extends TestCase
             ->with(OrderStatus::NEW, OrderStatus::PENDING_PAYMENT)
             ->willReturn(true);
 
-        $order->expects($this->once())
+        $order->expects(static::once())
             ->method('setStatus')
             ->with(OrderStatus::PENDING_PAYMENT);
 
@@ -132,7 +132,7 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->pay($order, 'https://example.com/return');
 
         // Assert
-        $this->assertNotEmpty($result->getPaymentUrl());
+        static::assertNotEmpty($result->getPaymentUrl());
     }
 
     public function testPayAllowsPaymentWhenAlreadyInPendingPaymentStatus(): void
@@ -146,7 +146,7 @@ class StripePaymentServiceTest extends TestCase
             ->willReturn(false);
 
         // setStatus is ALWAYS called at the end of transitionToPendingPayment method
-        $order->expects($this->once())
+        $order->expects(static::once())
             ->method('setStatus')
             ->with(OrderStatus::PENDING_PAYMENT);
 
@@ -164,7 +164,7 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->pay($order, 'https://example.com/return');
 
         // Assert - no exception should be thrown
-        $this->assertNotEmpty($result->getPaymentUrl());
+        static::assertNotEmpty($result->getPaymentUrl());
     }
 
     // ========== VERIFY METHOD TESTS ==========
@@ -173,7 +173,7 @@ class StripePaymentServiceTest extends TestCase
     {
         // Arrange
         $this->paymentSessionRepository
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findValidByToken')
             ->with('invalid_token')
             ->willReturn(null);
@@ -182,17 +182,17 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('invalid_token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertNull($result->getOrder());
-        $this->assertEmpty($result->getReturnUrl());
-        $this->assertEquals('Invalid or expired payment token', $result->getMessage());
+        static::assertFalse($result->isSuccess());
+        static::assertNull($result->getOrder());
+        static::assertEmpty($result->getReturnUrl());
+        static::assertEquals('Invalid or expired payment token', $result->getMessage());
     }
 
     public function testVerifyWithExpiredToken(): void
     {
         // Arrange
         $this->paymentSessionRepository
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findValidByToken')
             ->with('expired_token')
             ->willReturn(null);
@@ -201,8 +201,8 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('expired_token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertEquals('Invalid or expired payment token', $result->getMessage());
+        static::assertFalse($result->isSuccess());
+        static::assertEquals('Invalid or expired payment token', $result->getMessage());
     }
 
     public function testVerifyWithMissingStripeSessionId(): void
@@ -216,7 +216,7 @@ class StripePaymentServiceTest extends TestCase
         $paymentSession->method('getReturnUrl')->willReturn('https://example.com/return');
 
         $this->paymentSessionRepository
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findValidByToken')
             ->with('valid_token')
             ->willReturn($paymentSession);
@@ -225,10 +225,10 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('valid_token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals('https://example.com/return', $result->getReturnUrl());
-        $this->assertEquals('No Stripe session found', $result->getMessage());
+        static::assertFalse($result->isSuccess());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals('https://example.com/return', $result->getReturnUrl());
+        static::assertEquals('No Stripe session found', $result->getMessage());
     }
 
     public function testVerifyFailsWhenOrderCannotTransitionToPaid(): void
@@ -275,7 +275,7 @@ class StripePaymentServiceTest extends TestCase
         try {
             $result = $this->paymentService->verify('valid_token');
             // If we somehow get here without Stripe API error, verify it's a failure
-            $this->assertFalse($result->isSuccess());
+            static::assertFalse($result->isSuccess());
         } catch (\Exception) {
             // Expected - Stripe API will fail in unit test without valid credentials
         }
@@ -292,7 +292,7 @@ class StripePaymentServiceTest extends TestCase
         $paymentSession->method('getReturnUrl')->willReturn('');
 
         $this->paymentSessionRepository
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findValidByToken')
             ->with('token_with_empty_url')
             ->willReturn($paymentSession);
@@ -301,11 +301,11 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('token_with_empty_url');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals('', $result->getReturnUrl());
-        $this->assertEquals('No Stripe session found', $result->getMessage());
-        $this->assertFalse($result->hasReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals('', $result->getReturnUrl());
+        static::assertEquals('No Stripe session found', $result->getMessage());
+        static::assertFalse($result->hasReturnUrl());
     }
 
     public function testVerifyPreservesOrderAndReturnUrlInFailures(): void
@@ -327,10 +327,10 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('test_token');
 
         // Assert - verify that order and returnUrl are preserved in failure result
-        $this->assertFalse($result->isSuccess());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals($returnUrl, $result->getReturnUrl());
-        $this->assertTrue($result->hasReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals($returnUrl, $result->getReturnUrl());
+        static::assertTrue($result->hasReturnUrl());
     }
 
     public function testVerifySuccessfullyMarksPaymentAsPaid(): void
@@ -357,18 +357,18 @@ class StripePaymentServiceTest extends TestCase
         // Mock Stripe session with paid status
         $paidSession = $this->createMockStripeSession('paid');
         $this->stripeClient
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('retrieveSession')
             ->with('cs_test_paid_123')
             ->willReturn($paidSession);
 
         // Expect order status to be updated to PAID
-        $order->expects($this->once())
+        $order->expects(static::once())
             ->method('setStatus')
             ->with(OrderStatus::PAID);
 
         // Expect payment session to be marked as completed
-        $paymentSession->expects($this->once())
+        $paymentSession->expects(static::once())
             ->method('complete');
 
         // Expect entities to be persisted and flushed
@@ -379,24 +379,24 @@ class StripePaymentServiceTest extends TestCase
                 static $callCount = 0;
                 $callCount++;
                 if ($callCount === 1) {
-                    $this->assertSame($order, $entity);
+                    static::assertSame($order, $entity);
                 } elseif ($callCount === 2) {
-                    $this->assertSame($paymentSession, $entity);
+                    static::assertSame($paymentSession, $entity);
                 }
             });
 
         $this->entityManager
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('flush');
 
         // Act
         $result = $this->paymentService->verify('paid_token');
 
         // Assert
-        $this->assertTrue($result->isSuccess());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals('https://example.com/success', $result->getReturnUrl());
-        $this->assertNull($result->getMessage());
+        static::assertTrue($result->isSuccess());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals('https://example.com/success', $result->getReturnUrl());
+        static::assertNull($result->getMessage());
     }
 
     public function testVerifyReturnsFailureWhenPaymentStatusIsNotPaid(): void
@@ -422,19 +422,19 @@ class StripePaymentServiceTest extends TestCase
             ->willReturn($unpaidSession);
 
         // Order status should NOT be updated
-        $order->expects($this->never())->method('setStatus');
+        $order->expects(static::never())->method('setStatus');
 
         // Payment session should NOT be completed
-        $paymentSession->expects($this->never())->method('complete');
+        $paymentSession->expects(static::never())->method('complete');
 
         // Act
         $result = $this->paymentService->verify('unpaid_token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertEquals('Payment not completed', $result->getMessage());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals('https://example.com/return', $result->getReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertEquals('Payment not completed', $result->getMessage());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals('https://example.com/return', $result->getReturnUrl());
     }
 
     public function testVerifyHandlesStripeApiExceptions(): void
@@ -459,10 +459,10 @@ class StripePaymentServiceTest extends TestCase
         $result = $this->paymentService->verify('error_token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertEquals('Stripe API error occurred', $result->getMessage());
-        $this->assertSame($order, $result->getOrder());
-        $this->assertEquals('https://example.com/return', $result->getReturnUrl());
+        static::assertFalse($result->isSuccess());
+        static::assertEquals('Stripe API error occurred', $result->getMessage());
+        static::assertSame($order, $result->getOrder());
+        static::assertEquals('https://example.com/return', $result->getReturnUrl());
     }
 
     public function testVerifyWithPaidStatusButCannotTransitionToPaid(): void
@@ -492,15 +492,15 @@ class StripePaymentServiceTest extends TestCase
             ->willReturn(false);
 
         // Order status should NOT be updated
-        $order->expects($this->never())->method('setStatus');
+        $order->expects(static::never())->method('setStatus');
 
         // Act
         $result = $this->paymentService->verify('token');
 
         // Assert
-        $this->assertFalse($result->isSuccess());
-        $this->assertStringContainsString('Order cannot transition from "cancelled" to "PAID"', $result->getMessage());
-        $this->assertSame($order, $result->getOrder());
+        static::assertFalse($result->isSuccess());
+        static::assertStringContainsString('Order cannot transition from "cancelled" to "PAID"', $result->getMessage());
+        static::assertSame($order, $result->getOrder());
     }
 
     // ========== HELPER METHODS ==========

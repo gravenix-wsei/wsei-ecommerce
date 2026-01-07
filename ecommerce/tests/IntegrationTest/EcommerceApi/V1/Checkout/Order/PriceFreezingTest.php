@@ -19,7 +19,7 @@ class PriceFreezingTest extends AbstractOrderPlacementTest
 
         // Act
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Modify product prices
@@ -28,10 +28,10 @@ class PriceFreezingTest extends AbstractOrderPlacementTest
         $this->entityManager->flush();
 
         // Assert - Order should have original prices
-        $this->assertEquals('300.00', $response['items'][0]['priceNet']);
-        $this->assertEquals('369.00', $response['items'][0]['priceGross']);
-        $this->assertEquals('300.00', $response['totalPriceNet']);
-        $this->assertEquals('369.00', $response['totalPriceGross']);
+        static::assertEquals('300.00', $response['items'][0]['priceNet']);
+        static::assertEquals('369.00', $response['items'][0]['priceGross']);
+        static::assertEquals('300.00', $response['totalPriceNet']);
+        static::assertEquals('369.00', $response['totalPriceGross']);
     }
 
     public function testProductNameIsFrozenInOrder(): void
@@ -45,7 +45,7 @@ class PriceFreezingTest extends AbstractOrderPlacementTest
 
         // Act
         $this->placeOrder($customer, $address->getId());
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
         // Modify product name
@@ -53,10 +53,10 @@ class PriceFreezingTest extends AbstractOrderPlacementTest
         $this->entityManager->flush();
 
         // Assert - Order item should retain original name
-        $this->assertEquals('Original Product Name', $response['items'][0]['productName']);
+        static::assertEquals('Original Product Name', $response['items'][0]['productName']);
 
         // Verify product reference is maintained
-        $this->assertEquals($product->getId(), $response['items'][0]['productId']);
+        static::assertEquals($product->getId(), $response['items'][0]['productId']);
     }
 
     /**
@@ -86,11 +86,11 @@ class PriceFreezingTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertEquals($expectedTotalNet, $response['totalPriceNet']);
-        $this->assertEquals($expectedTotalGross, $response['totalPriceGross']);
+        static::assertEquals($expectedTotalNet, $response['totalPriceNet']);
+        static::assertEquals($expectedTotalGross, $response['totalPriceGross']);
     }
 
     /**

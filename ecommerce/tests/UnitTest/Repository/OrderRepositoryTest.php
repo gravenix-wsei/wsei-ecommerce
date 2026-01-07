@@ -65,7 +65,7 @@ class OrderRepositoryTest extends TestCase
         $nextNumber = $this->repository->getNextOrderNumber();
 
         // Assert
-        $this->assertSame('00001', $nextNumber);
+        static::assertSame('00001', $nextNumber);
     }
 
     public function testGetNextOrderNumberIncrementsFromExistingNumber(): void
@@ -93,7 +93,7 @@ class OrderRepositoryTest extends TestCase
         $nextNumber = $this->repository->getNextOrderNumber();
 
         // Assert
-        $this->assertSame('00043', $nextNumber);
+        static::assertSame('00043', $nextNumber);
     }
 
     public function testFindAllPaginatedBuildsCorrectQuery(): void
@@ -131,7 +131,7 @@ class OrderRepositoryTest extends TestCase
         $result = $this->repository->findAllPaginated(3, 20);
 
         // Assert
-        $this->assertNotEmpty($result);
+        static::assertNotEmpty($result);
     }
 
     public function testFindAllPaginatedUsesDefaultLimitOf20(): void
@@ -169,7 +169,7 @@ class OrderRepositoryTest extends TestCase
         $result = $this->repository->findAllPaginated(1);
 
         // Assert
-        $this->assertNotEmpty($result);
+        static::assertNotEmpty($result);
     }
 
     public function testCountAllBuildsCorrectQuery(): void
@@ -197,7 +197,7 @@ class OrderRepositoryTest extends TestCase
         $count = $this->repository->countAll();
 
         // Assert
-        $this->assertSame(42, $count);
+        static::assertSame(42, $count);
     }
 
     public function testFindByCustomerPaginatedBuildsCorrectQuery(): void
@@ -247,7 +247,7 @@ class OrderRepositoryTest extends TestCase
         $result = $this->repository->findByCustomerPaginated($customerId, 3, 10);
 
         // Assert
-        $this->assertNotEmpty($result);
+        static::assertNotEmpty($result);
     }
 
     public function testFindByCustomerPaginatedUsesDefaultLimitOf20(): void
@@ -297,7 +297,7 @@ class OrderRepositoryTest extends TestCase
         $result = $this->repository->findByCustomerPaginated($customerId, 1);
 
         // Assert
-        $this->assertNotEmpty($result);
+        static::assertNotEmpty($result);
     }
 
     public function testCountByCustomerBuildsCorrectQuery(): void
@@ -337,6 +337,6 @@ class OrderRepositoryTest extends TestCase
         $count = $this->repository->countByCustomer($customerId);
 
         // Assert
-        $this->assertSame(15, $count);
+        static::assertSame(15, $count);
     }
 }
