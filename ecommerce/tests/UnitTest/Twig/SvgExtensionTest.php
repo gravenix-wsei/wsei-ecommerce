@@ -139,6 +139,85 @@ SVG;
         }
     }
 
+    public function testAddAttributesToSvgReturnsOriginalContentWhenNoSvgTagFound(): void
+    {
+        // Arrange
+        $sut = $this->createSUT();
+        $projectDir = dirname(__DIR__, 3);
+        $testSvgPath = $projectDir . '/public/img/icons/test-no-svg-tag.svg';
+
+        // Create file without <svg> tag
+        $contentWithoutSvgTag = '<div>This is not an SVG</div>';
+        file_put_contents($testSvgPath, $contentWithoutSvgTag);
+
+        try {
+            // Act
+            $result = $sut->loadSvg('img/icons/test-no-svg-tag.svg', [
+                'class' => 'test',
+            ]);
+
+            // Assert - Should return original content unchanged
+            static::assertSame($contentWithoutSvgTag, $result);
+            static::assertStringNotContainsString('class="test"', $result);
+        } finally {
+            // Cleanup
+            if (file_exists($testSvgPath)) {
+                unlink($testSvgPath);
+            }
+        }
+    }
+
+    public function testAddAttributesToSvgWithEmptyContent(): void
+    {
+        // Arrange
+        $sut = $this->createSUT();
+        $projectDir = dirname(__DIR__, 3);
+        $testSvgPath = $projectDir . '/public/img/icons/test-empty.svg';
+
+        file_put_contents($testSvgPath, '');
+
+        try {
+            // Act
+            $result = $sut->loadSvg('img/icons/test-empty.svg', [
+                'class' => 'test',
+            ]);
+
+            // Assert
+            static::assertSame('', $result);
+        } finally {
+            // Cleanup
+            if (file_exists($testSvgPath)) {
+                unlink($testSvgPath);
+            }
+        }
+    }
+
+    public function testAddAttributesToSvgWithOnlyOpeningTagNoClosing(): void
+    {
+        // Arrange
+        $sut = $this->createSUT();
+        $projectDir = dirname(__DIR__, 3);
+        $testSvgPath = $projectDir . '/public/img/icons/test-no-closing.svg';
+
+        file_put_contents($testSvgPath, '<svg viewBox="0 0 24 24">');
+
+        try {
+            // Act
+            $result = $sut->loadSvg('img/icons/test-no-closing.svg', [
+                'class' => 'icon',
+            ]);
+
+            // Assert
+            static::assertStringContainsString('class="icon"', $result);
+            static::assertStringContainsString('viewBox="0 0 24 24"', $result);
+        } finally {
+            // Cleanup
+            if (file_exists($testSvgPath)) {
+                unlink($testSvgPath);
+            }
+        }
+    }
+
     public function createSUT(?string $projectDir = null): SvgExtension
     {
         if ($projectDir === null) {
