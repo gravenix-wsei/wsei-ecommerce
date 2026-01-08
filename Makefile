@@ -1,4 +1,4 @@
-.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests phpmetrics
+.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests phpmetrics infection
 
 # Load environment variables from .env file if it exists
 ifneq (,$(wildcard .env))
@@ -94,6 +94,9 @@ php-coverage-check: ## Check coverage for changed files (requires diff-cover: pi
 
 phpmetrics: ## Generate PHP metrics report
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpmetrics
+
+infection: ## Generate PHP metrics report
+	docker compose exec -u www-data -e XDEBUG_MODE=off php composer test:infection
 
 phpstan: ## Generate PHP metrics report
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpstan
