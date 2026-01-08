@@ -4,25 +4,18 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Tests\IntegrationTest\EcommerceApi\V1\Checkout\Cart;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Wsei\Ecommerce\Entity\ApiToken;
-use Wsei\Ecommerce\Entity\Customer;
-use Wsei\Ecommerce\Entity\Product;
 
-class CartControllerTest extends WebTestCase
+class CartBasicOperationsTest extends WebTestCase
 {
-    private KernelBrowser $client;
+    use CartTestHelperTrait;
 
-    private ContainerInterface $container;
+    private KernelBrowser $client;
 
     protected function setUp(): void
     {
         $this->client = static::createClient();
-        $this->container = static::getContainer();
     }
 
     public function testGetEmptyCart(): void
@@ -213,172 +206,5 @@ class CartControllerTest extends WebTestCase
 
         $cartResponse = json_decode($this->client->getResponse()->getContent(), true);
         static::assertCount(0, $cartResponse['items']);
-    }
-
-    public function testCannotAddNonExistentProduct(): void
-    {
-        // Arrange
-        $customer = $this->createCustomerWithToken('nonexistent@example.com');
-        $payload = [
-            'productId' => 999999,
-            'quantity' => 1,
-        ];
-
-        // Act
-        $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Assert
-        static::assertResponseStatusCodeSame(400);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        static::assertStringContainsString('not found', strtolower($response['message']));
-    }
-
-    public function testCannotAddProductWithZeroStock(): void
-    {
-        // Arrange
-        $customer = $this->createCustomerWithToken('zero-stock@example.com');
-        $product = $this->createProduct('Out of Stock Product', 0, '10.00');
-        $payload = [
-            'productId' => $product->getId(),
-            'quantity' => 1,
-        ];
-
-        // Act
-        $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Assert
-        static::assertResponseStatusCodeSame(400);
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        static::assertStringContainsString('stock', strtolower($response['message']));
-    }
-
-    public function testCannotRemoveItemFromAnotherCustomerCart(): void
-    {
-        // Arrange
-        $customer1 = $this->createCustomerWithToken('customer1@example.com');
-        $customer2 = $this->createCustomerWithToken('customer2@example.com');
-        $product = $this->createProduct('Product Z', 100, '10.00');
-
-        // Customer 1 adds item
-        $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', [
-            'productId' => $product->getId(),
-            'quantity' => 1,
-        ], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
-                ->getToken(),
-        ]);
-
-        $addResponse = json_decode($this->client->getResponse()->getContent(), true);
-        $itemId = $addResponse['id'];
-
-        // Act - Customer 2 tries to remove customer 1's item
-        $this->client->request('DELETE', '/ecommerce/api/v1/cart/items/' . $itemId, [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Assert
-        static::assertResponseStatusCodeSame(404);
-    }
-
-    public function testValidationErrorsForInvalidPayload(): void
-    {
-        // Arrange
-        $customer = $this->createCustomerWithToken('validation@example.com');
-        $payload = [
-            'productId' => -1,
-            'quantity' => 0,
-        ];
-
-        // Act
-        $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', $payload, [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Assert
-        static::assertResponseStatusCodeSame(422);
-    }
-
-    public function testEachCustomerHasOwnActiveCart(): void
-    {
-        // Arrange
-        $customer1 = $this->createCustomerWithToken('isolated1@example.com');
-        $customer2 = $this->createCustomerWithToken('isolated2@example.com');
-        $product = $this->createProduct('Shared Product', 100, '10.00');
-
-        // Act - Customer 1 adds item
-        $this->client->jsonRequest('POST', '/ecommerce/api/v1/cart/items', [
-            'productId' => $product->getId(),
-            'quantity' => 5,
-        ], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Customer 2 gets their cart
-        $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer2->getApiToken()
-                ->getToken(),
-        ]);
-
-        // Assert - Customer 2's cart should be empty
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        static::assertCount(0, $response['items']);
-
-        // Customer 1's cart should have the item
-        $this->client->request('GET', '/ecommerce/api/v1/cart', [], [], [
-            'HTTP_wsei-ecommerce-token' => $customer1->getApiToken()
-                ->getToken(),
-        ]);
-
-        $response = json_decode($this->client->getResponse()->getContent(), true);
-        static::assertCount(1, $response['items']);
-        static::assertEquals(5, $response['items'][0]['quantity']);
-    }
-
-    private function createCustomerWithToken(string $email): Customer
-    {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-        $passwordHasher = $this->container->get(UserPasswordHasherInterface::class);
-
-        $customer = new Customer();
-        $customer->setEmail($email);
-        $customer->setFirstName('Test');
-        $customer->setLastName('User');
-        $customer->setPassword($passwordHasher->hashPassword($customer, 'password123'));
-
-        $apiToken = new ApiToken();
-        $apiToken->setToken(ApiToken::generate());
-        $customer->setApiToken($apiToken);
-
-        $entityManager->persist($customer);
-        $entityManager->persist($apiToken);
-        $entityManager->flush();
-
-        return $customer;
-    }
-
-    private function createProduct(string $name, int $stock, string $price): Product
-    {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-
-        $product = new Product();
-        $product->setName($name);
-        $product->setDescription('Test description for ' . $name);
-        $product->setStock($stock);
-        $product->setPriceNet($price);
-        $product->setPriceGross($price);
-
-        $entityManager->persist($product);
-        $entityManager->flush();
-
-        return $product;
     }
 }

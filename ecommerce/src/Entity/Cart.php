@@ -153,4 +153,26 @@ class Cart
 
         return $this;
     }
+
+    public function getTotalPriceNet(): string
+    {
+        $total = '0.00';
+
+        foreach ($this->items as $item) {
+            $total = bcadd($total, $item->getTotalPriceNet(), 2);
+        }
+
+        return $total;
+    }
+
+    public function getTotalPriceGross(): string
+    {
+        $total = '0.00';
+
+        foreach ($this->items as $item) {
+            $total = bcadd($total, $item->getTotalPriceGross(), 2);
+        }
+
+        return $total;
+    }
 }

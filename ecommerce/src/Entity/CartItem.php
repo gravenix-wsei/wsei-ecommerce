@@ -111,4 +111,34 @@ class CartItem
 
         return $this;
     }
+
+    public function getTotalPriceNet(): string
+    {
+        $product = $this->getProduct();
+        if ($product === null) {
+            return '0.00';
+        }
+
+        $priceNet = $product->getPriceNet();
+        if ($priceNet === null) {
+            return '0.00';
+        }
+
+        return bcmul($priceNet, (string) $this->quantity, 2);
+    }
+
+    public function getTotalPriceGross(): string
+    {
+        $product = $this->getProduct();
+        if ($product === null) {
+            return '0.00';
+        }
+
+        $priceGross = $product->getPriceGross();
+        if ($priceGross === null) {
+            return '0.00';
+        }
+
+        return bcmul($priceGross, (string) $this->quantity, 2);
+    }
 }
