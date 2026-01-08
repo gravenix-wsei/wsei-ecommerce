@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Attribute\Route;
@@ -13,6 +14,7 @@ use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Repository\OrderRepository;
 
 #[Route('/ecommerce/api/v1/orders')]
+#[OA\Tag(name: 'CustomerOrder')]
 class CustomerOrderController extends AbstractController
 {
     public function __construct(
@@ -22,6 +24,23 @@ class CustomerOrderController extends AbstractController
     }
 
     #[Route('', name: 'ecommerce_api.orders.list', methods: ['GET'])]
+    #[OA\Get(
+        path: '/orders',
+        summary: 'List customer orders',
+        security: [['ApiToken' => []]],
+        parameters: [
+            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1)),
+            new OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 20)),
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'List of orders',
+                content: new OA\JsonContent(ref: '#/components/schemas/OrderListResponse')
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ]
+    )]
     public function list(Request $request, Customer $customer): OrderListResponse
     {
         $page = (int) $request->query->get('page', '1');
