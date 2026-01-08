@@ -150,6 +150,9 @@ class ApiTokenAuthenticationSubscriberTest extends TestCase
         static::assertSame($customer, $request->attributes->get(RequestAttributes::AUTHENTICATED_CUSTOMER));
     }
 
+    /**
+     * @return array<string, array{string}>
+     */
     public static function provideNonApiPaths(): array
     {
         return [
@@ -180,4 +183,3 @@ class ApiTokenAuthenticationSubscriberTest extends TestCase
         return new ApiTokenAuthenticationSubscriber($this->apiTokenRepository);
     }
 }
-
