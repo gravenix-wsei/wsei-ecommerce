@@ -101,7 +101,9 @@ class CustomerAuthController extends AbstractController
         summary: 'Customer logout',
         tags: ['Customer'],
         description: 'Invalidate current API token',
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         responses: [
             new OA\Response(
                 response: 200,

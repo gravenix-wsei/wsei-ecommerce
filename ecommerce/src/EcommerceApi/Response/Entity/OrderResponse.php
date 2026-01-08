@@ -36,7 +36,15 @@ use Wsei\Ecommerce\Entity\OrderItem;
     properties: [
         new OA\Property(property: 'id', type: 'integer', example: 1),
         new OA\Property(property: 'orderNumber', type: 'string', example: 'ORD-20260108-001'),
-        new OA\Property(property: 'status', type: 'string', example: 'new', enum: ['new', 'pending_payment', 'paid', 'processing', 'shipped', 'delivered', 'cancelled']),
+        new OA\Property(property: 'status', type: 'string', example: 'new', enum: [
+            'new',
+            'pending_payment',
+            'paid',
+            'processing',
+            'shipped',
+            'delivered',
+            'cancelled',
+        ]),
         new OA\Property(property: 'totalPriceNet', type: 'string', example: '1999.98'),
         new OA\Property(property: 'totalPriceGross', type: 'string', example: '2459.98'),
         new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2026-01-08 10:00:00'),

@@ -27,7 +27,13 @@ use Wsei\Ecommerce\Utility\Defaults;
         new OA\Property(property: 'totalPriceNet', type: 'string', example: '1999.98'),
         new OA\Property(property: 'totalPriceGross', type: 'string', example: '2459.98'),
         new OA\Property(property: 'createdAt', type: 'string', format: 'date-time', example: '2026-01-08 10:00:00'),
-        new OA\Property(property: 'updatedAt', type: 'string', format: 'date-time', example: '2026-01-08 10:30:00', nullable: true),
+        new OA\Property(
+            property: 'updatedAt',
+            type: 'string',
+            format: 'date-time',
+            example: '2026-01-08 10:30:00',
+            nullable: true
+        ),
         new OA\Property(property: 'apiDescription', type: 'string', example: 'CartItem'),
     ]
 )]

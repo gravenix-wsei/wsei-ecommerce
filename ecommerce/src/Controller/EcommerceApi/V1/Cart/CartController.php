@@ -32,7 +32,9 @@ class CartController extends AbstractController
         path: '/cart',
         summary: 'Get current cart',
         tags: ['Cart'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         responses: [
             new OA\Response(
                 response: 200,
@@ -54,7 +56,9 @@ class CartController extends AbstractController
         path: '/cart/items',
         summary: 'Add item to cart',
         tags: ['Cart'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(ref: '#/components/schemas/AddCartItemPayload')
@@ -90,7 +94,9 @@ class CartController extends AbstractController
         path: '/cart/items/{itemId}',
         summary: 'Remove item from cart',
         tags: ['Cart'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         parameters: [
             new OA\Parameter(name: 'itemId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
@@ -122,7 +128,9 @@ class CartController extends AbstractController
         path: '/cart',
         summary: 'Clear cart',
         tags: ['Cart'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         responses: [
             new OA\Response(
                 response: 200,

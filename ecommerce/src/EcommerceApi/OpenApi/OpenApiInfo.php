@@ -11,10 +11,7 @@ use OpenApi\Attributes as OA;
     title: 'WSEI Ecommerce API',
     description: 'E-commerce API for managing products, categories, cart, orders and customer accounts'
 )]
-#[OA\Server(
-    url: '/ecommerce/api/v1',
-    description: 'API V1'
-)]
+#[OA\Server(url: '/ecommerce/api/v1', description: 'API V1')]
 #[OA\SecurityScheme(
     securityScheme: 'ApiToken',
     type: 'apiKey',
@@ -32,4 +29,3 @@ use OpenApi\Attributes as OA;
 class OpenApiInfo
 {
 }
-

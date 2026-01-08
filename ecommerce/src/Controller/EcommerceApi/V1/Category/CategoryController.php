@@ -30,8 +30,15 @@ class CategoryController extends AbstractController
         summary: 'List all categories',
         tags: ['Category'],
         parameters: [
-            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1)),
-            new OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 20, maximum: 100)),
+            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(
+                type: 'integer',
+                default: 1
+            )),
+            new OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(
+                type: 'integer',
+                default: 20,
+                maximum: 100
+            )),
         ],
         responses: [
             new OA\Response(

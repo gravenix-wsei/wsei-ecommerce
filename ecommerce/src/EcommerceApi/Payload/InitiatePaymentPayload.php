@@ -11,7 +11,13 @@ use Symfony\Component\Validator\Constraints as Assert;
     schema: 'InitiatePaymentPayload',
     required: ['returnUrl'],
     properties: [
-        new OA\Property(property: 'returnUrl', type: 'string', format: 'uri', example: 'https://example.com/payment/callback', description: 'URL to redirect after payment'),
+        new OA\Property(
+            property: 'returnUrl',
+            type: 'string',
+            format: 'uri',
+            example: 'https://example.com/payment/callback',
+            description: 'URL to redirect after payment'
+        ),
     ]
 )]
 class InitiatePaymentPayload

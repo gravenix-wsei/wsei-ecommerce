@@ -27,10 +27,18 @@ class CustomerOrderController extends AbstractController
     #[OA\Get(
         path: '/orders',
         summary: 'List customer orders',
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         parameters: [
-            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 1)),
-            new OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 20)),
+            new OA\Parameter(name: 'page', in: 'query', required: false, schema: new OA\Schema(
+                type: 'integer',
+                default: 1
+            )),
+            new OA\Parameter(name: 'limit', in: 'query', required: false, schema: new OA\Schema(
+                type: 'integer',
+                default: 20
+            )),
         ],
         responses: [
             new OA\Response(

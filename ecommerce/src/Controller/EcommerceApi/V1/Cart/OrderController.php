@@ -42,7 +42,9 @@ class OrderController extends AbstractController
         path: '/cart/order',
         summary: 'Place order from cart',
         tags: ['Order'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(ref: '#/components/schemas/PlaceOrderPayload')
@@ -75,7 +77,9 @@ class OrderController extends AbstractController
         path: '/order/pay/{orderId}',
         summary: 'Initiate payment for order',
         tags: ['Order'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         parameters: [
             new OA\Parameter(name: 'orderId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],

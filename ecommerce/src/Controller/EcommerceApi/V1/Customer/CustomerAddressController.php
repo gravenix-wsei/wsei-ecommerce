@@ -33,7 +33,9 @@ class CustomerAddressController extends AbstractController
         path: '/customer/addresses',
         summary: 'List customer addresses',
         tags: ['Address'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         responses: [
             new OA\Response(
                 response: 200,
@@ -55,7 +57,9 @@ class CustomerAddressController extends AbstractController
         path: '/customer/addresses',
         summary: 'Create new address',
         tags: ['Address'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(ref: '#/components/schemas/AddressPayload')
@@ -89,7 +93,9 @@ class CustomerAddressController extends AbstractController
         path: '/customer/addresses/{id}',
         summary: 'Update address',
         tags: ['Address'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
@@ -132,7 +138,9 @@ class CustomerAddressController extends AbstractController
         path: '/customer/addresses/{id}',
         summary: 'Delete address',
         tags: ['Address'],
-        security: [['ApiToken' => []]],
+        security: [[
+            'ApiToken' => [],
+        ]],
         parameters: [
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],

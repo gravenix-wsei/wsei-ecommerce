@@ -62,4 +62,3 @@ class SwaggerController extends AbstractController
         return $openapi->toJson();
     }
 }
-
