@@ -17,15 +17,11 @@ WSEI E-commerce is a **Symfony 7.4** based e-commerce platform featuring:
 ### 📦 [Setup](Setup.md)
 Getting started with the project - Docker environment, installation, and initial configuration.
 
-### 👨‍💻 For Developers
-- [Project Architecture](For-Developers.md) - Namespacing, directory structure, coding standards
-- [Admin Settings Plugin System](Admin-Settings-Plugin-System.md) - Extending admin settings
-- [Testing Guide](Testing-Guide.md) - Running unit and integration tests
-- [Code Quality](Code-Quality.md) - PHPStan, ECS, and mutation testing
+### 👨‍💻 [For Developers](For-Developers.md)
+Architectural overview of controllers, entities, forms, framework components, repositories, and Twig extensions.
 
-### 👥 For Users
-- [Admin Panel](Admin-Panel.md) - Managing products, categories, customers, and orders
-- [API Reference](API-Reference.md) - REST API endpoints and authentication
+### 👥 [User Manual](User-manual.md)
+Step-by-step guide for using the administration panel to manage products, categories, customers, orders, and administrator permissions.
 
 ## Technology Stack
 
@@ -43,8 +39,8 @@ Getting started with the project - Docker environment, installation, and initial
 ## Quick Links
 
 - [Makefile Commands Reference](Setup.md#makefile-commands)
-- [API Authentication](API-Reference.md#authentication)
-- [Running Tests](Testing-Guide.md#running-tests)
-- [Coding Standards](For-Developers.md#coding-standards)
+- [Controllers Architecture](For-Developers.md#controllers)
+- [EcommerceApi System](For-Developers.md#ecommerceapi-system)
+- [Framework Components](For-Developers.md#framework)
 
 

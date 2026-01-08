@@ -15,7 +15,7 @@ Located in `Controller/Admin/`, these handle the administration panel:
 
 #### Settings Section
 
-`SettingsController` displays a grid of available settings. Individual setting controllers are in `Controller/Admin/Settings/{SettingName}/` and implement `EcommerceSettingsInterface`. See [Admin Settings Plugin System](Admin-Settings-Plugin-System.md) for details.
+`SettingsController` displays a grid of available settings. Individual setting controllers are in `Controller/Admin/Settings/{SettingName}/` and implement `EcommerceSettingsInterface`. Settings are auto-discovered via service tagging.
 
 ### EcommerceApi Controllers
 
@@ -149,7 +149,6 @@ Forms use Symfony's form component with CSRF protection enabled.
 3. `SettingsProvider` collects all tagged services and creates `SettingItem` DTOs
 4. Main `SettingsController` displays grid of setting cards sorted by position/name
 
-See [Admin Settings Plugin System](Admin-Settings-Plugin-System.md) for full details.
 
 ### Checkout Classes
 
@@ -236,10 +235,4 @@ class Defaults
 
 Used throughout the application for consistent date formatting in API responses and display.
 
----
-
-**Related:** 
-- [Admin Settings Plugin System →](Admin-Settings-Plugin-System.md)
-- [Testing Guide →](Testing-Guide.md)
-- [Code Quality →](Code-Quality.md)
 
