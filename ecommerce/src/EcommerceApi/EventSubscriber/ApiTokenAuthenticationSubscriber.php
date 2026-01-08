@@ -25,7 +25,7 @@ class ApiTokenAuthenticationSubscriber
         if (!str_starts_with($request->getPathInfo(), RequestAttributes::API_PREFIX)) {
             return;
         }
-        $request->attributes->set('is_ecommerce_api', true);
+        $request->attributes->set(RequestAttributes::IS_ECOMMERCE_API, true);
 
         $controller = $event->getController();
         if (!is_array($controller)) {

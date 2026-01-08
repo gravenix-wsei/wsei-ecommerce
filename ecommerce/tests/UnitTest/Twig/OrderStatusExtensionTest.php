@@ -22,32 +22,16 @@ class OrderStatusExtensionTest extends TestCase
         $this->extension = new OrderStatusExtension();
     }
 
-    public function testGetFiltersReturnsTwoFilters(): void
+    public function testGetFiltersReturnsCorrectFilters(): void
     {
         // Act
         $filters = $this->extension->getFilters();
 
         // Assert
         static::assertCount(2, $filters);
-    }
 
-    public function testGetFiltersContainsOrderStatusBadgeFilter(): void
-    {
-        // Act
-        $filters = $this->extension->getFilters();
-
-        // Assert
         $filterNames = array_map(fn (TwigFilter $filter): string => $filter->getName(), $filters);
         static::assertContains('order_status_badge', $filterNames);
-    }
-
-    public function testGetFiltersContainsOrderStatusLabelFilter(): void
-    {
-        // Act
-        $filters = $this->extension->getFilters();
-
-        // Assert
-        $filterNames = array_map(fn (TwigFilter $filter): string => $filter->getName(), $filters);
         static::assertContains('order_status_label', $filterNames);
     }
 
