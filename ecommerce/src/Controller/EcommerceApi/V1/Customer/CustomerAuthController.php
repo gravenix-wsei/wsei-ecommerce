@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Customer;
 
 use Doctrine\ORM\EntityManagerInterface;
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -19,7 +20,16 @@ use Wsei\Ecommerce\Entity\ApiToken;
 use Wsei\Ecommerce\Entity\Customer as CustomerEntity;
 use Wsei\Ecommerce\Repository\CustomerRepository;
 
+#[OA\Schema(
+    schema: 'LoginPayload',
+    required: ['email', 'password'],
+    properties: [
+        new OA\Property(property: 'email', type: 'string', format: 'email', example: 'customer@example.com'),
+        new OA\Property(property: 'password', type: 'string', example: 'password123'),
+    ]
+)]
 #[Route('/ecommerce/api/v1/customer')]
+#[OA\Tag(name: 'Customer')]
 class CustomerAuthController extends AbstractController
 {
     public function __construct(
@@ -31,6 +41,25 @@ class CustomerAuthController extends AbstractController
 
     #[PublicAccess]
     #[Route('/login', name: 'ecommerce_api.customer.login', methods: ['POST'])]
+    #[OA\Post(
+        path: '/customer/login',
+        summary: 'Customer login',
+        tags: ['Customer'],
+        description: 'Authenticate customer and receive API token',
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/LoginPayload')
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Login successful',
+                content: new OA\JsonContent(ref: '#/components/schemas/ApiTokenResponse')
+            ),
+            new OA\Response(response: 400, description: 'Bad request'),
+            new OA\Response(response: 401, description: 'Invalid credentials'),
+        ]
+    )]
     public function login(Request $request): ApiTokenResponse
     {
         $data = json_decode($request->getContent(), true);
@@ -67,6 +96,23 @@ class CustomerAuthController extends AbstractController
     }
 
     #[Route('/logout', name: 'ecommerce_api.customer.logout', methods: ['POST'])]
+    #[OA\Post(
+        path: '/customer/logout',
+        summary: 'Customer logout',
+        tags: ['Customer'],
+        description: 'Invalidate current API token',
+        security: [[
+            'ApiToken' => [],
+        ]],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Logout successful',
+                content: new OA\JsonContent(ref: '#/components/schemas/SuccessResponse')
+            ),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ]
+    )]
     public function logout(CustomerEntity $customer): Response
     {
         $apiToken = $customer->getApiToken();

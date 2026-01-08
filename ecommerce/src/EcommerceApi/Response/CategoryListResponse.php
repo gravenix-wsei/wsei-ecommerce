@@ -4,9 +4,31 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\Response;
 
+use OpenApi\Attributes as OA;
 use Wsei\Ecommerce\EcommerceApi\Response\Entity\CategoryResponse;
 use Wsei\Ecommerce\Entity\Category;
 
+#[OA\Schema(
+    schema: 'CategoryListResponse',
+    properties: [
+        new OA\Property(
+            property: 'data',
+            type: 'array',
+            items: new OA\Items(ref: '#/components/schemas/CategoryResponse')
+        ),
+        new OA\Property(property: 'page', type: 'integer', example: 1),
+        new OA\Property(property: 'totalPages', type: 'integer', example: 5),
+        new OA\Property(
+            property: 'nextPage',
+            type: 'string',
+            format: 'uri',
+            example: 'http://localhost/ecommerce/api/v1/categories?page=2&limit=20',
+            nullable: true
+        ),
+        new OA\Property(property: 'previousPage', type: 'string', format: 'uri', example: null, nullable: true),
+        new OA\Property(property: 'apiDescription', type: 'string', example: 'CategoryList'),
+    ]
+)]
 class CategoryListResponse extends EcommerceResponse
 {
     /**

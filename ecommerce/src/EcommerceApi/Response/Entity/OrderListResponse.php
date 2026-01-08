@@ -4,9 +4,31 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\Response\Entity;
 
+use OpenApi\Attributes as OA;
 use Wsei\Ecommerce\EcommerceApi\Response\EcommerceResponse;
 use Wsei\Ecommerce\Entity\Order;
 
+#[OA\Schema(
+    schema: 'OrderListResponse',
+    properties: [
+        new OA\Property(
+            property: 'data',
+            type: 'array',
+            items: new OA\Items(ref: '#/components/schemas/OrderResponse')
+        ),
+        new OA\Property(property: 'page', type: 'integer', example: 1),
+        new OA\Property(property: 'totalPages', type: 'integer', example: 5),
+        new OA\Property(
+            property: 'nextPage',
+            type: 'string',
+            format: 'uri',
+            example: 'http://localhost/ecommerce/api/v1/orders?page=2&limit=20',
+            nullable: true
+        ),
+        new OA\Property(property: 'previousPage', type: 'string', format: 'uri', example: null, nullable: true),
+        new OA\Property(property: 'apiDescription', type: 'string', example: 'OrderList'),
+    ]
+)]
 class OrderListResponse extends EcommerceResponse
 {
     /**

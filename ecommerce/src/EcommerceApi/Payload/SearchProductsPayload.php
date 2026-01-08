@@ -4,8 +4,29 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\Payload;
 
+use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[OA\Schema(
+    schema: 'SearchProductsPayload',
+    properties: [
+        new OA\Property(
+            property: 'categoryId',
+            type: 'integer',
+            example: 1,
+            description: 'Filter by category ID',
+            nullable: true
+        ),
+        new OA\Property(property: 'page', type: 'integer', example: 1, description: 'Page number', default: 1),
+        new OA\Property(
+            property: 'limit',
+            type: 'integer',
+            example: 20,
+            description: 'Items per page (max 100)',
+            default: 20
+        ),
+    ]
+)]
 class SearchProductsPayload
 {
     public function __construct(

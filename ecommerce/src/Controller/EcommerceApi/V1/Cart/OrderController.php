@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\Controller\EcommerceApi\V1\Cart;
 
+use OpenApi\Attributes as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +26,7 @@ use Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface;
 use Wsei\Ecommerce\Repository\OrderRepository;
 
 #[Route('/ecommerce/api/v1')]
+#[OA\Tag(name: 'Order')]
 class OrderController extends AbstractController
 {
     public function __construct(
@@ -36,6 +38,27 @@ class OrderController extends AbstractController
     }
 
     #[Route('/cart/order', name: 'ecommerce_api.cart.place_order', methods: ['POST'])]
+    #[OA\Post(
+        path: '/cart/order',
+        summary: 'Place order from cart',
+        tags: ['Order'],
+        security: [[
+            'ApiToken' => [],
+        ]],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/PlaceOrderPayload')
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Order placed successfully',
+                content: new OA\JsonContent(ref: '#/components/schemas/OrderResponse')
+            ),
+            new OA\Response(response: 400, description: 'Bad request'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+        ]
+    )]
     public function placeOrder(#[MapRequestPayload] PlaceOrderPayload $payload, Customer $customer): OrderResponse
     {
         $cart = $this->cartService->getOrCreateActiveCart($customer);
@@ -50,6 +73,31 @@ class OrderController extends AbstractController
     }
 
     #[Route('/order/pay/{orderId}', name: 'ecommerce_api.order.pay', methods: ['POST'])]
+    #[OA\Post(
+        path: '/order/pay/{orderId}',
+        summary: 'Initiate payment for order',
+        tags: ['Order'],
+        security: [[
+            'ApiToken' => [],
+        ]],
+        parameters: [
+            new OA\Parameter(name: 'orderId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(ref: '#/components/schemas/InitiatePaymentPayload')
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Payment URL generated',
+                content: new OA\JsonContent(ref: '#/components/schemas/PaymentUrlResponse')
+            ),
+            new OA\Response(response: 400, description: 'Bad request'),
+            new OA\Response(response: 401, description: 'Unauthorized'),
+            new OA\Response(response: 404, description: 'Order not found'),
+        ]
+    )]
     public function pay(
         int $orderId,
         #[MapRequestPayload]
@@ -71,6 +119,20 @@ class OrderController extends AbstractController
 
     #[PublicAccess]
     #[Route('/order/verify-payment', name: 'ecommerce_api.order.verify_payment', methods: ['GET'])]
+    #[OA\Get(
+        path: '/order/verify-payment',
+        summary: 'Verify payment callback',
+        tags: ['Order'],
+        description: 'Payment gateway callback endpoint. Redirects to return URL with payment status.',
+        parameters: [
+            new OA\Parameter(name: 'token', in: 'query', required: true, schema: new OA\Schema(type: 'string')),
+        ],
+        responses: [
+            new OA\Response(response: 302, description: 'Redirect to return URL'),
+            new OA\Response(response: 400, description: 'Bad request'),
+            new OA\Response(response: 404, description: 'Payment not found'),
+        ]
+    )]
     public function verifyPayment(Request $request): RedirectResponse
     {
         $token = $request->query->get('token');

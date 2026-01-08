@@ -4,8 +4,16 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\Payload;
 
+use OpenApi\Attributes as OA;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[OA\Schema(
+    schema: 'PlaceOrderPayload',
+    required: ['addressId'],
+    properties: [
+        new OA\Property(property: 'addressId', type: 'integer', example: 1, description: 'ID of the delivery address'),
+    ]
+)]
 class PlaceOrderPayload
 {
     public function __construct(

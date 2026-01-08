@@ -16,6 +16,7 @@ when@dev: &config
             autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
             bind:
                 $projectDir: '%kernel.project_dir%'
+                $kernelEnvironment: '%kernel.environment%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Framework\Payment\Stripe\StripePaymentService'
 
         # Auto-tag all setting controllers that implement EcommerceSettingsInterface
@@ -57,6 +58,7 @@ when@test:
             autoconfigure: true
             bind:
                 $projectDir: '%kernel.project_dir%'
+                $kernelEnvironment: '%kernel.environment%'
                 Wsei\Ecommerce\Framework\Payment\PaymentServiceInterface $paymentService: '@Wsei\Ecommerce\Tests\IntegrationTest\Mocked\Framework\Payment\MockPaymentService'
 
         # Auto-tag all setting controllers that implement EcommerceSettingsInterface
