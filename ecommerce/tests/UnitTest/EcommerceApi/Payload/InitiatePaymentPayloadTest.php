@@ -18,7 +18,7 @@ class InitiatePaymentPayloadTest extends TestCase
         $payload = new InitiatePaymentPayload($returnUrl);
 
         // Assert
-        $this->assertEquals($returnUrl, $payload->returnUrl);
+        static::assertEquals($returnUrl, $payload->returnUrl);
     }
 
     public function testReturnUrlIsPubliclyAccessible(): void
@@ -28,6 +28,6 @@ class InitiatePaymentPayloadTest extends TestCase
         $payload = new InitiatePaymentPayload($returnUrl);
 
         // Act & Assert
-        $this->assertSame($returnUrl, $payload->returnUrl);
+        static::assertSame($returnUrl, $payload->returnUrl);
     }
 }

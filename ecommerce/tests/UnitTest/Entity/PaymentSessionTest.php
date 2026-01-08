@@ -17,12 +17,12 @@ class PaymentSessionTest extends TestCase
         $session = new PaymentSession();
 
         // Assert
-        $this->assertNull($session->getId());
-        $this->assertNotNull($session->getToken());
-        $this->assertNotNull($session->getCreatedAt());
-        $this->assertNotNull($session->getExpiresAt());
-        $this->assertEquals(PaymentSessionStatus::ACTIVE, $session->getStatus());
-        $this->assertTrue($session->isActive());
+        static::assertNull($session->getId());
+        static::assertNotNull($session->getToken());
+        static::assertNotNull($session->getCreatedAt());
+        static::assertNotNull($session->getExpiresAt());
+        static::assertEquals(PaymentSessionStatus::ACTIVE, $session->getStatus());
+        static::assertTrue($session->isActive());
     }
 
     public function testTokenIsGeneratedWithCorrectLength(): void
@@ -31,7 +31,7 @@ class PaymentSessionTest extends TestCase
         $session = new PaymentSession();
 
         // Assert
-        $this->assertEquals(PaymentSession::TOKEN_LENGTH, strlen($session->getToken()));
+        static::assertEquals(PaymentSession::TOKEN_LENGTH, strlen($session->getToken()));
     }
 
     public function testExpiresAtIsSetTo30MinutesFromNow(): void
@@ -42,8 +42,8 @@ class PaymentSessionTest extends TestCase
         $after = new \DateTime('+30 minutes');
 
         // Assert - expiresAt should be within the range (allowing for execution time)
-        $this->assertGreaterThanOrEqual($before, $session->getExpiresAt());
-        $this->assertLessThanOrEqual($after, $session->getExpiresAt());
+        static::assertGreaterThanOrEqual($before, $session->getExpiresAt());
+        static::assertLessThanOrEqual($after, $session->getExpiresAt());
     }
 
     public function testCanSetAndGetOrder(): void
@@ -56,8 +56,8 @@ class PaymentSessionTest extends TestCase
         $result = $session->setOrder($order);
 
         // Assert
-        $this->assertSame($session, $result);
-        $this->assertSame($order, $session->getOrder());
+        static::assertSame($session, $result);
+        static::assertSame($order, $session->getOrder());
     }
 
     public function testCanSetAndGetReturnUrl(): void
@@ -70,8 +70,8 @@ class PaymentSessionTest extends TestCase
         $result = $session->setReturnUrl($returnUrl);
 
         // Assert
-        $this->assertSame($session, $result);
-        $this->assertEquals($returnUrl, $session->getReturnUrl());
+        static::assertSame($session, $result);
+        static::assertEquals($returnUrl, $session->getReturnUrl());
     }
 
     public function testCanSetAndGetStripeSessionId(): void
@@ -84,8 +84,8 @@ class PaymentSessionTest extends TestCase
         $result = $session->setStripeSessionId($stripeSessionId);
 
         // Assert
-        $this->assertSame($session, $result);
-        $this->assertEquals($stripeSessionId, $session->getStripeSessionId());
+        static::assertSame($session, $result);
+        static::assertEquals($stripeSessionId, $session->getStripeSessionId());
     }
 
     public function testCanSetAndGetPaymentIntentId(): void
@@ -98,8 +98,8 @@ class PaymentSessionTest extends TestCase
         $result = $session->setPaymentIntentId($paymentIntentId);
 
         // Assert
-        $this->assertSame($session, $result);
-        $this->assertEquals($paymentIntentId, $session->getPaymentIntentId());
+        static::assertSame($session, $result);
+        static::assertEquals($paymentIntentId, $session->getPaymentIntentId());
     }
 
     public function testCanSetAndGetStatus(): void
@@ -111,8 +111,8 @@ class PaymentSessionTest extends TestCase
         $result = $session->setStatus(PaymentSessionStatus::COMPLETED);
 
         // Assert
-        $this->assertSame($session, $result);
-        $this->assertEquals(PaymentSessionStatus::COMPLETED, $session->getStatus());
+        static::assertSame($session, $result);
+        static::assertEquals(PaymentSessionStatus::COMPLETED, $session->getStatus());
     }
 
     public function testIsActiveReturnsTrueForActiveStatus(): void
@@ -121,7 +121,7 @@ class PaymentSessionTest extends TestCase
         $session = new PaymentSession();
 
         // Assert
-        $this->assertTrue($session->isActive());
+        static::assertTrue($session->isActive());
     }
 
     public function testIsActiveReturnsFalseForNonActiveStatus(): void
@@ -131,7 +131,7 @@ class PaymentSessionTest extends TestCase
         $session->setStatus(PaymentSessionStatus::CANCELLED);
 
         // Assert
-        $this->assertFalse($session->isActive());
+        static::assertFalse($session->isActive());
     }
 
     public function testIsCancelledReturnsTrueForCancelledStatus(): void
@@ -141,7 +141,7 @@ class PaymentSessionTest extends TestCase
         $session->setStatus(PaymentSessionStatus::CANCELLED);
 
         // Assert
-        $this->assertTrue($session->isCancelled());
+        static::assertTrue($session->isCancelled());
     }
 
     public function testIsCancelledReturnsFalseForNonCancelledStatus(): void
@@ -150,7 +150,7 @@ class PaymentSessionTest extends TestCase
         $session = new PaymentSession();
 
         // Assert
-        $this->assertFalse($session->isCancelled());
+        static::assertFalse($session->isCancelled());
     }
 
     public function testIsCompletedReturnsTrueForCompletedStatus(): void
@@ -160,7 +160,7 @@ class PaymentSessionTest extends TestCase
         $session->setStatus(PaymentSessionStatus::COMPLETED);
 
         // Assert
-        $this->assertTrue($session->isCompleted());
+        static::assertTrue($session->isCompleted());
     }
 
     public function testIsCompletedReturnsFalseForNonCompletedStatus(): void
@@ -169,7 +169,7 @@ class PaymentSessionTest extends TestCase
         $session = new PaymentSession();
 
         // Assert
-        $this->assertFalse($session->isCompleted());
+        static::assertFalse($session->isCompleted());
     }
 
     public function testIsExpiredReturnsTrueWhenExpiryDatePassed(): void
@@ -179,7 +179,7 @@ class PaymentSessionTest extends TestCase
         $session->setExpiresAt(new \DateTime('-1 hour'));
 
         // Assert
-        $this->assertTrue($session->isExpired());
+        static::assertTrue($session->isExpired());
     }
 
     public function testIsExpiredReturnsTrueForExpiredStatus(): void
@@ -189,7 +189,7 @@ class PaymentSessionTest extends TestCase
         $session->setStatus(PaymentSessionStatus::EXPIRED);
 
         // Assert
-        $this->assertTrue($session->isExpired());
+        static::assertTrue($session->isExpired());
     }
 
     public function testIsExpiredReturnsFalseWhenNotExpired(): void
@@ -199,7 +199,7 @@ class PaymentSessionTest extends TestCase
         $session->setExpiresAt(new \DateTime('+1 hour'));
 
         // Assert
-        $this->assertFalse($session->isExpired());
+        static::assertFalse($session->isExpired());
     }
 
     public function testCancelChangesStatusToCancelled(): void
@@ -211,8 +211,8 @@ class PaymentSessionTest extends TestCase
         $session->cancel();
 
         // Assert
-        $this->assertEquals(PaymentSessionStatus::CANCELLED, $session->getStatus());
-        $this->assertTrue($session->isCancelled());
+        static::assertEquals(PaymentSessionStatus::CANCELLED, $session->getStatus());
+        static::assertTrue($session->isCancelled());
     }
 
     public function testCompleteChangesStatusToCompleted(): void
@@ -224,8 +224,8 @@ class PaymentSessionTest extends TestCase
         $session->complete();
 
         // Assert
-        $this->assertEquals(PaymentSessionStatus::COMPLETED, $session->getStatus());
-        $this->assertTrue($session->isCompleted());
+        static::assertEquals(PaymentSessionStatus::COMPLETED, $session->getStatus());
+        static::assertTrue($session->isCompleted());
     }
 
     public function testExpireChangesStatusToExpired(): void
@@ -237,7 +237,7 @@ class PaymentSessionTest extends TestCase
         $session->expire();
 
         // Assert
-        $this->assertEquals(PaymentSessionStatus::EXPIRED, $session->getStatus());
+        static::assertEquals(PaymentSessionStatus::EXPIRED, $session->getStatus());
     }
 
     public function testGenerateCreatesUniqueTokens(): void
@@ -248,13 +248,13 @@ class PaymentSessionTest extends TestCase
         $token3 = PaymentSession::generate();
 
         // Assert
-        $this->assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token1));
-        $this->assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token2));
-        $this->assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token3));
+        static::assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token1));
+        static::assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token2));
+        static::assertEquals(PaymentSession::TOKEN_LENGTH, strlen($token3));
 
-        $this->assertNotEquals($token1, $token2);
-        $this->assertNotEquals($token2, $token3);
-        $this->assertNotEquals($token1, $token3);
+        static::assertNotEquals($token1, $token2);
+        static::assertNotEquals($token2, $token3);
+        static::assertNotEquals($token1, $token3);
     }
 
     public function testGeneratedTokenContainsOnlyAllowedCharacters(): void
@@ -263,6 +263,6 @@ class PaymentSessionTest extends TestCase
         $token = PaymentSession::generate();
 
         // Assert
-        $this->assertMatchesRegularExpression('/^[A-Za-z0-9]+$/', $token);
+        static::assertMatchesRegularExpression('/^[A-Za-z0-9]+$/', $token);
     }
 }

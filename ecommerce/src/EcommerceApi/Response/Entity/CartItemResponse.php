@@ -25,12 +25,14 @@ class CartItemResponse extends EcommerceResponse
                     ->getId(),
                 'name' => $this->cartItem->getProduct()
                     ->getName(),
-                'priceNet' => $this->cartItem->getProduct()
-                    ->getPriceNet(),
-                'priceGross' => $this->cartItem->getProduct()
-                    ->getPriceGross(),
             ],
             'quantity' => $this->cartItem->getQuantity(),
+            'unitPriceNet' => $this->cartItem->getProduct()
+                ->getPriceNet(),
+            'unitPriceGross' => $this->cartItem->getProduct()
+                ->getPriceGross(),
+            'totalPriceNet' => $this->cartItem->getTotalPriceNet(),
+            'totalPriceGross' => $this->cartItem->getTotalPriceGross(),
             'createdAt' => $this->cartItem->getCreatedAt()?->format(Defaults::DEFAULT_DATE_FORMAT),
             'updatedAt' => $this->cartItem->getUpdatedAt()?->format(Defaults::DEFAULT_DATE_FORMAT),
         ];

@@ -72,5 +72,5 @@ Accept: application/json
 wsei-ecommerce-token: {{authToken}}
 
 {
-  "returnUrl": "http://localhost:8080/payment-return"
+  "returnUrl": "http://localhost:8080"
 }

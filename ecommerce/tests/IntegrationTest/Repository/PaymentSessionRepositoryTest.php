@@ -42,8 +42,8 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $found = $this->repository->findByToken($token);
 
         // Assert
-        $this->assertNotNull($found);
-        $this->assertEquals($token, $found->getToken());
+        static::assertNotNull($found);
+        static::assertEquals($token, $found->getToken());
     }
 
     public function testFindByTokenReturnsNullForNonExistentToken(): void
@@ -52,7 +52,7 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $result = $this->repository->findByToken('non_existent_token_12345');
 
         // Assert
-        $this->assertNull($result);
+        static::assertNull($result);
     }
 
     public function testCanFindValidPaymentSessionByToken(): void
@@ -74,9 +74,9 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $found = $this->repository->findValidByToken($token);
 
         // Assert
-        $this->assertNotNull($found);
-        $this->assertEquals($token, $found->getToken());
-        $this->assertTrue($found->isActive());
+        static::assertNotNull($found);
+        static::assertEquals($token, $found->getToken());
+        static::assertTrue($found->isActive());
     }
 
     public function testFindValidByTokenReturnsNullForExpiredSession(): void
@@ -98,7 +98,7 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $found = $this->repository->findValidByToken($token);
 
         // Assert
-        $this->assertNull($found);
+        static::assertNull($found);
     }
 
     public function testFindValidByTokenReturnsNullForCancelledSession(): void
@@ -120,7 +120,7 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $found = $this->repository->findValidByToken($token);
 
         // Assert
-        $this->assertNull($found);
+        static::assertNull($found);
     }
 
     public function testCanFindActiveSessionsByOrder(): void
@@ -151,9 +151,9 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $activeSessions = $this->repository->findActiveByOrder($order);
 
         // Assert
-        $this->assertCount(2, $activeSessions);
+        static::assertCount(2, $activeSessions);
         foreach ($activeSessions as $session) {
-            $this->assertTrue($session->isActive());
+            static::assertTrue($session->isActive());
         }
     }
 
@@ -181,7 +181,7 @@ class PaymentSessionRepositoryTest extends KernelTestCase
 
         // Assert
         $sessions = $this->repository->findActiveByOrder($order);
-        $this->assertCount(0, $sessions);
+        static::assertCount(0, $sessions);
     }
 
     public function testCancelActiveSessionsDoesNotAffectOtherOrders(): void
@@ -211,8 +211,8 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         $order1Sessions = $this->repository->findActiveByOrder($order1);
         $order2Sessions = $this->repository->findActiveByOrder($order2);
 
-        $this->assertCount(0, $order1Sessions);
-        $this->assertCount(1, $order2Sessions);
+        static::assertCount(0, $order1Sessions);
+        static::assertCount(1, $order2Sessions);
     }
 
     private function createTestOrder(EntityManagerInterface $em): Order

@@ -55,8 +55,8 @@ class ExampleIntegrationTest extends KernelTestCase
 
         $response = $loginController->login($request);
 
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertNotNull($response->getContent());
+        static::assertEquals(200, $response->getStatusCode());
+        static::assertNotNull($response->getContent());
     }
 
     #[Depends('testCustomerLoginController')]
@@ -67,6 +67,6 @@ class ExampleIntegrationTest extends KernelTestCase
         $loginCustomer = $this->customerRepository->findOneBy([
             'email' => 'login-test@example.com',
         ]);
-        $this->assertNull($loginCustomer, 'Login customer should not exist - database should be rolled back');
+        static::assertNull($loginCustomer, 'Login customer should not exist - database should be rolled back');
     }
 }

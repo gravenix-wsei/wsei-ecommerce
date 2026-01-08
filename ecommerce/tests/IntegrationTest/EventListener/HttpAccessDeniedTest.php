@@ -9,7 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 use Wsei\Ecommerce\Entity\User;
 
-class AccessDeniedListenerTest extends WebTestCase
+class HttpAccessDeniedTest extends WebTestCase
 {
     private KernelBrowser $client;
 

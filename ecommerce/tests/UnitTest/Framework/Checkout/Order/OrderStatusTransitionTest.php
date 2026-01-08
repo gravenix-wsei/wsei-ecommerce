@@ -34,8 +34,8 @@ class OrderStatusTransitionTest extends TestCase
         $allowedTransitions = $this->statusTransition->getAllowedTransitions($fromStatus);
 
         // Assert
-        $this->assertSame($expectedStatuses, $allowedTransitions);
-        $this->assertCount(count($expectedStatuses), $allowedTransitions);
+        static::assertSame($expectedStatuses, $allowedTransitions);
+        static::assertCount(count($expectedStatuses), $allowedTransitions);
     }
 
     /**
@@ -80,7 +80,7 @@ class OrderStatusTransitionTest extends TestCase
         $canTransition = $this->statusTransition->canTransitionTo($fromStatus, $toStatus);
 
         // Assert
-        $this->assertTrue(
+        static::assertTrue(
             $canTransition,
             sprintf('Should be able to transition from %s to %s', $fromStatus->value, $toStatus->value)
         );
@@ -136,7 +136,7 @@ class OrderStatusTransitionTest extends TestCase
         $canTransition = $this->statusTransition->canTransitionTo($fromStatus, $toStatus);
 
         // Assert
-        $this->assertFalse(
+        static::assertFalse(
             $canTransition,
             sprintf('Should NOT be able to transition from %s to %s', $fromStatus->value, $toStatus->value)
         );
@@ -282,9 +282,9 @@ class OrderStatusTransitionTest extends TestCase
         $disabledStatuses = $this->statusTransition->getDisabledStatuses($currentStatus);
 
         // Assert
-        $this->assertCount(count($expectedDisabledStatuses), $disabledStatuses);
+        static::assertCount(count($expectedDisabledStatuses), $disabledStatuses);
         foreach ($expectedDisabledStatuses as $expectedStatus) {
-            $this->assertContains(
+            static::assertContains(
                 $expectedStatus,
                 $disabledStatuses,
                 sprintf(
@@ -366,7 +366,7 @@ class OrderStatusTransitionTest extends TestCase
     public function testImplementsInterface(): void
     {
         // Assert
-        $this->assertInstanceOf(OrderStatusTransitionInterface::class, $this->statusTransition);
+        static::assertInstanceOf(OrderStatusTransitionInterface::class, $this->statusTransition);
     }
 
     public function testAllStatusesAreCoveredInTransitionRules(): void
@@ -380,7 +380,7 @@ class OrderStatusTransitionTest extends TestCase
 
             // Every status should have a defined rule (even if empty array for final statuses)
             // The return type guarantees it's an array, so we just verify no exception is thrown
-            $this->assertGreaterThanOrEqual(
+            static::assertGreaterThanOrEqual(
                 0,
                 count($allowedTransitions),
                 sprintf('Status %s should have defined transition rules (array)', $status->value)
@@ -397,7 +397,7 @@ class OrderStatusTransitionTest extends TestCase
         foreach ($nonFinalStatuses as $status) {
             $canTransition = $this->statusTransition->canTransitionTo($status, OrderStatus::CANCELLED);
 
-            $this->assertTrue($canTransition, sprintf('Should be able to cancel from %s status', $status->value));
+            static::assertTrue($canTransition, sprintf('Should be able to cancel from %s status', $status->value));
         }
     }
 
@@ -412,7 +412,7 @@ class OrderStatusTransitionTest extends TestCase
             foreach ($allStatuses as $targetStatus) {
                 $canTransition = $this->statusTransition->canTransitionTo($finalStatus, $targetStatus);
 
-                $this->assertFalse(
+                static::assertFalse(
                     $canTransition,
                     sprintf('Final status %s should not transition to %s', $finalStatus->value, $targetStatus->value)
                 );

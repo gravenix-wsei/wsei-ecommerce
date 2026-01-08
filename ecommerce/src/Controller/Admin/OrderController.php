@@ -14,6 +14,7 @@ use Wsei\Ecommerce\Entity\Order;
 use Wsei\Ecommerce\Form\Admin\OrderStatusType;
 use Wsei\Ecommerce\Framework\Checkout\Order\OrderStatusTransitionInterface;
 use Wsei\Ecommerce\Repository\OrderRepository;
+use function max;
 
 #[Route('/admin/orders')]
 #[IsGranted('ROLE_ADMIN.ORDER')]
@@ -31,7 +32,7 @@ class OrderController extends AbstractController
     #[Route('', name: 'admin.order.index', methods: ['GET'])]
     public function index(Request $request): Response
     {
-        $page = $this->getPageFromRequest($request);
+        $page = max(1, (int) $request->query->get('page', '1'));
 
         $orders = $this->orderRepository->findAllPaginated($page, self::ORDERS_PER_PAGE);
         $totalOrders = $this->orderRepository->countAll();
@@ -81,10 +82,5 @@ class OrderController extends AbstractController
             'order' => $order,
             'form' => $form,
         ]);
-    }
-
-    private function getPageFromRequest(Request $request): int
-    {
-        return max(1, $request->query->getInt('page', 1));
     }
 }

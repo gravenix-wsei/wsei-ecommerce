@@ -26,6 +26,8 @@ class CartResponse extends EcommerceResponse
         return [
             'id' => $this->cart->getId(),
             'items' => $items,
+            'totalPriceNet' => $this->cart->getTotalPriceNet(),
+            'totalPriceGross' => $this->cart->getTotalPriceGross(),
             'createdAt' => $this->cart->getCreatedAt()?->format(Defaults::DEFAULT_DATE_FORMAT),
             'updatedAt' => $this->cart->getUpdatedAt()?->format(Defaults::DEFAULT_DATE_FORMAT),
         ];

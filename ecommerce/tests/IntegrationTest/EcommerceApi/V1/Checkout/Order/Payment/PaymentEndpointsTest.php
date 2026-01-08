@@ -27,7 +27,7 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         );
 
         // Verify it's actually the MockPaymentService
-        $this->assertInstanceOf(MockPaymentService::class, $this->mockPaymentService);
+        static::assertInstanceOf(MockPaymentService::class, $this->mockPaymentService);
 
         // Reset to clean state
         $this->mockPaymentService->reset();
@@ -63,13 +63,13 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         ]);
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
         $response = json_decode($this->client->getResponse()->getContent(), true);
 
-        $this->assertArrayHasKey('paymentUrl', $response);
-        $this->assertArrayHasKey('token', $response);
-        $this->assertStringStartsWith('https://mock.stripe.com/checkout/', $response['paymentUrl']);
-        $this->assertStringStartsWith('mock_token_', $response['token']);
+        static::assertArrayHasKey('paymentUrl', $response);
+        static::assertArrayHasKey('token', $response);
+        static::assertStringStartsWith('https://mock.stripe.com/checkout/', $response['paymentUrl']);
+        static::assertStringStartsWith('mock_token_', $response['token']);
     }
 
     public function testPayEndpointFailsWithMockError(): void
@@ -96,10 +96,10 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertStringContainsString('Simulated payment error', $response['message']);
+        static::assertArrayHasKey('message', $response);
+        static::assertStringContainsString('Simulated payment error', $response['message']);
     }
 
     public function testPayEndpointThrowsException(): void
@@ -126,10 +126,10 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertStringContainsString('Payment service unavailable', $response['message']);
+        static::assertArrayHasKey('message', $response);
+        static::assertStringContainsString('Payment service unavailable', $response['message']);
     }
 
     public function testPayEndpointFailsForNonExistentOrder(): void
@@ -145,7 +145,7 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         ]);
 
         // Assert
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
     }
 
     public function testVerifyEndpointWithMockSuccess(): void
@@ -168,10 +168,10 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         $this->client->request('GET', '/ecommerce/api/v1/order/verify-payment?token=mock_token_123');
 
         // Assert - should redirect to success
-        $this->assertResponseRedirects();
+        static::assertResponseRedirects();
         $location = $this->client->getResponse()->headers->get('Location');
-        $this->assertStringContainsString('https://example.com/success', $location);
-        $this->assertStringContainsString('payment_success=1', $location);
+        static::assertStringContainsString('https://example.com/success', $location);
+        static::assertStringContainsString('payment_success=1', $location);
     }
 
     public function testVerifyEndpointWithMockFailure(): void
@@ -183,10 +183,10 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         $this->client->request('GET', '/ecommerce/api/v1/order/verify-payment?token=failed_token');
 
         // Assert - should return error (no redirect URL available for failed verification)
-        $this->assertResponseStatusCodeSame(404);
+        static::assertResponseStatusCodeSame(404);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertStringContainsString('Payment was not completed', $response['message']);
+        static::assertArrayHasKey('message', $response);
+        static::assertStringContainsString('Payment was not completed', $response['message']);
     }
 
     public function testVerifyEndpointWithoutToken(): void
@@ -195,9 +195,9 @@ class PaymentEndpointsTest extends AbstractOrderPlacementTest
         $this->client->request('GET', '/ecommerce/api/v1/order/verify-payment');
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertArrayHasKey('message', $response);
-        $this->assertStringContainsString('Payment token is required', $response['message']);
+        static::assertArrayHasKey('message', $response);
+        static::assertStringContainsString('Payment token is required', $response['message']);
     }
 }

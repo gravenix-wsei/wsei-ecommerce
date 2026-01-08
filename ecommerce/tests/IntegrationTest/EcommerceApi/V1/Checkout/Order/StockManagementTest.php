@@ -25,12 +25,12 @@ class StockManagementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Fetch product from database to check updated stock
         $updatedProduct = $this->entityManager->find(Product::class, $product->getId());
-        $this->assertEquals($initialStock - $orderedQuantity, $updatedProduct?->getStock());
-        $this->assertEquals(85, $updatedProduct?->getStock());
+        static::assertEquals($initialStock - $orderedQuantity, $updatedProduct?->getStock());
+        static::assertEquals(85, $updatedProduct?->getStock());
     }
 
     public function testStockDecreasedForMultipleProducts(): void
@@ -51,16 +51,16 @@ class StockManagementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Fetch products from database to check updated stock
         $updatedProduct1 = $this->entityManager->find(Product::class, $product1->getId());
         $updatedProduct2 = $this->entityManager->find(Product::class, $product2->getId());
         $updatedProduct3 = $this->entityManager->find(Product::class, $product3->getId());
 
-        $this->assertEquals(40, $updatedProduct1?->getStock());
-        $this->assertEquals(25, $updatedProduct2?->getStock());
-        $this->assertEquals(75, $updatedProduct3?->getStock());
+        static::assertEquals(40, $updatedProduct1?->getStock());
+        static::assertEquals(25, $updatedProduct2?->getStock());
+        static::assertEquals(75, $updatedProduct3?->getStock());
     }
 
     /**
@@ -90,10 +90,10 @@ class StockManagementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
         $response = json_decode($this->client->getResponse()->getContent(), true);
-        $this->assertStringContainsString('Insufficient stock', $response['message']);
-        $this->assertMatchesRegularExpression($expectedErrorMessagePattern, $response['message']);
+        static::assertStringContainsString('Insufficient stock', $response['message']);
+        static::assertMatchesRegularExpression($expectedErrorMessagePattern, $response['message']);
     }
 
     /**
@@ -166,15 +166,15 @@ class StockManagementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseStatusCodeSame(400);
+        static::assertResponseStatusCodeSame(400);
 
         // Verify stocks unchanged
         $this->entityManager->clear();
         $productARefreshed = $this->entityManager->find(Product::class, $productA->getId());
         $productBRefreshed = $this->entityManager->find(Product::class, $productB->getId());
 
-        $this->assertEquals($initialStockA, $productARefreshed?->getStock());
-        $this->assertEquals($initialStockB, $productBRefreshed?->getStock());
+        static::assertEquals($initialStockA, $productARefreshed?->getStock());
+        static::assertEquals($initialStockB, $productBRefreshed?->getStock());
     }
 
     public function testOrderWithExactStockAmount(): void
@@ -190,10 +190,10 @@ class StockManagementTest extends AbstractOrderPlacementTest
         $this->placeOrder($customer, $address->getId());
 
         // Assert
-        $this->assertResponseIsSuccessful();
+        static::assertResponseIsSuccessful();
 
         // Fetch product from database to check updated stock
         $updatedProduct = $this->entityManager->find(Product::class, $product->getId());
-        $this->assertEquals(0, $updatedProduct?->getStock());
+        static::assertEquals(0, $updatedProduct?->getStock());
     }
 }

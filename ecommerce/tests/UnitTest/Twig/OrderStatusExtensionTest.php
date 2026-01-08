@@ -22,33 +22,17 @@ class OrderStatusExtensionTest extends TestCase
         $this->extension = new OrderStatusExtension();
     }
 
-    public function testGetFiltersReturnsTwoFilters(): void
+    public function testGetFiltersReturnsCorrectFilters(): void
     {
         // Act
         $filters = $this->extension->getFilters();
 
         // Assert
-        $this->assertCount(2, $filters);
-    }
+        static::assertCount(2, $filters);
 
-    public function testGetFiltersContainsOrderStatusBadgeFilter(): void
-    {
-        // Act
-        $filters = $this->extension->getFilters();
-
-        // Assert
         $filterNames = array_map(fn (TwigFilter $filter): string => $filter->getName(), $filters);
-        $this->assertContains('order_status_badge', $filterNames);
-    }
-
-    public function testGetFiltersContainsOrderStatusLabelFilter(): void
-    {
-        // Act
-        $filters = $this->extension->getFilters();
-
-        // Assert
-        $filterNames = array_map(fn (TwigFilter $filter): string => $filter->getName(), $filters);
-        $this->assertContains('order_status_label', $filterNames);
+        static::assertContains('order_status_badge', $filterNames);
+        static::assertContains('order_status_label', $filterNames);
     }
 
     #[DataProvider('provideStatusBadgeClasses')]
@@ -58,7 +42,7 @@ class OrderStatusExtensionTest extends TestCase
         $badgeClass = $this->extension->getStatusBadgeClass($status);
 
         // Assert
-        $this->assertSame($expectedClass, $badgeClass);
+        static::assertSame($expectedClass, $badgeClass);
     }
 
     /**
@@ -101,7 +85,7 @@ class OrderStatusExtensionTest extends TestCase
         $label = $this->extension->getStatusLabel($status);
 
         // Assert
-        $this->assertSame($expectedLabel, $label);
+        static::assertSame($expectedLabel, $label);
     }
 
     /**

@@ -112,4 +112,22 @@ class OrderItem
 
         return $this;
     }
+
+    public function getTotalPriceNet(): string
+    {
+        if ($this->priceNet === null) {
+            return '0.00';
+        }
+
+        return bcmul($this->priceNet, (string) $this->quantity, 2);
+    }
+
+    public function getTotalPriceGross(): string
+    {
+        if ($this->priceGross === null) {
+            return '0.00';
+        }
+
+        return bcmul($this->priceGross, (string) $this->quantity, 2);
+    }
 }
