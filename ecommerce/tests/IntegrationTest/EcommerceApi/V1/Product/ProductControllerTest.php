@@ -8,11 +8,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Wsei\Ecommerce\Entity\Category;
-use Wsei\Ecommerce\Entity\Product;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCategories;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsProducts;
 
 class ProductControllerTest extends WebTestCase
 {
+    use BuildsCategories;
+    use BuildsProducts;
+
     private KernelBrowser $client;
 
     private ContainerInterface $container;
@@ -21,6 +24,11 @@ class ProductControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->container = static::getContainer();
+    }
+
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->container->get(EntityManagerInterface::class);
     }
 
     public function testSearchProductsEmpty(): void
@@ -42,9 +50,9 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Electronics');
-        $product1 = $this->createProduct('Laptop', $category);
-        $product2 = $this->createProduct('Mouse', null);
-        $product3 = $this->createProduct('Keyboard', $category);
+        $product1 = $this->createProduct('Laptop', category: $category);
+        $product2 = $this->createProduct('Mouse');
+        $product3 = $this->createProduct('Keyboard', category: $category);
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
@@ -81,9 +89,9 @@ class ProductControllerTest extends WebTestCase
         $electronicsCategory = $this->createCategory('Electronics');
         $booksCategory = $this->createCategory('Books');
 
-        $product1 = $this->createProduct('Laptop', $electronicsCategory);
-        $product2 = $this->createProduct('Book', $booksCategory);
-        $product3 = $this->createProduct('Mouse', $electronicsCategory);
+        $product1 = $this->createProduct('Laptop', category: $electronicsCategory);
+        $product2 = $this->createProduct('Book', category: $booksCategory);
+        $product3 = $this->createProduct('Mouse', category: $electronicsCategory);
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', [
@@ -116,7 +124,7 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Electronics');
-        $this->createProduct('Laptop', $category);
+        $this->createProduct('Laptop', category: $category);
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', [
@@ -134,8 +142,8 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Electronics');
-        $productWithCategory = $this->createProduct('Laptop', $category);
-        $productWithoutCategory = $this->createProduct('Generic Item', null);
+        $productWithCategory = $this->createProduct('Laptop', category: $category);
+        $productWithoutCategory = $this->createProduct('Generic Item');
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
@@ -163,7 +171,7 @@ class ProductControllerTest extends WebTestCase
         // Arrange - Create 25 products
         $category = $this->createCategory('Test');
         for ($i = 1; $i <= 25; $i++) {
-            $this->createProduct('Product ' . $i, $category);
+            $this->createProduct('Product ' . $i, category: $category);
         }
 
         // Act
@@ -185,7 +193,7 @@ class ProductControllerTest extends WebTestCase
         // Arrange - Create 25 products
         $category = $this->createCategory('Test');
         for ($i = 1; $i <= 25; $i++) {
-            $this->createProduct('Product ' . $i, $category);
+            $this->createProduct('Product ' . $i, category: $category);
         }
 
         // Act
@@ -207,7 +215,7 @@ class ProductControllerTest extends WebTestCase
         // Arrange - Create 25 products
         $category = $this->createCategory('Test');
         for ($i = 1; $i <= 25; $i++) {
-            $this->createProduct('Product ' . $i, $category);
+            $this->createProduct('Product ' . $i, category: $category);
         }
 
         // Act
@@ -231,10 +239,10 @@ class ProductControllerTest extends WebTestCase
         $books = $this->createCategory('Books');
 
         for ($i = 1; $i <= 15; $i++) {
-            $this->createProduct('Laptop ' . $i, $electronics);
+            $this->createProduct('Laptop ' . $i, category: $electronics);
         }
         for ($i = 1; $i <= 5; $i++) {
-            $this->createProduct('Book ' . $i, $books);
+            $this->createProduct('Book ' . $i, category: $books);
         }
 
         // Act
@@ -256,7 +264,7 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Public Category');
-        $this->createProduct('Public Product', $category);
+        $this->createProduct('Public Product', category: $category);
 
         // Act - No authentication header provided
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
@@ -272,7 +280,7 @@ class ProductControllerTest extends WebTestCase
         // Arrange - Create 30 products
         $category = $this->createCategory('Test');
         for ($i = 1; $i <= 30; $i++) {
-            $this->createProduct('Product ' . $i, $category);
+            $this->createProduct('Product ' . $i, category: $category);
         }
 
         // Act - No pagination params
@@ -301,7 +309,7 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Electronics');
-        $product = $this->createProduct('Test Product', $category, 50, '99.99', '122.99');
+        $product = $this->createProduct('Test Product', stock: 50, priceNet: '99.99', priceGross: '122.99', category: $category);
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
@@ -319,41 +327,5 @@ class ProductControllerTest extends WebTestCase
         static::assertEquals('122.99', $productData['priceGross']);
         static::assertIsArray($productData['category']);
         static::assertEquals('Electronics', $productData['category']['name']);
-    }
-
-    private function createCategory(string $name): Category
-    {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-
-        $category = new Category();
-        $category->setName($name);
-
-        $entityManager->persist($category);
-        $entityManager->flush();
-
-        return $category;
-    }
-
-    private function createProduct(
-        string $name,
-        ?Category $category,
-        int $stock = 100,
-        string $priceNet = '10.00',
-        string $priceGross = '12.30'
-    ): Product {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-
-        $product = new Product();
-        $product->setName($name);
-        $product->setDescription('Test description for ' . $name);
-        $product->setStock($stock);
-        $product->setPriceNet($priceNet);
-        $product->setPriceGross($priceGross);
-        $product->setCategory($category);
-
-        $entityManager->persist($product);
-        $entityManager->flush();
-
-        return $product;
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Wsei\Ecommerce\Entity\Category;
 use Wsei\Ecommerce\Entity\Product;
 
 trait BuildsProducts
@@ -17,7 +18,8 @@ trait BuildsProducts
         ?string $name = null,
         int $stock = 100,
         string $priceNet = '10.00',
-        string $priceGross = '12.30'
+        string $priceGross = '12.30',
+        ?Category $category = null
     ): Product {
         if ($name === null) {
             ++self::$productNameCounter;
@@ -30,6 +32,7 @@ trait BuildsProducts
         $product->setStock($stock);
         $product->setPriceNet($priceNet);
         $product->setPriceGross($priceGross);
+        $product->setCategory($category);
 
         $this->getEntityManager()->persist($product);
         $this->getEntityManager()->flush();

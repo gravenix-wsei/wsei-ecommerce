@@ -8,10 +8,12 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Wsei\Ecommerce\Entity\Category;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCategories;
 
 class CategoryControllerTest extends WebTestCase
 {
+    use BuildsCategories;
+
     private KernelBrowser $client;
 
     private ContainerInterface $container;
@@ -20,6 +22,11 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->client = static::createClient();
         $this->container = static::getContainer();
+    }
+
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->container->get(EntityManagerInterface::class);
     }
 
     public function testGetCategoriesListEmpty(): void
@@ -240,18 +247,5 @@ class CategoryControllerTest extends WebTestCase
 
         // Assert - Order should be consistent
         static::assertEquals($response1['data'], $response2['data']);
-    }
-
-    private function createCategory(string $name): Category
-    {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-
-        $category = new Category();
-        $category->setName($name);
-
-        $entityManager->persist($category);
-        $entityManager->flush();
-
-        return $category;
     }
 }
