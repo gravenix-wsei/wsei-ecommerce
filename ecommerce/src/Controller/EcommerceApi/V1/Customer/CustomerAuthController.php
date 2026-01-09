@@ -105,11 +105,7 @@ class CustomerAuthController extends AbstractController
             'ApiToken' => [],
         ]],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Logout successful',
-                content: new OA\JsonContent(ref: '#/components/schemas/SuccessResponse')
-            ),
+            new OA\Response(response: 204, description: 'Logout successful'),
             new OA\Response(response: 401, description: 'Unauthorized'),
         ]
     )]

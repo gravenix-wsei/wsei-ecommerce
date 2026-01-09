@@ -101,11 +101,7 @@ class CartController extends AbstractController
             new OA\Parameter(name: 'itemId', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Item removed',
-                content: new OA\JsonContent(ref: '#/components/schemas/SuccessResponse')
-            ),
+            new OA\Response(response: 204, description: 'Item removed'),
             new OA\Response(response: 401, description: 'Unauthorized'),
             new OA\Response(response: 404, description: 'Item not found'),
         ]
@@ -132,11 +128,7 @@ class CartController extends AbstractController
             'ApiToken' => [],
         ]],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Cart cleared',
-                content: new OA\JsonContent(ref: '#/components/schemas/SuccessResponse')
-            ),
+            new OA\Response(response: 204, description: 'Cart cleared'),
             new OA\Response(response: 401, description: 'Unauthorized'),
         ]
     )]

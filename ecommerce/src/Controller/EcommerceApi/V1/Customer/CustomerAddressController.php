@@ -145,11 +145,7 @@ class CustomerAddressController extends AbstractController
             new OA\Parameter(name: 'id', in: 'path', required: true, schema: new OA\Schema(type: 'integer')),
         ],
         responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Address deleted',
-                content: new OA\JsonContent(ref: '#/components/schemas/SuccessResponse')
-            ),
+            new OA\Response(response: 204, description: 'Address deleted'),
             new OA\Response(response: 401, description: 'Unauthorized'),
             new OA\Response(response: 404, description: 'Address not found'),
         ]
