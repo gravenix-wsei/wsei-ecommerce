@@ -24,11 +24,6 @@ class CategoryControllerTest extends WebTestCase
         $this->container = static::getContainer();
     }
 
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        return $this->container->get(EntityManagerInterface::class);
-    }
-
     public function testGetCategoriesListEmpty(): void
     {
         // Act
@@ -247,5 +242,10 @@ class CategoryControllerTest extends WebTestCase
 
         // Assert - Order should be consistent
         static::assertEquals($response1['data'], $response2['data']);
+    }
+
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->container->get(EntityManagerInterface::class);
     }
 }

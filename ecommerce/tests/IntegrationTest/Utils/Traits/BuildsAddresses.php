@@ -12,19 +12,23 @@ trait BuildsAddresses
 {
     abstract protected function getEntityManager(): EntityManagerInterface;
 
-    /**
-     * @param array<string, string> $overrides
-     */
-    protected function createAddress(Customer $customer, array $overrides = []): Address
-    {
+    protected function createAddress(
+        Customer $customer,
+        string $firstName = 'John',
+        string $lastName = 'Doe',
+        string $street = '123 Main St',
+        string $zipcode = '12345',
+        string $city = 'Test City',
+        string $country = 'Test Country'
+    ): Address {
         $address = new Address();
         $address->setCustomer($customer);
-        $address->setFirstName($overrides['firstName'] ?? 'John');
-        $address->setLastName($overrides['lastName'] ?? 'Doe');
-        $address->setStreet($overrides['street'] ?? '123 Main St');
-        $address->setZipcode($overrides['zipcode'] ?? '12345');
-        $address->setCity($overrides['city'] ?? 'Test City');
-        $address->setCountry($overrides['country'] ?? 'Test Country');
+        $address->setFirstName($firstName);
+        $address->setLastName($lastName);
+        $address->setStreet($street);
+        $address->setZipcode($zipcode);
+        $address->setCity($city);
+        $address->setCountry($country);
 
         $this->getEntityManager()->persist($address);
         $this->getEntityManager()->flush();

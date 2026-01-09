@@ -119,12 +119,13 @@ class SuccessfulOrderPlacementTest extends AbstractOrderPlacementTest
     {
         // Arrange
         $customer = $this->createCustomerWithToken('frozen-address@example.com');
-        $address = $this->createAddress($customer, [
-            'firstName' => 'Original',
-            'lastName' => 'Name',
-            'street' => 'Original Street',
-            'city' => 'Original City',
-        ]);
+        $address = $this->createAddress(
+            $customer,
+            firstName: 'Original',
+            lastName: 'Name',
+            street: 'Original Street',
+            city: 'Original City'
+        );
         $product = $this->createProduct('Product C', 10);
 
         $this->addItemToCart($customer, $product->getId(), 1);

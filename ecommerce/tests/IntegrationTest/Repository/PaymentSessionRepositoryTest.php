@@ -215,6 +215,7 @@ class PaymentSessionRepositoryTest extends KernelTestCase
         static::assertCount(1, $order2Sessions);
     }
 
+    // TODO: think about preparing a class for buying path so it can easily simulate Ecommerce API calls and then we just test the results
     private function createTestOrder(EntityManagerInterface $em): Order
     {
         $customer = new Customer();

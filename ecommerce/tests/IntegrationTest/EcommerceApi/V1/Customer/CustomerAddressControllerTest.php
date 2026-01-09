@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Wsei\Ecommerce\Tests\IntegrationTest\EcommerceApi\V1\Checkout\Cart\Customer;
+namespace Wsei\Ecommerce\Tests\IntegrationTest\EcommerceApi\V1\Customer;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Wsei\Ecommerce\Entity\Address;
-use Wsei\Ecommerce\Entity\ApiToken;
-use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Repository\AddressRepository;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsAddresses;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCustomers;
 
 class CustomerAddressControllerTest extends WebTestCase
 {
+    use BuildsAddresses;
+    use BuildsCustomers;
+
     private KernelBrowser $client;
 
     private ContainerInterface $container;
@@ -30,8 +31,8 @@ class CustomerAddressControllerTest extends WebTestCase
     {
         // Arrange
         $customer = $this->createCustomerWithToken('list@example.com');
-        $this->createAddress($customer, 'John', 'Doe', 'New York');
-        $this->createAddress($customer, 'Jane', 'Smith', 'Los Angeles');
+        $this->createAddress($customer, firstName: 'John', lastName: 'Doe', city: 'New York');
+        $this->createAddress($customer, firstName: 'Jane', lastName: 'Smith', city: 'Los Angeles');
 
         // Act
         $this->client->request('GET', '/ecommerce/api/v1/customer/addresses', [], [], [
@@ -81,7 +82,7 @@ class CustomerAddressControllerTest extends WebTestCase
     {
         // Arrange
         $customer = $this->createCustomerWithToken('update@example.com');
-        $address = $this->createAddress($customer, 'Bob', 'Brown', 'Boston');
+        $address = $this->createAddress($customer, firstName: 'Bob', lastName: 'Brown', city: 'Boston');
         $payload = [
             'firstName' => 'Robert',
             'lastName' => 'Brown',
@@ -108,7 +109,7 @@ class CustomerAddressControllerTest extends WebTestCase
     {
         // Arrange
         $customer = $this->createCustomerWithToken('delete@example.com');
-        $address = $this->createAddress($customer, 'Charlie', 'Davis', 'Seattle');
+        $address = $this->createAddress($customer, firstName: 'Charlie', lastName: 'Davis', city: 'Seattle');
         $addressId = $address->getId();
 
         // Act
@@ -128,7 +129,7 @@ class CustomerAddressControllerTest extends WebTestCase
         // Arrange
         $customer1 = $this->createCustomerWithToken('owner@example.com');
         $customer2 = $this->createCustomerWithToken('other@example.com');
-        $address = $this->createAddress($customer1, 'Owner', 'User', 'Portland');
+        $address = $this->createAddress($customer1, firstName: 'Owner', lastName: 'User', city: 'Portland');
         $payload = [
             'firstName' => 'Hacker',
             'lastName' => 'Malicious',
@@ -153,7 +154,7 @@ class CustomerAddressControllerTest extends WebTestCase
         // Arrange
         $customer1 = $this->createCustomerWithToken('owner2@example.com');
         $customer2 = $this->createCustomerWithToken('other2@example.com');
-        $address = $this->createAddress($customer1, 'Owner', 'User', 'Denver');
+        $address = $this->createAddress($customer1, firstName: 'Owner', lastName: 'User', city: 'Denver');
 
         // Act
         $this->client->request('DELETE', '/ecommerce/api/v1/customer/addresses/' . $address->getId(), [], [], [
@@ -165,44 +166,8 @@ class CustomerAddressControllerTest extends WebTestCase
         static::assertResponseStatusCodeSame(404);
     }
 
-    private function createCustomerWithToken(string $email): Customer
+    protected function getEntityManager(): EntityManagerInterface
     {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-        $passwordHasher = $this->container->get(UserPasswordHasherInterface::class);
-
-        $customer = new Customer();
-        $customer->setEmail($email);
-        $customer->setFirstName('Test');
-        $customer->setLastName('User');
-        $customer->setPassword($passwordHasher->hashPassword($customer, 'password123'));
-
-        $apiToken = new ApiToken();
-        $apiToken->setToken(ApiToken::generate());
-        $customer->setApiToken($apiToken);
-
-        $entityManager->persist($customer);
-        $entityManager->persist($apiToken);
-        $entityManager->flush();
-
-        return $customer;
-    }
-
-    private function createAddress(Customer $customer, string $firstName, string $lastName, string $city): Address
-    {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-
-        $address = new Address();
-        $address->setFirstName($firstName);
-        $address->setLastName($lastName);
-        $address->setStreet('123 Main St');
-        $address->setZipcode('12345');
-        $address->setCity($city);
-        $address->setCountry('USA');
-        $address->setCustomer($customer);
-
-        $entityManager->persist($address);
-        $entityManager->flush();
-
-        return $address;
+        return $this->container->get(EntityManagerInterface::class);
     }
 }

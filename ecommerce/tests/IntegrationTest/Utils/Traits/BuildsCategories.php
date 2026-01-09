@@ -29,4 +29,3 @@ trait BuildsCategories
         return $category;
     }
 }
-

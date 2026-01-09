@@ -106,14 +106,7 @@ class CustomerOrderControllerTest extends WebTestCase
     {
         // Arrange
         $customer = $this->createCustomerWithToken('order-fields@example.com');
-        $address = $this->createAddress($customer, [
-            'firstName' => 'John',
-            'lastName' => 'Doe',
-            'street' => '123 Main St',
-            'city' => 'Boston',
-            'zipcode' => '02101',
-            'country' => 'USA',
-        ]);
+        $address = $this->createAddress($customer, city: 'Boston', country: 'USA');
         $product = $this->createProduct('Laptop', 10, '800.00', '984.00');
 
         $this->placeOrderForCustomer($customer, $address, $product, 2);
@@ -145,7 +138,7 @@ class CustomerOrderControllerTest extends WebTestCase
         static::assertEquals('Doe', $order['address']['lastName']);
         static::assertEquals('123 Main St', $order['address']['street']);
         static::assertEquals('Boston', $order['address']['city']);
-        static::assertEquals('02101', $order['address']['zipcode']);
+        static::assertEquals('12345', $order['address']['zipcode']);
         static::assertEquals('USA', $order['address']['country']);
 
         // Verify order items

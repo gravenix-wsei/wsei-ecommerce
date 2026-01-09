@@ -110,14 +110,8 @@ class CartBehaviorTest extends AbstractOrderPlacementTest
     {
         // Arrange
         $customer = $this->createCustomerWithToken('multi-address@example.com');
-        $address1 = $this->createAddress($customer, [
-            'street' => 'Home Address',
-            'city' => 'City A',
-        ]);
-        $address2 = $this->createAddress($customer, [
-            'street' => 'Work Address',
-            'city' => 'City B',
-        ]);
+        $address1 = $this->createAddress($customer, street: 'Home Address', city: 'City A');
+        $address2 = $this->createAddress($customer, street: 'Work Address', city: 'City B');
 
         $product = $this->createProduct('Product Multi-Addr', 50);
 

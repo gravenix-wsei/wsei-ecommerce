@@ -8,12 +8,13 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Wsei\Ecommerce\Entity\Customer;
 use Wsei\Ecommerce\Repository\CustomerRepository;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCustomers;
 
 class CustomerRegisterControllerTest extends WebTestCase
 {
+    use BuildsCustomers;
+
     private KernelBrowser $client;
 
     private ContainerInterface $container;
@@ -190,20 +191,8 @@ class CustomerRegisterControllerTest extends WebTestCase
         static::assertResponseStatusCodeSame(400);
     }
 
-    private function createCustomer(string $email): Customer
+    protected function getEntityManager(): EntityManagerInterface
     {
-        $entityManager = $this->container->get(EntityManagerInterface::class);
-        $passwordHasher = $this->container->get(UserPasswordHasherInterface::class);
-
-        $customer = new Customer();
-        $customer->setEmail($email);
-        $customer->setFirstName('Test');
-        $customer->setLastName('User');
-        $customer->setPassword($passwordHasher->hashPassword($customer, 'password123'));
-
-        $entityManager->persist($customer);
-        $entityManager->flush();
-
-        return $customer;
+        return $this->container->get(EntityManagerInterface::class);
     }
 }

@@ -26,11 +26,6 @@ class ProductControllerTest extends WebTestCase
         $this->container = static::getContainer();
     }
 
-    protected function getEntityManager(): EntityManagerInterface
-    {
-        return $this->container->get(EntityManagerInterface::class);
-    }
-
     public function testSearchProductsEmpty(): void
     {
         // Act
@@ -309,7 +304,13 @@ class ProductControllerTest extends WebTestCase
     {
         // Arrange
         $category = $this->createCategory('Electronics');
-        $product = $this->createProduct('Test Product', stock: 50, priceNet: '99.99', priceGross: '122.99', category: $category);
+        $product = $this->createProduct(
+            'Test Product',
+            stock: 50,
+            priceNet: '99.99',
+            priceGross: '122.99',
+            category: $category
+        );
 
         // Act
         $this->client->jsonRequest('POST', '/ecommerce/api/v1/products/search', []);
@@ -327,5 +328,10 @@ class ProductControllerTest extends WebTestCase
         static::assertEquals('122.99', $productData['priceGross']);
         static::assertIsArray($productData['category']);
         static::assertEquals('Electronics', $productData['category']['name']);
+    }
+
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->container->get(EntityManagerInterface::class);
     }
 }
