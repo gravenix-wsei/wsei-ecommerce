@@ -4,15 +4,6 @@ declare(strict_types=1);
 
 namespace Wsei\Ecommerce\EcommerceApi\Response;
 
-use OpenApi\Attributes as OA;
-
-#[OA\Schema(
-    schema: 'SuccessResponse',
-    properties: [
-        new OA\Property(property: 'success', type: 'boolean', example: true),
-        new OA\Property(property: 'apiDescription', type: 'string', example: 'Success'),
-    ]
-)]
 class SuccessResponse extends EcommerceResponse
 {
     public function __construct()

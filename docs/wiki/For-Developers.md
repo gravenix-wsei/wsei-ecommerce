@@ -69,6 +69,7 @@ Available exceptions in `EcommerceApi/Exception/Http/`:
 - `NotFoundException` - 404
 - `InvalidCredentialsException` - 401
 - `UnauthorizedException` - 401
+- `CustomerAlreadyExistsException` - 409
 
 All extend `HttpException` and return JSON:
 ```json

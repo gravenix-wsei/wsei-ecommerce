@@ -1,3 +1,22 @@
+### Register new customer
+POST {{baseUrl}}/customer/register
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "password123",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+
+> {%
+  client.test('is 201', () => response.status === 201);
+  client.test('has auth token', () => typeof response.body?.token === 'string');
+  client.test('has expiresAt', () => typeof response.body?.expiresAt === 'string');
+  client.global.set('authToken', response.body.token);
+%}
+
 ### Login a customer
 POST {{baseUrl}}/customer/login
 Content-Type: application/json
