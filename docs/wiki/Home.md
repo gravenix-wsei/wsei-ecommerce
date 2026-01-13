@@ -23,6 +23,9 @@ Architectural overview of controllers, entities, forms, framework components, re
 ### 👥 [User Manual](User-manual.md)
 Step-by-step guide for using the administration panel to manage products, categories, customers, orders, and administrator permissions.
 
+### 🧪 [Testing and Analysis](Testing-and-Analysis.md)
+Comprehensive guide to testing and static analysis tools - PHPUnit tests, E2E testing with Playwright, mutation testing with Infection, and code quality analysis with PHPMetrics.
+
 ## Technology Stack
 
 | Component | Technology |
