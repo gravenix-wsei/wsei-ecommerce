@@ -6,6 +6,7 @@
    - [Running Tests](#running-tests)
    - [Code Coverage](#code-coverage)
    - [Integration Test Utilities](#integration-test-utilities)
+   - [AAA Testing Pattern](#aaa-testing-pattern)
 2. [E2E Tests (Playwright)](#e2e-tests-playwright)
    - [Configuration](#e2e-configuration)
    - [Running E2E Tests](#running-e2e-tests)
@@ -116,6 +117,7 @@ open ecommerce/phpunit-coverage/html/index.html
 The coverage report shows:
 - **Line coverage** - percentage of code lines executed during tests
 - **Branch coverage** - percentage of code branches (if/else paths) covered
+- **Path coverage** - percentage of unique execution paths through the code (combination of all possible branches)
 - **Method coverage** - percentage of methods called during tests
 
 ### Integration Test Utilities
@@ -132,34 +134,40 @@ The project provides reusable traits in `tests/IntegrationTest/Utils/Traits/` to
 **Example Usage:**
 
 ```php
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCustomers;
+use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
+use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsCategories;
 use Wsei\Ecommerce\Tests\IntegrationTest\Utils\Traits\BuildsProducts;
 
-class MyApiTest extends WebTestCase
+class ProductCategoryTest extends KernelTestCase
 {
-    use BuildsCustomers;
+    use BuildsCategories;
     use BuildsProducts;
 
-    protected function setUp(): void
+    public function testProductCanBeAssignedToCategory(): void
     {
-        $this->client = static::createClient();
-    }
-
-    public function testSomething(): void
-    {
-        // Create a customer with API token for authenticated requests
-        $customer = $this->createCustomerWithToken();
+        // Create a category
+        $category = $this->createCategory(
+            name: 'Electronics',
+            slug: 'electronics'
+        );
         
-        // Create a product
-        $product = $this->createProduct(name: 'Test Product', price: 99.99);
+        // Create multiple products in the category
+        $laptop = $this->createProduct(
+            name: 'Gaming Laptop',
+            price: 1299.99,
+            category: $category
+        );
         
-        // Make authenticated API request
-        $this->client->jsonRequest('GET', '/ecommerce/api/v1/products', [], [
-            'HTTP_wsei-ecommerce-token' => $customer->getApiToken()->getToken(),
-        ]);
+        $mouse = $this->createProduct(
+            name: 'Wireless Mouse',
+            price: 29.99,
+            category: $category
+        );
         
-        $this->assertResponseIsSuccessful();
+        // Verify relationships
+        $this->assertSame($category, $laptop->getCategory());
+        $this->assertSame($category, $mouse->getCategory());
+        $this->assertCount(2, $category->getProducts());
     }
     
     protected function getEntityManager(): EntityManagerInterface
@@ -171,11 +179,39 @@ class MyApiTest extends WebTestCase
 
 **Abstract Test Classes:**
 
-For complex test scenarios, extend abstract test classes like `AbstractOrderPlacementTest` which provides:
+For complex test scenarios, consider preparing your own abstract test classes like `AbstractOrderPlacementTest` which can provides:
 - Pre-configured client setup
 - Helper methods for cart operations
-- Authentication header builders
-- JSON response parsing
+
+### AAA Testing Pattern
+
+All tests in this project follow the **AAA (Arrange-Act-Assert)** pattern for clarity and maintainability:
+
+**1. Arrange** - Set up test data and preconditions
+```php
+// Create necessary entities, mock dependencies, prepare test state
+$category = $this->createCategory(name: 'Electronics');
+$product = $this->createProduct(name: 'Laptop', price: 999.99);
+```
+
+**2. Act** - Execute the behavior being tested
+```php
+// Call the method or perform the action you're testing
+$result = $orderService->placeOrder($cart, $customer);
+```
+
+**3. Assert** - Verify the expected outcome
+```php
+// Check that the result matches expectations
+$this->assertInstanceOf(Order::class, $result);
+$this->assertEquals(OrderStatus::PENDING, $result->getStatus());
+```
+
+**Why AAA Pattern?**
+
+- **Readability** - Tests are easy to understand at a glance
+- **Debugging** - Clear separation makes it obvious where failures occur
+- **Maintenance** - Changes to test logic are easier to implement
 
 ---
 
@@ -252,13 +288,6 @@ npm run report
 This opens the report at `e2e-tests/playwright-report/index.html`
 
 ![Playwright Report](img/playwright-report.png)
-
-The report includes:
-- Test results summary (passed/failed/skipped)
-- Test execution timeline
-- Screenshots of failures
-- Video recordings (on failure)
-- Test traces for debugging
 
 **Test Artifacts:**
 
