@@ -53,7 +53,6 @@ class AdminUserType extends AbstractType
                 'attr' => [
                     'class' => 'checkbox-list',
                 ],
-                'help' => 'Select all roles that should be assigned to this administrator',
             ]);
     }
 

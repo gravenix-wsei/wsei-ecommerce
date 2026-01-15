@@ -184,6 +184,14 @@ body {
         }
     }
 
+    .checkbox-list {
+        & > input[type="checkbox"] {
+            float: left;
+            margin-top: 4px;
+            margin-right: 10px;
+        }
+    }
+
     select {
         width: 100%;
         padding: 0.75rem 2.5rem 0.75rem 1rem;
