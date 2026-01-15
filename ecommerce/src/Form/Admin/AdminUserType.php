@@ -47,7 +47,7 @@ class AdminUserType extends AbstractType
             ])
             ->add('roles', ChoiceType::class, [
                 'label' => 'Roles',
-                'choices' => AdminRole::getChoices(),
+                'choices' => $this->getAvailableRoles(),
                 'multiple' => true,
                 'expanded' => true,
                 'attr' => [
@@ -62,5 +62,18 @@ class AdminUserType extends AbstractType
             'data_class' => User::class,
             'is_edit' => false,
         ]);
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getAvailableRoles(): array
+    {
+        $disallowedRolesAdmin = [AdminRole::ROLE_ADMIN->value];
+
+        return array_filter(
+            AdminRole::getChoices(),
+            static fn (string $role) => !\in_array($role, $disallowedRolesAdmin, true)
+        );
     }
 }
