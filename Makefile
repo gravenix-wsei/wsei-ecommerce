@@ -10,7 +10,7 @@ help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Available targets:'
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@awk 'BEGIN {FS = ":.*?## "}; /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 .env: ## Create .env file from .env.example if it doesn't exist
 	@if [ ! -f .env ]; then \
@@ -95,16 +95,16 @@ php-coverage-check: ## Check coverage for changed files (requires diff-cover: pi
 phpmetrics: ## Generate PHP metrics report
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpmetrics
 
-infection: ## Generate PHP metrics report
+infection: ## Generate PHP Infection report
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer test:infection
 
-phpstan: ## Generate PHP metrics report
+phpstan: ## Run PHPStan static analysis
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer phpstan
 
-ecs: ## Generate PHP metrics report
+ecs: ## Run ECS analysis
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer ecs
 
-ecs-fix: ## Generate PHP metrics report
+ecs-fix: ## Fix code style issues with ECS
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer ecs -- --fix
 
 down: ## Stop and remove containers
