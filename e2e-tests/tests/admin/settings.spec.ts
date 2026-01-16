@@ -33,7 +33,6 @@ test.describe('Admin - Settings', () => {
 
     // Step 4: Select only Customer Manager and Order Manager roles
     // First, uncheck all roles that might be selected by default
-    await page.uncheck('input[type="checkbox"][value="ROLE_ADMIN"]');
     await page.uncheck('input[type="checkbox"][value="ROLE_ADMIN.PRODUCT"]');
     await page.uncheck('input[type="checkbox"][value="ROLE_ADMIN.CATEGORY"]');
     await page.uncheck('input[type="checkbox"][value="ROLE_ADMIN.CONFIG"]');
