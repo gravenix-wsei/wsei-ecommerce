@@ -1,4 +1,4 @@
-.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests phpmetrics infection
+.PHONY: help up build restart logs shell php-exec down init env start stop php-test-init php-run-tests phpmetrics infection e2e-install e2e-test e2e-test-ui
 
 # Load environment variables from .env file if it exists
 ifneq (,$(wildcard .env))
@@ -10,7 +10,7 @@ help: ## Show this help message
 	@echo 'Usage: make [target]'
 	@echo ''
 	@echo 'Available targets:'
-	@awk 'BEGIN {FS = ":.*?## "}; /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@awk 'BEGIN {FS = ":.*?## "}; /^[a-zA-Z0-9_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
 .env: ## Create .env file from .env.example if it doesn't exist
 	@if [ ! -f .env ]; then \
@@ -35,6 +35,12 @@ build: ## Build or rebuild services
 
 restart: ## Restart containers
 	docker compose restart
+
+down: ## Stop and remove containers
+	docker compose down
+
+stop: ## Stop containers
+	docker compose stop
 
 logs: ## Preview container logs (follow mode)
 	docker compose logs -f
@@ -64,7 +70,7 @@ endif
 	@docker compose exec -u www-data -e APP_ENV=test php bin/console doctrine:migrations:migrate --no-interaction
 	@echo "Test database initialized and migrations completed!"
 
-php-run-tests: ## Run PHP unit tests with coverage report
+php-run-tests: ## Run PHP tests with coverage report
 	@COVERAGE_FLAGS=""; \
 	if [ -n "$(CHECK_COVERAGE)" ] && [ "$(CHECK_COVERAGE)" != "false" ]; then \
 		COVERAGE_FLAGS="$$COVERAGE_FLAGS --coverage-text"; \
@@ -73,6 +79,12 @@ php-run-tests: ## Run PHP unit tests with coverage report
 		COVERAGE_FLAGS="$$COVERAGE_FLAGS --path-coverage"; \
 	fi; \
 	docker compose exec -u www-data -e XDEBUG_MODE=coverage php bin/phpunit $(FLAGS) $$COVERAGE_FLAGS
+
+php-run-tests-unit: ## Run PHP unit tests
+	$(MAKE) php-run-tests FLAGS="--testsuite UnitTests"
+
+php-run-tests-integration: ## Run PHP integration tests
+	$(MAKE) php-run-tests FLAGS="--testsuite IntegrationTests"
 
 php-coverage-check: ## Check coverage for changed files (requires diff-cover: pip install diff-cover)
 	@echo "Running tests with coverage..."
@@ -107,8 +119,23 @@ ecs: ## Run ECS analysis
 ecs-fix: ## Fix code style issues with ECS
 	docker compose exec -u www-data -e XDEBUG_MODE=off php composer ecs -- --fix
 
-down: ## Stop and remove containers
-	docker compose down
+e2e-tests/.env: ## Create e2e test .env file from example
+	@if [ ! -f e2e-tests/.env ]; then \
+		cp e2e-tests/.env.example e2e-tests/.env; \
+		echo "e2e-tests/.env file created from e2e-tests/.env.example"; \
+	else \
+		echo "e2e-tests/.env file already exists, skipping..."; \
+	fi
 
-stop: ## Stop containers
-	docker compose stop
+e2e-tests/node_modules/.e2e-deps-installed: e2e-tests/.env
+	npm --prefix e2e-tests install
+	npm --prefix e2e-tests run install:browsers
+	@touch e2e-tests/node_modules/.e2e-deps-installed
+
+e2e-install: e2e-tests/node_modules/.e2e-deps-installed ## Install e2e test dependencies
+
+e2e-test: e2e-install ## Run e2e tests in CLI
+	npm --prefix e2e-tests run test
+
+e2e-test-ui: e2e-install ## Run e2e tests in interactive mode
+	npm --prefix e2e-tests run test:ui
